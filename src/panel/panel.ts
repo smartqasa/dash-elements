@@ -72,6 +72,8 @@ export class PanelCard extends LitElement implements LovelaceCard {
     private _controlTiles: LovelaceCard[][] = [];
     private _controlColumns: number[] = [];
 
+    private _debug = false;
+
     static get styles(): CSSResult {
         return unsafeCSS(panelStyles);
     }
@@ -105,35 +107,11 @@ export class PanelCard extends LitElement implements LovelaceCard {
             this._loadContent();
         }
 
-        if (changedProps.has('hass')) {
-            const prevHass = changedProps.get('hass') as
-                | HomeAssistant
-                | undefined;
-            const currHass = this.hass;
-
-            // Ensure previous and current hass exist
-            if (prevHass && currHass) {
-                // Compare the specific entity's state
-                const prevState =
-                    prevHass.states['input_button.fully_kiosk_restart_app'];
-                const currState =
-                    currHass.states['input_button.fully_kiosk_restart_app'];
-
-                if (prevState !== currState) {
-                    console.log(
-                        'The state of input_button.fully_kiosk_restart_app has changed!'
-                    );
-                    console.log('Previous state:', prevState);
-                    console.log('Current state:', currState);
-
-                    // Perform actions based on the state change
-                    //this._handleFullyKioskRestart();
-                }
-            }
-        }
-
         if (changedProps.has('hass') && this.hass) {
-            this._handleFullyKioskRestart();
+            if (!this._debug) {
+                console.log('Changed Props: ', changedProps);
+                this._debug = true;
+            }
 
             this._handleThemeChanges();
 
