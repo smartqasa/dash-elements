@@ -51,6 +51,7 @@ export class PanelCard extends LitElement implements LovelaceCard {
 
     @property({ attribute: false }) public hass?: HomeAssistant;
     @state() protected _config?: Config;
+    @state() private _fkbRestartState: String | undefined;
     @state() private _isAdminMode = false;
     @state() private _isPhone: boolean = getDeviceType() === 'phone';
     @state() private _isTablet: boolean = getDeviceType() === 'tablet';
@@ -71,8 +72,6 @@ export class PanelCard extends LitElement implements LovelaceCard {
     private _areaChips: LovelaceCard[] = [];
     private _controlTiles: LovelaceCard[][] = [];
     private _controlColumns: number[] = [];
-
-    private _debug = false;
 
     static get styles(): CSSResult {
         return unsafeCSS(panelStyles);
@@ -108,13 +107,8 @@ export class PanelCard extends LitElement implements LovelaceCard {
         }
 
         if (changedProps.has('hass') && this.hass) {
+            this._handleFullyKioskRestart();
             this._handleThemeChanges();
-
-            const restartState =
-                this.hass.states['input_button.fully_kiosk_restart_app'];
-            if (restartState) {
-                console.log('Restart Button State:', restartState);
-            }
 
             const isAdminMode =
                 this.hass.states['input_boolean.admin_mode']?.state === 'on';
@@ -194,10 +188,12 @@ export class PanelCard extends LitElement implements LovelaceCard {
     }
 
     private _handleFullyKioskRestart(): void {
-        console.log('Fully Kiosk Browser restart requested.');
+        const fkbRestartState =
+            this.hass?.states['input_button.fully_kiosk_restart_app']?.state;
+        if (this._fkbRestartState === fkbRestartState) return;
+
         if (typeof window.fully !== 'undefined' && window.fully.restartApp) {
             try {
-                console.log('Restarting Fully Kiosk Browser...');
                 window.fully.restartApp();
             } catch (error) {}
         }
