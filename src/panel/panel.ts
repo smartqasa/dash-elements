@@ -113,11 +113,7 @@ export class PanelCard extends LitElement implements LovelaceCard {
             const restartState =
                 this.hass.states['input_button.fully_kiosk_restart_app']?.state;
             if (restartState) {
-                console.log(
-                    'Restart Button State:',
-                    this.hass.states['input_button.fully_kiosk_restart_app']
-                        ?.state
-                );
+                console.log('Restart Button State:', restartState);
             }
 
             const isAdminMode =
