@@ -111,7 +111,7 @@ export class PanelCard extends LitElement implements LovelaceCard {
             this._handleThemeChanges();
 
             const restartState =
-                this.hass.states['input_button.fully_kiosk_restart_app']?.state;
+                this.hass.states['input_button.fully_kiosk_restart_app'];
             if (restartState) {
                 console.log('Restart Button State:', restartState);
             }
