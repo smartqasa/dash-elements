@@ -141,8 +141,6 @@ export class PanelCard extends LitElement implements LovelaceCard {
             `;
         }
 
-        this._debug = true;
-
         const name = this._config?.name ?? this._areaObj?.name ?? 'Area';
         const picture = this._config.picture ?? `${this._area}.png`;
 
