@@ -110,7 +110,6 @@ export class PanelCard extends LitElement implements LovelaceCard {
         if (changedProps.has('hass') && this.hass) {
             if (!this._debug) {
                 console.log('Changed Props: ', changedProps);
-                this._debug = true;
             }
 
             this._handleThemeChanges();
@@ -141,6 +140,8 @@ export class PanelCard extends LitElement implements LovelaceCard {
                 </div>
             `;
         }
+
+        this._debug = true;
 
         const name = this._config?.name ?? this._areaObj?.name ?? 'Area';
         const picture = this._config.picture ?? `${this._area}.png`;
