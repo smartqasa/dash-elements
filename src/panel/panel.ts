@@ -249,6 +249,17 @@ export class PanelCard extends LitElement implements LovelaceCard {
 
     private _resetToFirstPage(): void {
         this._startResetTimer();
+
+        const swiperContainer = this.shadowRoot?.querySelector(
+            'swiper-container'
+        ) as any;
+
+        if (swiperContainer && swiperContainer.swiper) {
+            console.log('Resetting Swiper to the first page...');
+            swiperContainer.swiper.slideTo(0);
+        } else {
+            console.warn('Swiper instance not found. Unable to reset.');
+        }
     }
 
     private async _loadContent(): Promise<void> {
