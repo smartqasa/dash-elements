@@ -96,6 +96,17 @@ export class PanelCard extends LitElement implements LovelaceCard {
         });
 
         this._startResetTimer();
+
+        this.hass?.connection.subscribeEvents((event: any) => {
+            if (
+                event.data.domain === 'input_button' &&
+                event.data.service === 'press' &&
+                event.data.service_data?.entity_id ===
+                    'input_button.fully_kiosk_restart_app'
+            ) {
+                this._handleFullyKioskRestart();
+            }
+        }, 'call_service');
     }
 
     protected willUpdate(changedProps: PropertyValues): void {
