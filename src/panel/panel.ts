@@ -106,6 +106,14 @@ export class PanelCard extends LitElement implements LovelaceCard {
         }
 
         if (changedProps.has('hass') && this.hass) {
+            if (
+                changedProps.get('hass')?.states[
+                    'input_button.fully_kiosk_restart_app'
+                ] !== this.hass.states['input_button.fully_kiosk_restart_app']
+            ) {
+                this._handleFullyKioskRestart();
+            }
+
             this._handleThemeChanges();
 
             const isAdminMode =
@@ -182,6 +190,26 @@ export class PanelCard extends LitElement implements LovelaceCard {
 
         if (this._resetTimer) {
             clearTimeout(this._resetTimer);
+        }
+    }
+
+    private _handleFullyKioskRestart(): void {
+        if (typeof window.fully !== 'undefined' && window.fully.restartApp) {
+            const restartState =
+                this.hass?.states['input_button.fully_kiosk_restart_app']
+                    ?.state;
+
+            if (restartState === 'on') {
+                try {
+                    console.log('Restarting Fully Kiosk Browser...');
+                    window.fully.restartApp();
+                } catch (error) {
+                    console.error(
+                        'Failed to restart Fully Kiosk Browser:',
+                        error
+                    );
+                }
+            }
         }
     }
 

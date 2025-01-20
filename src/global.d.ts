@@ -38,6 +38,7 @@ declare interface Window {
     };
     customCards: Array<Object>;
     fully?: {
+        restartApp: () => void;
         startApplication: (packageName: string) => void;
     };
     smartqasa: {
