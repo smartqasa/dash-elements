@@ -190,6 +190,7 @@ export class PanelCard extends LitElement implements LovelaceCard {
     private _handleFullyKioskRestart(): void {
         const fkbRestartState =
             this.hass?.states['input_button.fully_kiosk_restart_app']?.state;
+        if (!this._fkbRestartState) this._fkbRestartState = fkbRestartState;
         if (this._fkbRestartState === fkbRestartState) return;
 
         if (typeof window.fully !== 'undefined' && window.fully.restartApp) {
