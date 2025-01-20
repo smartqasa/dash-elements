@@ -197,6 +197,7 @@ export class PanelCard extends LitElement implements LovelaceCard {
     }
 
     private _handleFullyKioskRestart(): void {
+        console.log('Fully Kiosk Browser restart requested.');
         if (typeof window.fully !== 'undefined' && window.fully.restartApp) {
             try {
                 console.log('Restarting Fully Kiosk Browser...');
