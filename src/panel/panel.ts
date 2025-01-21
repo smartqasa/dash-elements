@@ -195,19 +195,15 @@ export class PanelCard extends LitElement implements LovelaceCard {
         if (this._refreshDashboardsState === refreshDashboardsState) return;
 
         if (typeof window.fully !== 'undefined') {
-            try {
-                window.fully.clearCache();
-                setTimeout(() => {
-                    window.fully?.restartApp();
-                }, 2000);
-                return;
-            } catch (error) {}
+            window.fully.clearCache();
+            setTimeout(() => {
+                window.fully?.restartApp();
+            }, 2000);
+            return;
         }
 
         if (typeof window.browser_mod !== 'undefined') {
-            try {
-                window.browser_mod.refresh();
-            } catch (error) {}
+            window.browser_mod.service('refresh');
         }
     }
 
