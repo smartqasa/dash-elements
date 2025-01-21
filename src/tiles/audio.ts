@@ -107,7 +107,6 @@ export class AudioTile extends LitElement implements LovelaceCard {
                         <div></div>
                         <div></div>
                         <div></div>
-                        <div></div>
                     </div>
                 `;
             } else {

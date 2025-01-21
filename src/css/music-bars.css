@@ -59,10 +59,6 @@
     animation-duration: 525ms;
 }
 
-.bars > div:nth-child(4) {
-    animation-duration: 500ms;
-}
-
 .bars > div:last-child {
-    animation-duration: 475ms;
+    animation-duration: 500ms;
 }
