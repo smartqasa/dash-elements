@@ -51,7 +51,7 @@ export class PanelCard extends LitElement implements LovelaceCard {
 
     @property({ attribute: false }) public hass?: HomeAssistant;
     @state() protected _config?: Config;
-    @state() private _fkbRestartState: String | undefined;
+    @state() private _refreshDashboardsState: String | undefined;
     @state() private _isAdminMode = false;
     @state() private _isPhone: boolean = getDeviceType() === 'phone';
     @state() private _isTablet: boolean = getDeviceType() === 'tablet';
@@ -107,7 +107,7 @@ export class PanelCard extends LitElement implements LovelaceCard {
         }
 
         if (changedProps.has('hass') && this.hass) {
-            this._handleFullyKioskRestart();
+            this._handleRefreshDevice();
             this._handleThemeChanges();
 
             const isAdminMode =
@@ -187,15 +187,26 @@ export class PanelCard extends LitElement implements LovelaceCard {
         }
     }
 
-    private _handleFullyKioskRestart(): void {
-        const fkbRestartState =
-            this.hass?.states['input_button.fully_kiosk_restart_app']?.state;
-        if (!this._fkbRestartState) this._fkbRestartState = fkbRestartState;
-        if (this._fkbRestartState === fkbRestartState) return;
+    private _handleRefreshDevice(): void {
+        const refreshDashboardsState =
+            this.hass?.states['input_button.refresh_dashboards']?.state;
+        if (!this._refreshDashboardsState)
+            this._refreshDashboardsState = refreshDashboardsState;
+        if (this._refreshDashboardsState === refreshDashboardsState) return;
 
-        if (typeof window.fully !== 'undefined' && window.fully.restartApp) {
+        if (typeof window.fully !== 'undefined') {
             try {
-                window.fully.restartApp();
+                window.fully.clearCache();
+                setTimeout(() => {
+                    window.fully?.restartApp();
+                }, 2000);
+                return;
+            } catch (error) {}
+        }
+
+        if (typeof window.browser_mod !== 'undefined') {
+            try {
+                window.browser_mod.refresh();
             } catch (error) {}
         }
     }

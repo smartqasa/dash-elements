@@ -34,10 +34,12 @@ declare const __BUILD_TIMESTAMP__: string;
 
 declare interface Window {
     browser_mod?: {
+        refresh: () => void;
         service: (service: string, data?: object) => void;
     };
     customCards: Array<Object>;
     fully?: {
+        clearCache: () => void;
         restartApp: () => void;
         startApplication: (packageName: string) => void;
     };
