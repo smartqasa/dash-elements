@@ -213,13 +213,15 @@ export class MenuCard extends LitElement implements LovelaceCard {
                 },
                 {
                     type: 'custom:smartqasa-action-tile',
-                    entity: 'script.system_tablet_reload',
+                    icon: 'mdi:refresh',
                     name: 'Refresh Dashboards',
                     actions: [
                         {
                             action: 'input_button.press',
                             data: {},
-                            target: 'input_button.refresh_dashboards',
+                            target: {
+                                entity_id: 'input_button.refresh_dashboards',
+                            },
                         },
                     ],
                 },
