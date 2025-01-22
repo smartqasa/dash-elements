@@ -1,7 +1,8 @@
 // Initialize global variables
 window.smartqasa = window.smartqasa || {};
-window.customCards = window.customCards ?? [];
 
+// Preload Panel Card
+window.customCards = window.customCards ?? [];
 window.customCards.push({
     type: 'smartqasa-panel-card',
     name: 'SmartQasa Panel Card',
@@ -9,6 +10,7 @@ window.customCards.push({
     description: 'A placeholder for SmartQasa Panel Card.',
 });
 
+// Save the Initial Area
 window.smartqasa.startArea =
     window.smartqasa.startArea || location.pathname.split('/').pop();
 
@@ -18,11 +20,11 @@ window.smartqasa.lightModeImage = lightModeImage;
 import darkModeImage from './assets/backgrounds/background_dark.jpg';
 window.smartqasa.darkModeImage = darkModeImage;
 
-const preloadImages = [lightModeImage, darkModeImage];
-preloadImages.forEach((src) => {
-    const img = new Image();
-    img.src = src;
-});
+//const preloadImages = [lightModeImage, darkModeImage];
+//preloadImages.forEach((src) => {
+//    const img = new Image();
+//    img.src = src;
+//});
 
 // Preload YAML configuration
 import { loadYamlAsJson } from './utilities/load-yaml-as-json';
