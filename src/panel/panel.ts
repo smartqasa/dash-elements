@@ -267,8 +267,10 @@ export class PanelCard extends LitElement implements LovelaceCard {
 
         if (swiperContainer && swiperContainer.swiper) {
             const currentPage = swiperContainer.swiper.activeIndex;
-            if (currentPage !== 0) swiperContainer.swiper.slideTo(0);
-            return;
+            if (currentPage !== 0) {
+                swiperContainer.swiper.slideTo(0);
+                return;
+            }
         }
 
         const area = location.pathname.split('/').pop();
