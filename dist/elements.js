@@ -15747,6 +15747,8 @@ let PanelCard = class PanelCard extends r$2 {
     }
     willUpdate(changedProps) {
         super.willUpdate(changedProps);
+        if (window.smartqasa.isInitializing)
+            return;
         if (changedProps.has('_config')) {
             this._loadContent();
         }
@@ -15767,7 +15769,11 @@ let PanelCard = class PanelCard extends r$2 {
         }
     }
     render() {
-        if (this._isLoading || !this.hass || !this._config || !this._area) {
+        if (window.smartqasa.isInitializing ||
+            this._isLoading ||
+            !this.hass ||
+            !this._config ||
+            !this._area) {
             return x `
                 <div class="loading-screen">
                     <span>Loading...</span>
@@ -15787,6 +15793,8 @@ let PanelCard = class PanelCard extends r$2 {
     }
     updated(changedProps) {
         super.updated(changedProps);
+        if (window.smartqasa.isInitializing)
+            return;
         if (changedProps.has('hass') && this.hass) {
             this._updateContent();
         }
@@ -15935,7 +15943,7 @@ window.smartqasa.darkModeImage = img$P;
 window.smartqasa.startArea =
     window.smartqasa.startArea || location.pathname.split('/').pop();
 window.smartqasa.version = "2025.1.19b-1";
-window.smartqasa.timestamp = "2025-01-22T13:59:03.057Z";
+window.smartqasa.timestamp = "2025-01-22T14:11:56.727Z";
 window.customCards = window.customCards ?? [];
 const preloadImages = [img$Q, img$P];
 preloadImages.forEach((src) => {
@@ -16016,14 +16024,12 @@ preloadImages.forEach((src) => {
             ...chips.map((path) => import(path)),
             ...tiles.map((path) => import(path)),
         ]);
-    }
-    catch (error) {
-        console.error('Error loading modules:', error);
-    }
-    finally {
         window.smartqasa.isInitializing = false;
         const event = new Event('smartqasa-initialized');
         window.dispatchEvent(event);
+    }
+    catch (error) {
+        console.error('Error loading modules:', error);
     }
     console.info(`%c SmartQasa ⏏ ${window.smartqasa.version} (Built: ${window.smartqasa.timestamp}) `, 'background-color: #0000ff; color: #ffffff; font-weight: 700;');
 })();

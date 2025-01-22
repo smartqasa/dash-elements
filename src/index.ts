@@ -104,12 +104,11 @@ import './panel/panel';
             ...chips.map((path) => import(path)),
             ...tiles.map((path) => import(path)),
         ]);
-    } catch (error) {
-        console.error('Error loading modules:', error);
-    } finally {
         window.smartqasa.isInitializing = false;
         const event = new Event('smartqasa-initialized');
         window.dispatchEvent(event);
+    } catch (error) {
+        console.error('Error loading modules:', error);
     }
 
     console.info(
