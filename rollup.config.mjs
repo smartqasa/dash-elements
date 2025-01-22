@@ -20,7 +20,6 @@ export default {
     output: {
         file: 'dist/elements.js',
         format: 'es',
-        inlineDynamicImports: true,
         name: 'SmartQasaElements',
     },
     plugins: [
