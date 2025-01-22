@@ -218,7 +218,9 @@ export class MenuCard extends LitElement implements LovelaceCard {
                     actions: [
                         {
                             action: 'input_button.press',
-                            entity_id: 'input_button.refresh_dashboards',
+                            data: {
+                                entity_id: 'input_button.refresh_dashboards',
+                            },
                         },
                     ],
                 },
