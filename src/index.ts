@@ -4,8 +4,8 @@ window.smartqasa.lightModeImage = lightModeImage;
 window.smartqasa.darkModeImage = darkModeImage;
 window.smartqasa.startArea =
     window.smartqasa.startArea || location.pathname.split('/').pop();
-window.smartqasa.version = __BUILD_VERSION__; // Injected version
-window.smartqasa.timestamp = __BUILD_TIMESTAMP__; // Injected timestamp
+window.smartqasa.version = __BUILD_VERSION__;
+window.smartqasa.timestamp = __BUILD_TIMESTAMP__;
 
 window.customCards = window.customCards ?? [];
 
@@ -37,7 +37,10 @@ preloadImages.forEach((src) => {
     }
 })();
 
-// Load modules
+// Synchronously import the panel module
+import './panel/panel';
+
+// Dynamically load other modules (cards, chips, tiles)
 (async () => {
     const cards = [
         './cards/areas',
@@ -98,8 +101,8 @@ preloadImages.forEach((src) => {
     ];
 
     try {
+        // Dynamically load all other modules in parallel
         await Promise.all([
-            import('./panel/panel'),
             ...cards.map((path) => import(path)),
             ...chips.map((path) => import(path)),
             ...tiles.map((path) => import(path)),
