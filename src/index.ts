@@ -1,9 +1,14 @@
-// Import Panel Card
-import './panel/panel';
-
 // Initialize global variables
 window.smartqasa = window.smartqasa || {};
 window.customCards = window.customCards ?? [];
+
+window.customCards.push({
+    type: 'smartqasa-panel-card',
+    name: 'SmartQasa Panel Card',
+    preview: true,
+    description: 'A placeholder for SmartQasa Panel Card.',
+});
+
 window.smartqasa.startArea =
     window.smartqasa.startArea || location.pathname.split('/').pop();
 
@@ -32,6 +37,8 @@ import { LovelaceCardConfig } from './types';
         console.error('Failed to preload chips config:', error);
     }
 })();
+
+import './panel/panel';
 
 import './cards/areas';
 import './cards/clean';
