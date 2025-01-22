@@ -1,3 +1,5 @@
+import './panel/panel';
+
 // Initialize global variables
 window.smartqasa = window.smartqasa || {};
 window.smartqasa.isInitializing = true;
@@ -35,8 +37,6 @@ preloadImages.forEach((src) => {
         console.error('Failed to preload chips config:', error);
     }
 })();
-
-import './panel/panel';
 
 import './cards/areas';
 import './cards/clean';
