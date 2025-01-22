@@ -1,11 +1,11 @@
+// Import Panel Card
+import './panel/panel';
+
 // Initialize global variables
 window.smartqasa = window.smartqasa || {};
 window.customCards = window.customCards ?? [];
 window.smartqasa.startArea =
     window.smartqasa.startArea || location.pathname.split('/').pop();
-
-// Import Panel Card
-import './panel/panel';
 
 // Preload background images
 import lightModeImage from './assets/backgrounds/background_light.jpg';
