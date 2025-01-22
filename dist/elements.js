@@ -15943,7 +15943,7 @@ window.smartqasa.darkModeImage = img$P;
 window.smartqasa.startArea =
     window.smartqasa.startArea || location.pathname.split('/').pop();
 window.smartqasa.version = "2025.1.19b-1";
-window.smartqasa.timestamp = "2025-01-22T14:46:42.324Z";
+window.smartqasa.timestamp = "2025-01-22T14:50:44.118Z";
 window.customCards = window.customCards ?? [];
 const preloadImages = [img$Q, img$P];
 preloadImages.forEach((src) => {
@@ -16022,10 +16022,10 @@ preloadImages.forEach((src) => {
         for (const path of paths) {
             try {
                 await import(path);
-                console.log(`Loaded module: ${path}`);
+                console.log(`LOADED: ${path}`);
             }
             catch (error) {
-                console.error(`Failed to load module: ${path}`, error);
+                console.error(`FAILED: ${path}`, error);
             }
         }
     }
