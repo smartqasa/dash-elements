@@ -1,5 +1,6 @@
 // Initialize global variables
 window.smartqasa = window.smartqasa || {};
+window.smartqasa.isInitializing = true;
 window.smartqasa.lightModeImage = lightModeImage;
 window.smartqasa.darkModeImage = darkModeImage;
 window.smartqasa.startArea =
@@ -37,59 +38,82 @@ preloadImages.forEach((src) => {
 
 import './panel/panel';
 
-import './cards/areas';
-import './cards/clean';
-import './cards/grid-stack';
-import './cards/group-stack';
-import './cards/horizontal-stack';
-import './cards/light-grid';
-import './cards/menu';
-import './cards/more-info';
-import './cards/pin-verify';
-import './cards/screensaver';
-import './cards/vertical-stack';
-import './cards/tv-remote';
-import './cards/weather';
+// Dynamically load other modules (cards, chips, tiles)
+(async () => {
+    const cards = [
+        './cards/areas',
+        './cards/clean',
+        './cards/grid-stack',
+        './cards/group-stack',
+        './cards/horizontal-stack',
+        './cards/light-grid',
+        './cards/menu',
+        './cards/more-info',
+        './cards/pin-verify',
+        './cards/screensaver',
+        './cards/vertical-stack',
+        './cards/tv-remote',
+        './cards/weather',
+    ];
 
-import './chips/admin';
-import './chips/audio';
-import './chips/custom';
-import './chips/dialog';
-import './chips/motion';
-import './chips/navigate';
-import './chips/routine';
-import './chips/select';
-import './chips/thermostat';
-import './chips/weather';
-import './chips/webpage';
+    const chips = [
+        './chips/admin',
+        './chips/audio',
+        './chips/custom',
+        './chips/dialog',
+        './chips/motion',
+        './chips/navigate',
+        './chips/routine',
+        './chips/select',
+        './chips/thermostat',
+        './chips/weather',
+        './chips/webpage',
+    ];
 
-import './tiles/action';
-import './tiles/all-off';
-import './tiles/app';
-import './tiles/area';
-import './tiles/audio';
-import './tiles/dialog';
-import './tiles/fan';
-import './tiles/garage';
-import './tiles/heater';
-import './tiles/light';
-import './tiles/light-editor';
-import './tiles/lock';
-import './tiles/option';
-import './tiles/robot';
-import './tiles/roku';
-import './tiles/routine';
-import './tiles/select';
-import './tiles/sensor';
-import './tiles/pool-light';
-import './tiles/pool-light-sequencer';
-import './tiles/shade';
-import './tiles/switch';
-import './tiles/theme';
-import './tiles/thermostat';
-import './tiles/webpage';
+    const tiles = [
+        './tiles/action',
+        './tiles/all-off',
+        './tiles/app',
+        './tiles/area',
+        './tiles/audio',
+        './tiles/dialog',
+        './tiles/fan',
+        './tiles/garage',
+        './tiles/heater',
+        './tiles/light',
+        './tiles/light-editor',
+        './tiles/lock',
+        './tiles/option',
+        './tiles/robot',
+        './tiles/roku',
+        './tiles/routine',
+        './tiles/select',
+        './tiles/sensor',
+        './tiles/pool-light',
+        './tiles/pool-light-sequencer',
+        './tiles/shade',
+        './tiles/switch',
+        './tiles/theme',
+        './tiles/thermostat',
+        './tiles/webpage',
+    ];
 
-console.info(
-    `%c SmartQasa ⏏ ${window.smartqasa.version} (Built: ${window.smartqasa.timestamp}) `,
-    'background-color: #0000ff; color: #ffffff; font-weight: 700;'
-);
+    try {
+        await Promise.all([
+            ...cards.map((path) => import(path)),
+            ...chips.map((path) => import(path)),
+            ...tiles.map((path) => import(path)),
+        ]);
+    } catch (error) {
+        console.error('Error loading modules:', error);
+    } finally {
+        window.smartqasa.isInitializing = false;
+        const event = new Event('smartqasa-initialized');
+        window.dispatchEvent(event);
+    }
+
+    console.info(
+        `%c SmartQasa ⏏ ${window.smartqasa.version} (Built: ${window.smartqasa.timestamp}) `,
+        'background-color: #0000ff; color: #ffffff; font-weight: 700;'
+    );
+})();

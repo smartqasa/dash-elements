@@ -85,6 +85,11 @@ export class PanelCard extends LitElement implements LovelaceCard {
     public connectedCallback(): void {
         super.connectedCallback();
 
+        window.addEventListener(
+            'smartqasa-initialized',
+            this._handleInitialized
+        );
+
         this._syncTime();
 
         window.addEventListener('resize', this._boundHandleDeviceChanges);
@@ -129,7 +134,13 @@ export class PanelCard extends LitElement implements LovelaceCard {
 
     protected render(): TemplateResult | typeof nothing {
         // Display a loading indicator if not ready
-        if (this._isLoading || !this.hass || !this._config || !this._area) {
+        if (
+            window.smartqasa.isInitializing ||
+            this._isLoading ||
+            !this.hass ||
+            !this._config ||
+            !this._area
+        ) {
             return html`
                 <div class="loading-screen">
                     <span>Loading...</span>
@@ -171,6 +182,11 @@ export class PanelCard extends LitElement implements LovelaceCard {
     public disconnectedCallback(): void {
         super.disconnectedCallback();
 
+        window.removeEventListener(
+            'smartqasa-initialized',
+            this._handleInitialized
+        );
+
         window.removeEventListener('resize', this._boundHandleDeviceChanges);
         window.removeEventListener(
             'orientationchange',
@@ -186,6 +202,10 @@ export class PanelCard extends LitElement implements LovelaceCard {
             clearTimeout(this._resetTimer);
         }
     }
+
+    private _handleInitialized = () => {
+        this.requestUpdate();
+    };
 
     private _handleRefreshDevice(): void {
         const refreshDashboardsState =

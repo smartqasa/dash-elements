@@ -46,6 +46,7 @@ declare interface Window {
     smartqasa: {
         chipsConfig?: any;
         darkModeImage: string;
+        isInitializing: boolean;
         lightModeImage: string;
         menuConfig?: any;
         menuTab: number;
