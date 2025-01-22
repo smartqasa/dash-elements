@@ -1,24 +1,17 @@
-import './panel/panel';
-
 // Initialize global variables
 window.smartqasa = window.smartqasa || {};
-window.smartqasa.isInitializing = true;
-window.smartqasa.lightModeImage = lightModeImage;
-window.smartqasa.darkModeImage = darkModeImage;
+window.customCards = window.customCards ?? [];
 window.smartqasa.startArea =
     window.smartqasa.startArea || location.pathname.split('/').pop();
-window.smartqasa.version = __BUILD_VERSION__;
-window.smartqasa.timestamp = __BUILD_TIMESTAMP__;
 
-window.customCards = window.customCards ?? [];
-
-// Utility Imports
-import { loadYamlAsJson } from './utilities/load-yaml-as-json';
-import { LovelaceCardConfig } from './types';
+// Import Panel Card
+import './panel/panel';
 
 // Preload background images
 import lightModeImage from './assets/backgrounds/background_light.jpg';
+window.smartqasa.lightModeImage = lightModeImage;
 import darkModeImage from './assets/backgrounds/background_dark.jpg';
+window.smartqasa.darkModeImage = darkModeImage;
 
 const preloadImages = [lightModeImage, darkModeImage];
 preloadImages.forEach((src) => {
@@ -27,6 +20,8 @@ preloadImages.forEach((src) => {
 });
 
 // Preload YAML configuration
+import { loadYamlAsJson } from './utilities/load-yaml-as-json';
+import { LovelaceCardConfig } from './types';
 (async () => {
     const yamlFilePath = '/local/smartqasa/config/chips.yaml';
     try {
@@ -91,6 +86,6 @@ import './tiles/thermostat';
 import './tiles/webpage';
 
 console.info(
-    `%c SmartQasa ⏏ ${window.smartqasa.version} (Built: ${window.smartqasa.timestamp}) `,
+    `%c SmartQasa ⏏ ${__BUILD_VERSION__} (Built: ${__BUILD_TIMESTAMP__}) `,
     'background-color: #0000ff; color: #ffffff; font-weight: 700;'
 );
