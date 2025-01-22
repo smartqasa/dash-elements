@@ -102,6 +102,7 @@ import './panel/panel';
         for (const path of paths) {
             try {
                 await import(path);
+                console.log(`Loaded module: ${path}`);
             } catch (error) {
                 console.error(`Failed to load module: ${path}`, error);
             }

@@ -15943,7 +15943,7 @@ window.smartqasa.darkModeImage = img$P;
 window.smartqasa.startArea =
     window.smartqasa.startArea || location.pathname.split('/').pop();
 window.smartqasa.version = "2025.1.19b-1";
-window.smartqasa.timestamp = "2025-01-22T14:40:08.861Z";
+window.smartqasa.timestamp = "2025-01-22T14:46:42.324Z";
 window.customCards = window.customCards ?? [];
 const preloadImages = [img$Q, img$P];
 preloadImages.forEach((src) => {
@@ -15995,7 +15995,7 @@ preloadImages.forEach((src) => {
         './tiles/action',
         './tiles/all-off',
         './tiles/app',
-        './tiles/area',
+        './tiles/area.ts',
         './tiles/audio',
         './tiles/dialog',
         './tiles/fan',
@@ -16022,6 +16022,7 @@ preloadImages.forEach((src) => {
         for (const path of paths) {
             try {
                 await import(path);
+                console.log(`Loaded module: ${path}`);
             }
             catch (error) {
                 console.error(`Failed to load module: ${path}`, error);
