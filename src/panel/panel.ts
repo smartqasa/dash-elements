@@ -261,12 +261,6 @@ export class PanelCard extends LitElement implements LovelaceCard {
     private _resetDash(): void {
         this._startDashTimer();
 
-        const area = location.pathname.split('/').pop();
-        if (area !== window.smartqasa.startArea) {
-            navigateToArea(window.smartqasa.startArea);
-            return;
-        }
-
         const swiperContainer = this.shadowRoot?.querySelector(
             'swiper-container'
         ) as any;
@@ -274,6 +268,12 @@ export class PanelCard extends LitElement implements LovelaceCard {
         if (swiperContainer && swiperContainer.swiper) {
             const currentPage = swiperContainer.swiper.activeIndex;
             if (currentPage !== 0) swiperContainer.swiper.slideTo(0);
+            return;
+        }
+
+        const area = location.pathname.split('/').pop();
+        if (area !== window.smartqasa.startArea) {
+            navigateToArea(window.smartqasa.startArea);
         }
     }
 
