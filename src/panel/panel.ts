@@ -59,7 +59,7 @@ export class PanelCard extends LitElement implements LovelaceCard {
         getDeviceOrientation() === 'portrait';
     @state() private _isLandscape: boolean =
         getDeviceOrientation() === 'landscape';
-    @state() private _isLoading = true; // Add loading state
+    @state() private _isLoading = true;
 
     private _boundHandleDeviceChanges = () => this._handleDeviceChanges();
     private _boundStartResetTimer = () => this._startResetTimer();
@@ -84,11 +84,6 @@ export class PanelCard extends LitElement implements LovelaceCard {
 
     public connectedCallback(): void {
         super.connectedCallback();
-
-        window.addEventListener(
-            'smartqasa-initialized',
-            this._handleInitialized
-        );
 
         this._syncTime();
 
@@ -175,11 +170,6 @@ export class PanelCard extends LitElement implements LovelaceCard {
     public disconnectedCallback(): void {
         super.disconnectedCallback();
 
-        window.removeEventListener(
-            'smartqasa-initialized',
-            this._handleInitialized
-        );
-
         window.removeEventListener('resize', this._boundHandleDeviceChanges);
         window.removeEventListener(
             'orientationchange',
@@ -195,14 +185,6 @@ export class PanelCard extends LitElement implements LovelaceCard {
             clearTimeout(this._resetTimer);
         }
     }
-
-    private _handleInitialized = () => {
-        console.log(
-            'SmartQasa Panel Card initialized',
-            window.smartqasa.isInitializing
-        );
-        this.requestUpdate();
-    };
 
     private _handleRefreshDevice(): void {
         const refreshDashboardsState =
@@ -305,7 +287,7 @@ export class PanelCard extends LitElement implements LovelaceCard {
         this._controlTiles = controlTiles;
         this._controlColumns = controlColumns;
 
-        this._isLoading = false; // Mark as loaded
+        this._isLoading = false;
     }
 
     protected _updateContent(): void {
