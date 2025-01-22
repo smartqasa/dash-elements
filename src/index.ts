@@ -98,11 +98,21 @@ import './panel/panel';
         './tiles/webpage',
     ];
 
+    async function loadModules(paths: string[]) {
+        for (const path of paths) {
+            try {
+                await import(path);
+            } catch (error) {
+                console.error(`Failed to load module: ${path}`, error);
+            }
+        }
+    }
+
     try {
         await Promise.all([
-            ...cards.map((path) => import(path)),
-            ...chips.map((path) => import(path)),
-            ...tiles.map((path) => import(path)),
+            loadModules(cards),
+            loadModules(chips),
+            loadModules(tiles),
         ]);
         window.smartqasa.isInitializing = false;
         const event = new Event('smartqasa-initialized');

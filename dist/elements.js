@@ -15943,7 +15943,7 @@ window.smartqasa.darkModeImage = img$P;
 window.smartqasa.startArea =
     window.smartqasa.startArea || location.pathname.split('/').pop();
 window.smartqasa.version = "2025.1.19b-1";
-window.smartqasa.timestamp = "2025-01-22T14:11:56.727Z";
+window.smartqasa.timestamp = "2025-01-22T14:31:52.971Z";
 window.customCards = window.customCards ?? [];
 const preloadImages = [img$Q, img$P];
 preloadImages.forEach((src) => {
@@ -16018,11 +16018,21 @@ preloadImages.forEach((src) => {
         './tiles/thermostat',
         './tiles/webpage',
     ];
+    async function loadModules(paths) {
+        for (const path of paths) {
+            try {
+                await import(path);
+            }
+            catch (error) {
+                console.error(`Failed to load module: ${path}`, error);
+            }
+        }
+    }
     try {
         await Promise.all([
-            ...cards.map((path) => import(path)),
-            ...chips.map((path) => import(path)),
-            ...tiles.map((path) => import(path)),
+            loadModules(cards),
+            loadModules(chips),
+            loadModules(tiles),
         ]);
         window.smartqasa.isInitializing = false;
         const event = new Event('smartqasa-initialized');
