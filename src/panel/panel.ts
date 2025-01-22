@@ -106,6 +106,7 @@ export class PanelCard extends LitElement implements LovelaceCard {
 
     protected willUpdate(changedProps: PropertyValues): void {
         super.willUpdate(changedProps);
+        if (window.smartqasa.isInitializing) return;
 
         if (changedProps.has('_config')) {
             this._loadContent();
@@ -133,7 +134,6 @@ export class PanelCard extends LitElement implements LovelaceCard {
     }
 
     protected render(): TemplateResult | typeof nothing {
-        // Display a loading indicator if not ready
         if (
             window.smartqasa.isInitializing ||
             this._isLoading ||
@@ -173,6 +173,8 @@ export class PanelCard extends LitElement implements LovelaceCard {
 
     protected updated(changedProps: PropertyValues): void {
         super.updated(changedProps);
+
+        if (window.smartqasa.isInitializing) return;
 
         if (changedProps.has('hass') && this.hass) {
             this._updateContent();

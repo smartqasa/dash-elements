@@ -15746,6 +15746,8 @@ let PanelCard = class PanelCard extends r$2 {
     }
     willUpdate(changedProps) {
         super.willUpdate(changedProps);
+        if (window.smartqasa.isInitializing)
+            return;
         if (changedProps.has('_config')) {
             this._loadContent();
         }
@@ -15766,7 +15768,6 @@ let PanelCard = class PanelCard extends r$2 {
         }
     }
     render() {
-        // Display a loading indicator if not ready
         if (window.smartqasa.isInitializing ||
             this._isLoading ||
             !this.hass ||
@@ -15791,6 +15792,8 @@ let PanelCard = class PanelCard extends r$2 {
     }
     updated(changedProps) {
         super.updated(changedProps);
+        if (window.smartqasa.isInitializing)
+            return;
         if (changedProps.has('hass') && this.hass) {
             this._updateContent();
         }
@@ -15939,7 +15942,7 @@ window.smartqasa.darkModeImage = img$P;
 window.smartqasa.startArea =
     window.smartqasa.startArea || location.pathname.split('/').pop();
 window.smartqasa.version = "2025.1.19b-1";
-window.smartqasa.timestamp = "2025-01-22T13:32:24.824Z";
+window.smartqasa.timestamp = "2025-01-22T13:38:02.829Z";
 window.customCards = window.customCards ?? [];
 const preloadImages = [img$Q, img$P];
 preloadImages.forEach((src) => {
