@@ -74,7 +74,7 @@ import './panel/panel';
         './tiles/action',
         './tiles/all-off',
         './tiles/app',
-        './tiles/area',
+        './tiles/area.ts',
         './tiles/audio',
         './tiles/dialog',
         './tiles/fan',
