@@ -6,7 +6,6 @@ window.customCards = window.customCards ?? [];
 window.customCards.push({
     type: 'smartqasa-panel-card',
     name: 'SmartQasa Panel Card',
-    preview: true,
     description: 'A placeholder for SmartQasa Panel Card.',
 });
 
@@ -19,12 +18,6 @@ import lightModeImage from './assets/backgrounds/background_light.jpg';
 window.smartqasa.lightModeImage = lightModeImage;
 import darkModeImage from './assets/backgrounds/background_dark.jpg';
 window.smartqasa.darkModeImage = darkModeImage;
-
-//const preloadImages = [lightModeImage, darkModeImage];
-//preloadImages.forEach((src) => {
-//    const img = new Image();
-//    img.src = src;
-//});
 
 // Preload YAML configuration
 import { loadYamlAsJson } from './utilities/load-yaml-as-json';

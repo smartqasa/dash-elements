@@ -194,7 +194,11 @@ export class PanelCard extends LitElement implements LovelaceCard {
         if (this._refreshDashboardsState === refreshDashboardsState) return;
 
         if (typeof window.fully !== 'undefined') {
-            window.fully.clearCache();
+            if (!window.fully.isInForeground())
+                window.fully.bringToForeground();
+            setTimeout(() => {
+                window.fully?.clearCache();
+            }, 2000);
             setTimeout(() => {
                 window.fully?.restartApp();
             }, 2000);

@@ -39,7 +39,9 @@ declare interface Window {
     };
     customCards: Array<Object>;
     fully?: {
+        bringToForeground: () => void;
         clearCache: () => void;
+        isInForeground: () => boolean;
         restartApp: () => void;
         startApplication: (packageName: string) => void;
     };
