@@ -20,8 +20,6 @@ import darkModeImage from './assets/backgrounds/background_dark.jpg';
 const preloadImages = [lightModeImage, darkModeImage];
 preloadImages.forEach((src) => {
     const img = new Image();
-    img.onload = () => console.info(`Preloaded image: ${src}`);
-    img.onerror = () => console.warn(`Failed to preload image: ${src}`);
     img.src = src;
 });
 
@@ -53,6 +51,7 @@ import './cards/screensaver';
 import './cards/vertical-stack';
 import './cards/tv-remote';
 import './cards/weather';
+
 import './chips/admin';
 import './chips/audio';
 import './chips/custom';
@@ -64,6 +63,7 @@ import './chips/select';
 import './chips/thermostat';
 import './chips/weather';
 import './chips/webpage';
+
 import './tiles/action';
 import './tiles/all-off';
 import './tiles/app';
