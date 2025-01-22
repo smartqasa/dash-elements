@@ -1,12 +1,12 @@
 {
-    "name": "smartqasa-elements",
+    "name": "smartqasa-dashboard",
     "version": "2025.1.22b-1",
     "description": "SmartQasa Dashboard Elements",
     "type": "module",
     "author": "Tom Bruno",
     "repository": {
         "type": "git",
-        "url": "https://github.com/smartqasa/smartqasa-dash"
+        "url": "https://github.com/smartqasa/dashboard"
     },
     "scripts": {
         "clean": "rm -f dist/elements.js",

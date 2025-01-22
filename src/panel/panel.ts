@@ -21,6 +21,7 @@ import { renderHeader } from './header';
 import { renderArea } from './area';
 import { loadControlTiles, renderControls } from './control';
 import { renderFooter } from './footer';
+import { navigateToArea } from '../utilities/navigate-to-area';
 
 import panelStyles from '../css/panel.css';
 
@@ -62,10 +63,10 @@ export class PanelCard extends LitElement implements LovelaceCard {
     @state() private _isLoading = true;
 
     private _boundHandleDeviceChanges = () => this._handleDeviceChanges();
-    private _boundStartResetTimer = () => this._startResetTimer();
+    private _boundDashResetTimer = () => this._startDashTimer();
 
     private _timeIntervalId: number | undefined;
-    private _resetTimer?: ReturnType<typeof setTimeout>;
+    private _dashTimer?: ReturnType<typeof setTimeout>;
     private _area?: string;
     private _areaObj?: HassArea;
     private _headerChips: LovelaceCard[] = [];
@@ -92,11 +93,11 @@ export class PanelCard extends LitElement implements LovelaceCard {
             'orientationchange',
             this._boundHandleDeviceChanges
         );
-        window.addEventListener('touchstart', this._boundStartResetTimer, {
+        window.addEventListener('touchstart', this._boundDashResetTimer, {
             passive: true,
         });
 
-        this._startResetTimer();
+        this._startDashTimer();
     }
 
     protected willUpdate(changedProps: PropertyValues): void {
@@ -175,14 +176,14 @@ export class PanelCard extends LitElement implements LovelaceCard {
             'orientationchange',
             this._boundHandleDeviceChanges
         );
-        window.removeEventListener('touchstart', this._boundStartResetTimer);
+        window.removeEventListener('touchstart', this._boundDashResetTimer);
 
         if (this._timeIntervalId !== undefined) {
             clearInterval(this._timeIntervalId);
         }
 
-        if (this._resetTimer) {
-            clearTimeout(this._resetTimer);
+        if (this._dashTimer) {
+            clearTimeout(this._dashTimer);
         }
     }
 
@@ -244,28 +245,36 @@ export class PanelCard extends LitElement implements LovelaceCard {
         syncTime();
     }
 
-    private _startResetTimer(): void {
-        if (this._resetTimer) {
-            clearTimeout(this._resetTimer);
+    private _startDashTimer(): void {
+        if (this._dashTimer) {
+            clearTimeout(this._dashTimer);
         }
 
-        this._resetTimer = setTimeout(
+        this._dashTimer = setTimeout(
             () => {
-                this._resetToFirstPage();
+                this._resetDash();
             },
-            5 * 60 * 1000
+            1 * 60 * 1000
         ); // 5 minutes
     }
 
-    private _resetToFirstPage(): void {
-        this._startResetTimer();
+    private _resetDash(): void {
+        this._startDashTimer();
+
+        const area = location.pathname.split('/').pop();
+        if (area !== window.smartqasa.startArea) {
+            navigateToArea(window.smartqasa.startArea);
+            return;
+        }
 
         const swiperContainer = this.shadowRoot?.querySelector(
             'swiper-container'
         ) as any;
 
-        if (swiperContainer && swiperContainer.swiper)
-            swiperContainer.swiper.slideTo(0);
+        if (swiperContainer && swiperContainer.swiper) {
+            const currentPage = swiperContainer.swiper.activeIndex;
+            if (currentPage !== 0) swiperContainer.swiper.slideTo(0);
+        }
     }
 
     private async _loadContent(): Promise<void> {
