@@ -206,6 +206,10 @@ export class PanelCard extends LitElement implements LovelaceCard {
     }
 
     private _handleInitialized = () => {
+        console.log(
+            'SmartQasa Panel Card initialized',
+            window.smartqasa.isInitializing
+        );
         this.requestUpdate();
     };
 

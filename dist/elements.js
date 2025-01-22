@@ -15720,6 +15720,7 @@ let PanelCard = class PanelCard extends r$2 {
         this._controlTiles = [];
         this._controlColumns = [];
         this._handleInitialized = () => {
+            console.log('SmartQasa Panel Card initialized', window.smartqasa.isInitializing);
             this.requestUpdate();
         };
     }
@@ -15942,7 +15943,7 @@ window.smartqasa.darkModeImage = img$P;
 window.smartqasa.startArea =
     window.smartqasa.startArea || location.pathname.split('/').pop();
 window.smartqasa.version = "2025.1.19b-1";
-window.smartqasa.timestamp = "2025-01-22T13:38:02.829Z";
+window.smartqasa.timestamp = "2025-01-22T13:44:51.006Z";
 window.customCards = window.customCards ?? [];
 const preloadImages = [img$Q, img$P];
 preloadImages.forEach((src) => {
