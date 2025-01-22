@@ -35,7 +35,6 @@ preloadImages.forEach((src) => {
     }
 })();
 
-// Synchronously import the panel module
 import './panel/panel';
 
 import './cards/areas';
