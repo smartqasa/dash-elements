@@ -17,6 +17,7 @@ import { LovelaceCardConfig } from './types';
 // Preload background images
 import lightModeImage from './assets/backgrounds/background_light.jpg';
 import darkModeImage from './assets/backgrounds/background_dark.jpg';
+import { AreasCard } from './cards/areas';
 
 const preloadImages = [lightModeImage, darkModeImage];
 preloadImages.forEach((src) => {
@@ -73,6 +74,7 @@ function displayBSoD(errorMessage: string) {
 }
 
 // Initialize everything in one stream
+
 (async function initialize() {
     try {
         // Load panel and cards
