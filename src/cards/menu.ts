@@ -238,9 +238,6 @@ export class MenuCard extends LitElement implements LovelaceCard {
                     ],
                 },
                 {
-                    type: 'custom:smartqasa-settings-tile',
-                },
-                {
                     type: 'custom:smartqasa-dialog-tile',
                     dialog: 'speed_test',
                 },
