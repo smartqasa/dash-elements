@@ -13,23 +13,22 @@ interface Config extends LovelaceCardConfig {
 }
 
 window.customCards.push({
-    type: 'smartqasa-console-tile',
-    name: 'SmartQasa Console Tile',
+    type: 'smartqasa-settings-tile',
+    name: 'SmartQasa Settings Tile',
     preview: true,
     description:
-        'A SmartQasa tile for displaying the Home Assistant Console page',
+        'A SmartQasa tile for displaying the Home Assistant Settings page',
 });
 
-@customElement('smartqasa-console-tile')
-export class ConsoleTile extends LitElement implements LovelaceCard {
+@customElement('smartqasa-settings-tile')
+export class SettingsTile extends LitElement implements LovelaceCard {
     public getCardSize(): number | Promise<number> {
         return 1;
     }
 
     @state() protected _config?: Config;
-    private _url: string | undefined;
     private _icon: string = 'hass:cog';
-    private _name: string = 'HA Console';
+    private _name: string = 'Settings';
 
     static get styles(): CSSResult {
         return unsafeCSS(tileStyle);
@@ -56,7 +55,7 @@ export class ConsoleTile extends LitElement implements LovelaceCard {
 
     private _showDialog(e: Event): void {
         e.stopPropagation();
-        const url = `${location.protocol}//${location.hostname}${location.port ? `:${location.port}` : ''}`;
+        const url = `${location.protocol}//${location.hostname}${location.port ? `:${location.port}` : ''}/config/dashboard`;
 
         try {
             const validatedUrl = new URL(url);
