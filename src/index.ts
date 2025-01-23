@@ -66,6 +66,7 @@ import './tiles/all-off';
 import './tiles/app';
 import './tiles/area';
 import './tiles/audio';
+import './tiles/browser-mod';
 import './tiles/dialog';
 import './tiles/fan';
 import './tiles/garage';
