@@ -13,31 +13,29 @@ interface Config extends LovelaceCardConfig {
 }
 
 window.customCards.push({
-    type: 'smartqasa-browser-mod-tile',
-    name: 'SmartQasa Browser Mod Tile',
+    type: 'smartqasa-console-tile',
+    name: 'SmartQasa Console Tile',
     preview: true,
-    description: 'A SmartQasa tile for displaying the Browswer Mod page',
+    description:
+        'A SmartQasa tile for displaying the Home Assistant Console page',
 });
 
-@customElement('smartqasa-browser-mod-tile')
-export class BrowserModTile extends LitElement implements LovelaceCard {
+@customElement('smartqasa-console-tile')
+export class ConsoleTile extends LitElement implements LovelaceCard {
     public getCardSize(): number | Promise<number> {
         return 1;
     }
 
     @state() protected _config?: Config;
     private _url: string | undefined;
-    private _icon: string = 'hass:web';
-    private _name: string = 'Web Page';
+    private _icon: string = 'hass:cog';
+    private _name: string = 'HA Console';
 
     static get styles(): CSSResult {
         return unsafeCSS(tileStyle);
     }
 
     public setConfig(config: Config): void {
-        const baseUrl = `${location.protocol}//${location.hostname}${location.port ? `:${location.port}` : ''}`;
-        this._url = `${baseUrl}/browser-mod`;
-
         if (config.icon) this._icon = config.icon;
         if (config.name) this._name = config.name;
         this._config = config;
@@ -58,10 +56,10 @@ export class BrowserModTile extends LitElement implements LovelaceCard {
 
     private _showDialog(e: Event): void {
         e.stopPropagation();
-        if (!this._url) return;
+        const url = `${location.protocol}//${location.hostname}${location.port ? `:${location.port}` : ''}`;
 
         try {
-            const validatedUrl = new URL(this._url);
+            const validatedUrl = new URL(url);
             const dialogConfig: any = {
                 title: this._name,
                 timeout: 120000,
@@ -74,7 +72,7 @@ export class BrowserModTile extends LitElement implements LovelaceCard {
 
             dialogPopup(dialogConfig);
         } catch {
-            console.error('Failed to launch URL:', this._url);
+            console.error('Failed to launch URL:', url);
             alert('Unable to launch the web page. The URL is invalid.');
         }
     }
