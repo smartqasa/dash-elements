@@ -118,14 +118,14 @@ export class SwitchTile extends LitElement implements LovelaceCard {
             stateFmtd = this.hass!.formatEntityState(this._stateObj);
         } else {
             icon = this._config!.icon || 'hass:toggle-switch-variant';
-            iconColor = 'var(--sq-unavailable-rgb, 255, 0, 255)';
+            iconColor = 'var(--sq-unavailable-rgb)';
             name = this._config?.name || 'Unknown Switch';
             stateFmtd = 'Unknown State';
         }
 
         this._iconStyles = {
             color: `rgb(${iconColor})`,
-            backgroundColor: `rgba(${iconColor}, var(--sq-icon-opacity, 0.2))`,
+            backgroundColor: `rgba(${iconColor}, var(--sq-icon-opacity))`,
         };
         this._icon = icon;
         this._name = name;

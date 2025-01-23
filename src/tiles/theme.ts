@@ -48,12 +48,12 @@ export class ThemeTile extends LitElement implements LovelaceCard {
         const icon = this._config.icon || 'hass:compare';
         const iconColor = this._config.mode
             ? 'var(--sq-inactive-rgb)'
-            : 'var(--sq-unavailable-rgb, 255, 0, 255)';
+            : 'var(--sq-unavailable-rgb)';
         const name = this._config.name || this._config.mode || 'Unknown';
 
         const iconStyles = {
             color: `rgb(${iconColor})`,
-            backgroundColor: `rgba(${iconColor}, var(--sq-icon-opacity, 0.2))`,
+            backgroundColor: `rgba(${iconColor}, var(--sq-icon-opacity))`,
         };
 
         return html`

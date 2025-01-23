@@ -140,7 +140,7 @@ export class LightTile extends LitElement implements LovelaceCard {
 
         this._iconStyles = {
             color: `rgb(${iconColor})`,
-            backgroundColor: `rgba(${iconColor}, var(--sq-icon-opacity, 0.2))`,
+            backgroundColor: `rgba(${iconColor}, var(--sq-icon-opacity))`,
         };
         this._icon = icon;
         this._name = name;

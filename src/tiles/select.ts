@@ -113,14 +113,14 @@ export class SelectTile extends LitElement implements LovelaceCard {
                 this.hass.formatEntityState(this._stateObj) || 'Unknown';
         } else {
             icon = this._config?.icon || 'hass:form-dropdown';
-            iconColor = 'var(--sq-unavailable-rgb, 255, 0, 255)';
+            iconColor = 'var(--sq-unavailable-rgb)';
             name = this._config?.name || 'Unknown';
             stateFmtd = 'Unknown';
         }
 
         this._iconStyles = {
             color: `rgb(${iconColor})`,
-            backgroundColor: `rgba(${iconColor}, var(--sq-icon-opacity, 0.2))`,
+            backgroundColor: `rgba(${iconColor}, var(--sq-icon-opacity))`,
         };
         this._icon = icon;
         this._name = name;

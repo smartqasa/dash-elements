@@ -91,7 +91,7 @@ export class TVRemoteCard extends LitElement implements LovelaceCard {
                 border-radius: var(--border-radius, 1rem);
                 background-color: rgba(
                     var(--sq-inactive-rgb),
-                    var(--sq-icon-opacity, 0.2)
+                    var(--sq-icon-opacity)
                 );
                 cursor: pointer;
             }

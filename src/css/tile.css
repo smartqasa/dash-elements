@@ -26,7 +26,7 @@
     height: var(--sq-icon-size);
     margin: auto 0;
     padding: var(--sq-tile-padding);
-    border-radius: 50%;
+    border-radius: var(--sq-icon-border-radius);
     color: rgb(var(--sq-inactive-rgb));
     background-color: rgba(var(--sq-inactive-rgb), var(--sq-icon-opacity));
     transition: var(--sq-icon-transition);

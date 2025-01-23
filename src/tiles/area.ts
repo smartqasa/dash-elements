@@ -100,7 +100,7 @@ export class AreaTile extends LitElement implements LovelaceCard {
 
         this._iconStyles = {
             color: `rgb(${iconColor})`,
-            backgroundColor: `rgba(${iconColor}, var(--sq-icon-opacity, 0.2))`,
+            backgroundColor: `rgba(${iconColor}, var(--sq-icon-opacity))`,
         };
     }
 

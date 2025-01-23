@@ -129,13 +129,13 @@ export class OptionTile extends LitElement implements LovelaceCard {
         } else {
             icon = this._config?.icon || 'hass:form-dropdown';
             iconAnimation = 'none';
-            iconColor = 'var(--sq-unavailable-rgb, 255, 0, 255)';
+            iconColor = 'var(--sq-unavailable-rgb)';
             name = this._config?.option || 'Unknown';
         }
 
         this._iconStyles = {
             color: `rgb(${iconColor})`,
-            backgroundColor: `rgba(${iconColor}, var(--sq-icon-opacity, 0.2))`,
+            backgroundColor: `rgba(${iconColor}, var(--sq-icon-opacity))`,
             animation: iconAnimation,
         };
         this._icon = icon;
