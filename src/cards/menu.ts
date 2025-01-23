@@ -208,9 +208,6 @@ export class MenuCard extends LitElement implements LovelaceCard {
                     dialog: 'clean_screen',
                 },
                 {
-                    type: 'custom:smartqasa-console-tile',
-                },
-                {
                     type: 'custom:smartqasa-dialog-tile',
                     dialog: 'display_themes',
                 },
@@ -239,6 +236,9 @@ export class MenuCard extends LitElement implements LovelaceCard {
                             },
                         },
                     ],
+                },
+                {
+                    type: 'custom:smartqasa-settings-tile',
                 },
                 {
                     type: 'custom:smartqasa-dialog-tile',
