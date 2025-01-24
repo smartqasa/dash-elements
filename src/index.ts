@@ -18,7 +18,7 @@ window.smartqasa.startArea =
 import { loadYamlAsJson } from './utilities/load-yaml-as-json';
 import { LovelaceCardConfig } from './types';
 (async () => {
-    const yamlFilePath = '/config/www/smartqasa/config/chips.yaml';
+    const yamlFilePath = '/local/smartqasa/config/chips.yaml';
     try {
         const chipsConfig =
             await loadYamlAsJson<LovelaceCardConfig[]>(yamlFilePath);

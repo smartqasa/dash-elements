@@ -64,7 +64,7 @@ export class CustomChip extends LitElement implements LovelaceCard {
         }
 
         try {
-            const path = `/config/www/smartqasa/dialogs/${config.dialog_file}`;
+            const path = `/local/smartqasa/dialogs/${config.dialog_file}`;
             this._dialogObj = (await loadYamlAsJson(path)) as DialogObj;
             this._entity = this._dialogObj.entity;
         } catch (error) {
