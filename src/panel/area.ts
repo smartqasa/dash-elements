@@ -15,7 +15,7 @@ export function renderArea(
             <div class="area-name ${isPhone ? 'overlay' : ''}">${name}</div>
             <img
                 class="area-picture"
-                src="/local/smartqasa/pictures/${picture}"
+                src="/config/www/smartqasa/pictures/${picture}"
                 alt="Area picture..."
                 @error=${(e: Event) => {
                     (e.target as HTMLImageElement).src = defaultImage;
