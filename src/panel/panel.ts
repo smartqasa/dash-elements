@@ -140,7 +140,7 @@ export class PanelCard extends LitElement implements LovelaceCard {
             .getPropertyValue('--sq-panel-image')
             .trim();
         console.log('Background URL: ', `url(${baseUrl}${panelImage})`);
-        this.style.backgroundImage = `url(${baseUrl}${panelImage})`;
+        this.style.backgroundImage = `url("${baseUrl}${panelImage}")`;
 
         return html`
             <div class="panel" ?admin=${this._isAdminMode}>
