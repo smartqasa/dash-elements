@@ -6,7 +6,6 @@ export const createElements = (
     hass: HomeAssistant
 ): LovelaceCard[] => {
     if (!Array.isArray(config)) {
-        console.error("Error: 'config' is not an array:", config);
         return [];
     }
 
