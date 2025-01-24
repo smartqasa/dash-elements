@@ -110,7 +110,7 @@ export class PanelCard extends LitElement implements LovelaceCard {
 
         if (changedProps.has('hass') && this.hass) {
             this._handleRefreshDevice();
-            this._handleThemeChanges();
+            //this._handleThemeChanges();
 
             const isAdminMode =
                 this.hass.states['input_boolean.admin_mode']?.state === 'on';
@@ -216,6 +216,7 @@ export class PanelCard extends LitElement implements LovelaceCard {
         this._isLandscape = orientation === 'landscape';
     }
 
+    /*
     private _handleThemeChanges(): void {
         const panel = this.shadowRoot?.querySelector('.panel') as HTMLElement;
 
@@ -226,6 +227,7 @@ export class PanelCard extends LitElement implements LovelaceCard {
             panel.style.backgroundImage = `url(${image})`;
         }
     }
+    */
 
     private _startTimer(): void {
         if (this._dashboardTimer) {

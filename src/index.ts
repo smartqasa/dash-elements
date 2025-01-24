@@ -13,13 +13,7 @@ window.customCards.push({
 window.smartqasa.startArea =
     window.smartqasa.startArea || location.pathname.split('/').pop();
 
-// Preload background images
-import lightModeImage from './assets/backgrounds/background_light.jpg';
-window.smartqasa.lightModeImage = lightModeImage;
-import darkModeImage from './assets/backgrounds/background_dark.jpg';
-window.smartqasa.darkModeImage = darkModeImage;
-
-// Preload YAML configuration
+// Preload Header Chips
 import { loadYamlAsJson } from './utilities/load-yaml-as-json';
 import { LovelaceCardConfig } from './types';
 (async () => {
