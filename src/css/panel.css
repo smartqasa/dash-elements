@@ -5,11 +5,9 @@
     background-position: center;
     background-repeat: no-repeat;
     background-size: cover;
-    height: 100vh;
 }
 .panel {
     display: grid;
-
     grid-template-columns: 100%;
     grid-template-rows: auto auto minmax(0, 1fr) auto;
     grid-template-areas:
