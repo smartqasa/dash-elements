@@ -135,6 +135,8 @@ export class PanelCard extends LitElement implements LovelaceCard {
         const name = this._config?.name ?? this._areaObj?.name ?? 'Area';
         const picture = this._config.picture ?? `${this._area}.png`;
 
+        this.style.backgroundImage =
+            "url('/local/smartqasa/backgrounds/dark,jpg')";
         return html`
             <div class="panel" ?admin=${this._isAdminMode}>
                 ${this._isTablet ? renderHeader(this._headerChips) : nothing}
