@@ -24,6 +24,7 @@ import { renderFooter } from './footer';
 import { navigateToArea } from '../utilities/navigate-to-area';
 
 import panelStyles from '../css/panel.css';
+import { getDefaultHighWaterMark } from 'stream';
 
 interface Config extends LovelaceCardConfig {
     area: string;
@@ -131,7 +132,8 @@ export class PanelCard extends LitElement implements LovelaceCard {
 
     protected render(): TemplateResult | typeof nothing {
         if (!this.hass || !this._config || !this._area) return nothing;
-
+        this.style.backgroundImage =
+            "url('/local/smartqasa/backgrounds/dark.jgp')";
         const name = this._config?.name ?? this._areaObj?.name ?? 'Area';
         const picture = this._config.picture ?? `${this._area}.png`;
 
