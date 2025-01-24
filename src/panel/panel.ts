@@ -140,13 +140,13 @@ export class PanelCard extends LitElement implements LovelaceCard {
         const panelImage = getComputedStyle(document.documentElement)
             .getPropertyValue('--sq-panel-image')
             .trim();
-        const backgroundImage = `url("${baseUrl}${panelImage}")`;
 
         const styles = {
-            backgroundImage: backgroundImage,
-            backgroundSize: 'cover',
-            backgroundRepeat: 'no-repeat',
+            backgroundAttachment: 'fixed',
+            backgroundImage: `url("${baseUrl}${panelImage}")`,
             backgroundPosition: 'center',
+            backgroundRepeat: 'no-repeat',
+            backgroundSize: 'cover',
         };
 
         return html`
