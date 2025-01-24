@@ -1,15 +1,11 @@
 :host {
     max-width: 100vw;
-    background-image: url('/config/essentials/backgrounds/light.jpg');
-    background-attachment: fixed;
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
 }
 .panel {
     display: grid;
+    width: 100%;
     height: 100vh;
-    background-image: url('/config/essentials/backgrounds/light.jpg');
+    background-image: var(--sq-panel-image);
     background-attachment: fixed;
     background-size: cover;
     background-position: center;
