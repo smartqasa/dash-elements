@@ -1,13 +1,14 @@
 // Initialize global variables
 window.smartqasa = window.smartqasa || {};
 
-// Preload Panel Card
+/* Preload Panel Card
 window.customCards = window.customCards ?? [];
 window.customCards.push({
     type: 'smartqasa-panel-card',
     name: 'SmartQasa Panel Card',
     description: 'A placeholder for SmartQasa Panel Card.',
 });
+*/
 
 // Save the Initial Area
 window.smartqasa.startArea =
