@@ -4,7 +4,6 @@
 .panel {
     display: grid;
     height: 100vh;
-    background-color: var(--sq-panel-color);
     background-image: var(--sq-panel-image);
     background-attachment: fixed;
     background-size: cover;
