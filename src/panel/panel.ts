@@ -25,7 +25,6 @@ import { navigateToArea } from '../utilities/navigate-to-area';
 
 import panelStyles from '../css/panel.css';
 import { getDefaultHighWaterMark } from 'stream';
-import { stat } from 'fs';
 
 interface Config extends LovelaceCardConfig {
     area: string;
@@ -136,22 +135,16 @@ export class PanelCard extends LitElement implements LovelaceCard {
         const name = this._config?.name ?? this._areaObj?.name ?? 'Area';
         const picture = this._config.picture ?? `${this._area}.png`;
 
+        /*
         const baseUrl = new URL(location.href).origin;
         const panelImage = getComputedStyle(document.documentElement)
             .getPropertyValue('--sq-panel-image')
             .trim();
-        const dynamicUrl = `url("${baseUrl}${panelImage}")`;
-
-        const staticUrl =
-            'url("http://192.168.75.10:10075/local/smartqasa/backgrounds/dark.jpg")';
-
-        if (staticUrl === dynamicUrl)
-            console.log('Same URLs', staticUrl, dynamicUrl);
-        if (staticUrl !== dynamicUrl)
-            console.log('Different URLs', staticUrl, dynamicUrl);
-
+        console.log('Background URL: ', `url(${baseUrl}${panelImage})`);
+        this.style.backgroundImage = `url(${baseUrl}${panelImage})`;
+        */
         this.style.backgroundImage =
-            'url("http://192.168.75.10:10075/local/smartqasa/backgrounds/dark.jpg")';
+            'url(http://192.168.75.10:10075/local/smartqasa/backgrounds/dark.jpg)';
 
         return html`
             <div class="panel" ?admin=${this._isAdminMode}>
