@@ -8,6 +8,7 @@ import {
     unsafeCSS,
 } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
+import { styleMap } from 'lit/directives/style-map.js';
 
 import {
     HassArea,
@@ -143,11 +144,22 @@ export class PanelCard extends LitElement implements LovelaceCard {
         console.log('Background URL: ', `url(${baseUrl}${panelImage})`);
         this.style.backgroundImage = `url(${baseUrl}${panelImage})`;
         */
-        this.style.backgroundImage =
+        const backgroundImage =
             'url("http://192.168.75.10:10075/local/smartqasa/backgrounds/dark.jpg")';
 
+        const styles = {
+            backgroundImage: backgroundImage,
+            backgroundSize: 'cover',
+            backgroundRepeat: 'no-repeat',
+            backgroundPosition: 'center',
+        };
+
         return html`
-            <div class="panel" ?admin=${this._isAdminMode}>
+            <div
+                class="panel"
+                style=${styleMap(styles)}
+                ?admin=${this._isAdminMode}
+            >
                 ${this._isTablet ? renderHeader(this._headerChips) : nothing}
                 ${renderArea(
                     name,
