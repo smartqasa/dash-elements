@@ -1,5 +1,11 @@
 :host {
     max-width: 100vw;
+    height: 100vh;
+    background-image: var(--sq-panel-image);
+    background-attachment: fixed;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
 }
 .panel {
     display: grid;
