@@ -146,6 +146,8 @@ export class PanelCard extends LitElement implements LovelaceCard {
             'url("http://192.168.75.10:10075/local/smartqasa/backgrounds/dark.jpg")';
 
         if (staticUrl === dynamicUrl)
+            console.log('Same URLs', staticUrl, dynamicUrl);
+        if (staticUrl !== dynamicUrl)
             console.log('Different URLs', staticUrl, dynamicUrl);
 
         this.style.backgroundImage =
