@@ -145,10 +145,11 @@ export class PanelCard extends LitElement implements LovelaceCard {
         const staticUrl =
             'url("http://192.168.75.10:10075/local/smartqasa/backgrounds/dark.jpg")';
 
-        if (staticUrl !== dynamicUrl)
+        if (staticUrl === dynamicUrl)
             console.log('Different URLs', staticUrl, dynamicUrl);
 
-        this.style.backgroundImage = staticUrl;
+        this.style.backgroundImage =
+            'url("http://192.168.75.10:10075/local/smartqasa/backgrounds/dark.jpg")';
 
         return html`
             <div class="panel" ?admin=${this._isAdminMode}>
