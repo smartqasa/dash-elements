@@ -135,6 +135,13 @@ export class PanelCard extends LitElement implements LovelaceCard {
         const name = this._config?.name ?? this._areaObj?.name ?? 'Area';
         const picture = this._config.picture ?? `${this._area}.png`;
 
+        const baseUrl = new URL(location.href).origin;
+        const panelImage = getComputedStyle(document.documentElement)
+            .getPropertyValue('--sq-panel-image')
+            .trim();
+
+        this.style.backgroundImage = `url(${baseUrl}${panelImage})`;
+
         return html`
             <div class="panel" ?admin=${this._isAdminMode}>
                 ${this._isTablet ? renderHeader(this._headerChips) : nothing}
