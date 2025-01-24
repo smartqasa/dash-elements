@@ -111,14 +111,14 @@ export class RoutineTile extends LitElement implements LovelaceCard {
                 iconColor = 'var(--sq-inactive-rgb)';
             }
             name =
-                this._config!.name ||
+                this._config?.name ||
                 this._stateObj.attributes.friendly_name ||
-                'Roku';
+                'Routine';
         } else {
-            icon = 'hass:alert-rhombus';
+            icon = this._config?.icon || 'hass:alert-rhombus';
             iconAnimation = 'none';
             iconColor = 'var(--sq-unavailable-rgb)';
-            name = 'Unknown';
+            name = this._config?.name || 'Unknown Routine';
         }
 
         this._iconStyles = {
