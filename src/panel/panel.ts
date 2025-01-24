@@ -133,7 +133,7 @@ export class PanelCard extends LitElement implements LovelaceCard {
     protected render(): TemplateResult | typeof nothing {
         if (!this.hass || !this._config || !this._area) return nothing;
         this.style.backgroundImage =
-            "url('/local/smartqasa/backgrounds/dark.jpg')";
+            "url('/config/essentials/backgrounds/dark.jpg')";
         const name = this._config?.name ?? this._areaObj?.name ?? 'Area';
         const picture = this._config.picture ?? `${this._area}.png`;
 
