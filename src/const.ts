@@ -17,10 +17,13 @@ export const heaterColors: Record<string, string> = {
 };
 
 export const modeIcons: Record<string, string> = {
-    Home: 'hass:home-account',
     Away: 'hass:map-marker-radius',
-    Guest: 'hass:account-multiple',
+    Closed: 'hass:calendar-remove',
     Entertain: 'hass:glass-cocktail',
+    Guest: 'hass:account-multiple',
+    Home: 'hass:home-account',
+    Regular: 'hass:calendar-check',
+    Special: 'hass:calendar-star',
     Vacation: 'hass:airplane',
     default: 'hass:help-rhombus',
 };
