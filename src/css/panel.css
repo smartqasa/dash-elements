@@ -5,6 +5,10 @@
     display: grid;
     height: 100vh;
     background-color: var(--sq-panel-color);
+    background-attachment: fixed;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
     grid-template-columns: 100%;
     grid-template-rows: auto auto minmax(0, 1fr) auto;
     grid-template-areas:

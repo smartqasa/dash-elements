@@ -25,15 +25,14 @@ import { renderFooter } from './footer';
 import { navigateToArea } from '../utilities/navigate-to-area';
 
 import panelStyles from '../css/panel.css';
-import { getDefaultHighWaterMark } from 'stream';
 
 interface Config extends LovelaceCardConfig {
     area: string;
-    name?: string;
-    picture?: string;
-    audio_player: string;
-    video_player: string;
-    video_sound: string;
+    name: string | undefined;
+    picture: string | undefined;
+    audio_player?: string;
+    video_player?: string;
+    video_sound?: string;
     header_chips?: LovelaceCardConfig[];
     area_chips?: LovelaceCardConfig[];
     tiles?: LovelaceCardConfig[];
@@ -64,13 +63,16 @@ export class PanelCard extends LitElement implements LovelaceCard {
         getDeviceOrientation() === 'landscape';
 
     private _boundHandleDeviceChanges = () => this._handleDeviceChanges();
-    private _boundDashboardTimer = () => this._startTimer();
+    private _boundStartDashboardTimer = () => this._startDashboardTimer();
 
     private _timeIntervalId: ReturnType<typeof setInterval> | undefined;
     private _dashboardTimer: ReturnType<typeof setTimeout> | undefined;
-    private _area?: string;
-    private _areaObj?: HassArea;
+    private _panelStyle: Record<string, string> = {};
     private _headerChips: LovelaceCard[] = [];
+    private _area: string | undefined;
+    private _areaObj: HassArea | undefined;
+    private _areaName: string | undefined;
+    private _areaPicture: string | undefined;
     private _areaChips: LovelaceCard[] = [];
     private _controlTiles: LovelaceCard[][] = [];
     private _controlColumns: number[] = [];
@@ -96,11 +98,11 @@ export class PanelCard extends LitElement implements LovelaceCard {
             'orientationchange',
             this._boundHandleDeviceChanges
         );
-        window.addEventListener('touchstart', this._boundDashboardTimer, {
+        window.addEventListener('touchstart', this._boundStartDashboardTimer, {
             passive: true,
         });
 
-        this._startTimer();
+        this._startDashboardTimer();
     }
 
     protected willUpdate(changedProps: PropertyValues): void {
@@ -112,18 +114,17 @@ export class PanelCard extends LitElement implements LovelaceCard {
 
         if (changedProps.has('hass') && this.hass) {
             this._handleRefreshDevice();
-            //this._handleThemeChanges();
 
-            const isAdminMode =
-                this.hass.states['input_boolean.admin_mode']?.state === 'on';
             this._isAdminMode =
-                (this.hass.user?.is_admin ?? false) || isAdminMode;
+                (this.hass.user?.is_admin ?? false) ||
+                this.hass.states['input_boolean.admin_mode']?.state === 'on';
 
-            // Fallback if chipsConfig wasn't preloaded successfully
+            /* Fallback if chipsConfig doesn't exist
             const chipsConfig = window.smartqasa.chipsConfig ?? [];
             if (this._headerChips.length === 0 && chipsConfig.length > 0) {
                 this._headerChips = createElements(chipsConfig, this.hass);
             }
+            */
 
             this._areaObj = this._area
                 ? this.hass?.areas[this._area]
@@ -133,32 +134,17 @@ export class PanelCard extends LitElement implements LovelaceCard {
 
     protected render(): TemplateResult | typeof nothing {
         if (!this.hass || !this._config || !this._area) return nothing;
-        const name = this._config?.name ?? this._areaObj?.name ?? 'Area';
-        const picture = this._config.picture ?? `${this._area}.png`;
-
-        const baseUrl = new URL(location.href).origin;
-        const panelImage = getComputedStyle(document.documentElement)
-            .getPropertyValue('--sq-panel-image')
-            .trim();
-
-        const styles = {
-            backgroundAttachment: 'fixed',
-            backgroundImage: `url("${baseUrl}${panelImage}")`,
-            backgroundPosition: 'center',
-            backgroundRepeat: 'no-repeat',
-            backgroundSize: 'cover',
-        };
 
         return html`
             <div
                 class="panel"
-                style=${styleMap(styles)}
+                style=${styleMap(this._panelStyle)}
                 ?admin=${this._isAdminMode}
             >
                 ${this._isTablet ? renderHeader(this._headerChips) : nothing}
                 ${renderArea(
-                    name,
-                    picture,
+                    this._areaName,
+                    this._areaPicture,
                     this._areaChips,
                     this._isPhone,
                     this._isLandscape
@@ -193,7 +179,10 @@ export class PanelCard extends LitElement implements LovelaceCard {
             'orientationchange',
             this._boundHandleDeviceChanges
         );
-        window.removeEventListener('touchstart', this._boundDashboardTimer);
+        window.removeEventListener(
+            'touchstart',
+            this._boundStartDashboardTimer
+        );
 
         if (this._dashboardTimer) {
             clearTimeout(this._dashboardTimer);
@@ -234,34 +223,21 @@ export class PanelCard extends LitElement implements LovelaceCard {
         this._isLandscape = orientation === 'landscape';
     }
 
-    /*
-    private _handleThemeChanges(): void {
-        const panel = this.shadowRoot?.querySelector('.panel') as HTMLElement;
-
-        if (panel) {
-            const image = this.hass?.themes?.darkMode
-                ? window.smartqasa.darkModeImage
-                : window.smartqasa.lightModeImage;
-            panel.style.backgroundImage = `url(${image})`;
-        }
-    }
-    */
-
-    private _startTimer(): void {
+    private _startDashboardTimer(): void {
         if (this._dashboardTimer) {
             clearTimeout(this._dashboardTimer);
         }
 
         this._dashboardTimer = setTimeout(
             () => {
-                this._resetDashboard();
+                this._refreshDashboard();
             },
             5 * 60 * 1000
-        ); // 5 minutes
+        );
     }
 
-    private _resetDashboard(): void {
-        this._startTimer();
+    private _refreshDashboard(): void {
+        this._startDashboardTimer();
 
         const swiperContainer = this.shadowRoot?.querySelector(
             'swiper-container'
@@ -284,6 +260,14 @@ export class PanelCard extends LitElement implements LovelaceCard {
     private async _loadContent(): Promise<void> {
         if (!this.hass || !this._config) return;
 
+        const baseUrl = new URL(location.href).origin;
+        const panelImage = getComputedStyle(document.documentElement)
+            .getPropertyValue('--sq-panel-image')
+            .trim();
+        this._panelStyle = {
+            backgroundImage: `url("${baseUrl}${panelImage}")`,
+        };
+
         const headerChipsConfig =
             (this._config.header_chips?.length ?? 0) > 0
                 ? this._config.header_chips
@@ -291,13 +275,17 @@ export class PanelCard extends LitElement implements LovelaceCard {
         this._headerChips = createElements(headerChipsConfig, this.hass);
 
         this._areaObj = this._area ? this.hass.areas[this._area] : undefined;
+        this._areaName = this._config.name ?? this._areaObj?.name;
+
+        this._areaPicture = this._config.picture ?? `${this._area}.png`;
+
         this._areaChips = createElements(
             this._config.area_chips || [],
             this.hass
         );
 
         const { controlTiles, controlColumns } = loadControlTiles(
-            this._config.tiles || [],
+            this._config.tiles ?? [],
             this.hass,
             this._isTablet
         );

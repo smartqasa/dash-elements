@@ -4,23 +4,30 @@ import { renderFooter } from './footer';
 import defaultImage from '../assets/images/default.png';
 
 export function renderArea(
-    name: string,
-    picture: string,
+    name: string | undefined,
+    picture: string | undefined,
     chips: LovelaceCard[],
     isPhone: boolean,
     isLandscape: boolean
 ): TemplateResult {
     return html`
         <div class="area-container">
-            <div class="area-name ${isPhone ? 'overlay' : ''}">${name}</div>
+            <div class="area-name ${isPhone ? 'overlay' : ''}">
+                ${name} || 'Area'
+            </div>
             <img
                 class="area-picture"
                 src="/local/smartqasa/pictures/${picture}"
                 alt="Area picture..."
                 @error=${(e: Event) => {
-                    (e.target as HTMLImageElement).src = defaultImage;
-                    e.preventDefault();
-                    e.stopPropagation();
+                    try {
+                        const img = e.target as HTMLImageElement;
+                        img.src = defaultImage;
+                    } catch {
+                    } finally {
+                        e.preventDefault();
+                        e.stopPropagation();
+                    }
                 }}
             />
             ${chips.length > 0
