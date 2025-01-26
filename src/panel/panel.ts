@@ -233,7 +233,7 @@ export class PanelCard extends LitElement implements LovelaceCard {
         imageUrl = baseUrl + imagePath;
 
         this._panelStyle = {
-            backgroundImage: 'url(imageUrl)',
+            backgroundImage: `url(${imageUrl})`,
         };
     }
 
@@ -281,7 +281,7 @@ export class PanelCard extends LitElement implements LovelaceCard {
         this._headerChips = createElements(headerChipsConfig, this.hass);
 
         this._areaObj = this._area ? this.hass.areas[this._area] : undefined;
-        this._areaName = this._config.name ?? this._areaObj?.name;
+        this._areaName = this._config.name ?? this._areaObj?.name ?? 'Unknown';
 
         this._areaPicture = this._config.picture ?? `${this._area}.png`;
 

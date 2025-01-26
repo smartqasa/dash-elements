@@ -12,9 +12,7 @@ export function renderArea(
 ): TemplateResult {
     return html`
         <div class="area-container">
-            <div class="area-name ${isPhone ? 'overlay' : ''}">
-                ${name} || 'Area'
-            </div>
+            <div class="area-name ${isPhone ? 'overlay' : ''}">${name}</div>
             <img
                 class="area-picture"
                 src="/local/smartqasa/pictures/${picture}"
