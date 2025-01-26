@@ -230,10 +230,10 @@ export class PanelCard extends LitElement implements LovelaceCard {
 
         const baseUrl = new URL(location.href).origin;
         const imagePath = `/local/smartqasa/backgrounds/${mode}.jpg`;
-        imageUrl = baseUrl + imagePath;
+        const backgroundImage = `url(${baseUrl}${imagePath})`;
 
         this._panelStyle = {
-            backgroundImage: `url(${imageUrl})`,
+            backgroundImage: backgroundImage,
         };
     }
 
