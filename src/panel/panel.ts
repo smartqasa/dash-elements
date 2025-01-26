@@ -225,7 +225,6 @@ export class PanelCard extends LitElement implements LovelaceCard {
     }
 
     private _handleModeChanges(): void {
-        let imageUrl;
         const mode = this.hass?.themes.darkMode ? 'dark' : 'light';
 
         const baseUrl = new URL(location.href).origin;
