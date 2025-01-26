@@ -113,6 +113,7 @@ export class PanelCard extends LitElement implements LovelaceCard {
         }
 
         if (changedProps.has('hass') && this.hass) {
+            this._handleModeChanges();
             this._handleRefreshDevice();
 
             this._isAdminMode =
@@ -223,6 +224,19 @@ export class PanelCard extends LitElement implements LovelaceCard {
         this._isLandscape = orientation === 'landscape';
     }
 
+    private _handleModeChanges(): void {
+        let imageUrl;
+        const mode = this.hass?.themes.darkMode ? 'dark' : 'light';
+
+        const baseUrl = new URL(location.href).origin;
+        const imagePath = `/local/smartqasa/${mode}.jpg`;
+        imageUrl = baseUrl + imagePath;
+
+        this._panelStyle = {
+            backgroundImage: 'url(imageUrl)',
+        };
+    }
+
     private _startDashboardTimer(): void {
         if (this._dashboardTimer) {
             clearTimeout(this._dashboardTimer);
@@ -259,14 +273,6 @@ export class PanelCard extends LitElement implements LovelaceCard {
 
     private async _loadContent(): Promise<void> {
         if (!this.hass || !this._config) return;
-
-        const baseUrl = new URL(location.href).origin;
-        const panelImage = getComputedStyle(document.documentElement)
-            .getPropertyValue('--sq-panel-image')
-            .trim();
-        this._panelStyle = {
-            backgroundImage: `url("${baseUrl}${panelImage}")`,
-        };
 
         const headerChipsConfig =
             (this._config.header_chips?.length ?? 0) > 0
