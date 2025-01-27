@@ -24,6 +24,7 @@ import { LovelaceCardConfig } from './types';
         const chipsConfig =
             await loadYamlAsJson<LovelaceCardConfig[]>(yamlFilePath);
         window.smartqasa.chipsConfig = chipsConfig;
+        console.log('Chips config preloaded:', chipsConfig);
     } catch (error) {
         console.error('Failed to preload chips config:', error);
     }
