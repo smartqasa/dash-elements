@@ -1,34 +1,9 @@
 // Initialize global variables
 window.smartqasa = window.smartqasa || {};
 
-/* Preload Panel Card
-window.customCards = window.customCards ?? [];
-window.customCards.push({
-    type: 'smartqasa-panel-card',
-    name: 'SmartQasa Panel Card',
-    description: 'A placeholder for SmartQasa Panel Card.',
-});
-*/
-
 // Save the Initial Area
 window.smartqasa.startArea =
     window.smartqasa.startArea || location.pathname.split('/').pop();
-
-// Preload Header Chips
-import { loadYamlAsJson } from './utilities/load-yaml-as-json';
-import { LovelaceCardConfig } from './types';
-(async () => {
-    const yamlFilePath = '/local/smartqasa/config/chips.yaml';
-    console.log('Preloading chips config from:', yamlFilePath);
-    try {
-        const chipsConfig =
-            await loadYamlAsJson<LovelaceCardConfig[]>(yamlFilePath);
-        window.smartqasa.chipsConfig = chipsConfig;
-        console.log('Chips config preloaded:', chipsConfig);
-    } catch (error) {
-        console.error('Failed to preload chips config:', error);
-    }
-})();
 
 import './panel/panel';
 
