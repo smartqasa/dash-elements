@@ -188,87 +188,7 @@ export class PanelCard extends LitElement implements LovelaceCard {
         }
     }
 
-    private _handleRefreshDevice(): void {
-        const refreshDashboardsState =
-            this.hass?.states['input_button.refresh_dashboards']?.state;
-        if (!this._refreshDashboardsState)
-            this._refreshDashboardsState = refreshDashboardsState;
-        if (this._refreshDashboardsState === refreshDashboardsState) return;
-
-        if (typeof window.fully !== 'undefined') {
-            if (!window.fully.isInForeground())
-                window.fully.bringToForeground();
-            setTimeout(() => {
-                window.fully?.clearCache();
-            }, 2000);
-            setTimeout(() => {
-                window.fully?.restartApp();
-            }, 2000);
-            return;
-        }
-
-        if (typeof window.browser_mod !== 'undefined') {
-            window.browser_mod.service('refresh');
-        }
-    }
-
-    private _handleDeviceChanges(): void {
-        const type = getDeviceType();
-        this._isPhone = type === 'phone';
-        this._isTablet = type === 'tablet';
-
-        const orientation = getDeviceOrientation();
-        this._isPortrait = orientation === 'portrait';
-        this._isLandscape = orientation === 'landscape';
-    }
-
-    private _handleModeChanges(): void {
-        const mode = this.hass?.themes.darkMode ? 'dark' : 'light';
-
-        const baseUrl = new URL(location.href).origin;
-        const imagePath = `/local/smartqasa/backgrounds/${mode}.jpg`;
-        const backgroundImage = `url(${baseUrl}${imagePath})`;
-
-        this._panelStyle = {
-            backgroundImage: backgroundImage,
-        };
-    }
-
-    private _startDashboardTimer(): void {
-        if (this._dashboardTimer) {
-            clearTimeout(this._dashboardTimer);
-        }
-
-        this._dashboardTimer = setTimeout(
-            () => {
-                this._refreshDashboard();
-            },
-            5 * 60 * 1000
-        );
-    }
-
-    private _refreshDashboard(): void {
-        this._startDashboardTimer();
-
-        const swiperContainer = this.shadowRoot?.querySelector(
-            'swiper-container'
-        ) as any;
-
-        if (swiperContainer && swiperContainer.swiper) {
-            const currentPage = swiperContainer.swiper.activeIndex;
-            if (currentPage !== 0) {
-                swiperContainer.swiper.slideTo(0);
-                return;
-            }
-        }
-
-        const area = location.pathname.split('/').pop();
-        if (area !== window.smartqasa.startArea) {
-            navigateToArea(window.smartqasa.startArea);
-        }
-    }
-
-    private async _loadContent(): Promise<void> {
+    private _loadContent(): void {
         if (!this._config || !this.hass) return;
 
         if (!this._headerChips) this._loadHeaderChips();
@@ -327,5 +247,85 @@ export class PanelCard extends LitElement implements LovelaceCard {
                 });
             }
         });
+    }
+
+    private _handleDeviceChanges(): void {
+        const type = getDeviceType();
+        this._isPhone = type === 'phone';
+        this._isTablet = type === 'tablet';
+
+        const orientation = getDeviceOrientation();
+        this._isPortrait = orientation === 'portrait';
+        this._isLandscape = orientation === 'landscape';
+    }
+
+    private _handleModeChanges(): void {
+        const mode = this.hass?.themes.darkMode ? 'dark' : 'light';
+
+        const baseUrl = new URL(location.href).origin;
+        const imagePath = `/local/smartqasa/backgrounds/${mode}.jpg`;
+        const backgroundImage = `url(${baseUrl}${imagePath})`;
+
+        this._panelStyle = {
+            backgroundImage: backgroundImage,
+        };
+    }
+
+    private _startDashboardTimer(): void {
+        if (this._dashboardTimer) {
+            clearTimeout(this._dashboardTimer);
+        }
+
+        this._dashboardTimer = setTimeout(
+            () => {
+                this._resetDashboard();
+            },
+            5 * 60 * 1000
+        );
+    }
+
+    private _handleRefreshDevice(): void {
+        const refreshDashboardsState =
+            this.hass?.states['input_button.refresh_dashboards']?.state;
+        if (!this._refreshDashboardsState)
+            this._refreshDashboardsState = refreshDashboardsState;
+        if (this._refreshDashboardsState === refreshDashboardsState) return;
+
+        if (typeof window.fully !== 'undefined') {
+            if (!window.fully.isInForeground())
+                window.fully.bringToForeground();
+            setTimeout(() => {
+                window.fully?.clearCache();
+            }, 2000);
+            setTimeout(() => {
+                window.fully?.restartApp();
+            }, 2000);
+            return;
+        }
+
+        if (typeof window.browser_mod !== 'undefined') {
+            window.browser_mod.service('refresh');
+        }
+    }
+
+    private _resetDashboard(): void {
+        this._startDashboardTimer();
+
+        const swiperContainer = this.shadowRoot?.querySelector(
+            'swiper-container'
+        ) as any;
+
+        if (swiperContainer && swiperContainer.swiper) {
+            const currentPage = swiperContainer.swiper.activeIndex;
+            if (currentPage !== 0) {
+                swiperContainer.swiper.slideTo(0);
+                return;
+            }
+        }
+
+        const area = location.pathname.split('/').pop();
+        if (area !== window.smartqasa.startArea) {
+            navigateToArea(window.smartqasa.startArea);
+        }
     }
 }
