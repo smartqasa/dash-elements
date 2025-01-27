@@ -3,6 +3,5 @@
     "homeassistant": "2024.10.0",
     "render_readme": true,
     "filename": "elements.js",
-    "foldername": "smartqasa",
     "content_in_root": false
 }
