@@ -272,7 +272,6 @@ export class PanelCard extends LitElement implements LovelaceCard {
 
     private async _loadContent(): Promise<void> {
         if (!this.hass || !this._config) return;
-        console.log(window.smartqasa.chipsConfig);
         const headerChipsConfig =
             (this._config.header_chips?.length ?? 0) > 0
                 ? this._config.header_chips

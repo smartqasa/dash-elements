@@ -19,6 +19,7 @@ import { loadYamlAsJson } from './utilities/load-yaml-as-json';
 import { LovelaceCardConfig } from './types';
 (async () => {
     const yamlFilePath = '/local/smartqasa/config/chips.yaml';
+    console.log('Preloading chips config from:', yamlFilePath);
     try {
         const chipsConfig =
             await loadYamlAsJson<LovelaceCardConfig[]>(yamlFilePath);
