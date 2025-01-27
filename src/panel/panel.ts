@@ -306,7 +306,6 @@ export class PanelCard extends LitElement implements LovelaceCard {
                 ? this._config.header_chips
                 : (window.smartqasa.chipsConfig ?? []);
         this._headerChips = createElements(chipsConfig, this.hass);
-        console.log('Chips config preloaded:', this._headerChips);
     }
 
     protected _updateContent(): void {

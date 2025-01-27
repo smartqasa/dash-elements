@@ -8,7 +8,9 @@ function launchClock(e: Event): void {
     launchApp('clock');
 }
 
-export function renderHeader(headerChips: LovelaceCard[]): TemplateResult {
+export function renderHeader(headerChips?: LovelaceCard[]): TemplateResult {
+    const chips = headerChips ?? [];
+
     return html`
         <div class="header-container">
             <div class="header-time-date" @click="${launchClock}">
@@ -16,9 +18,7 @@ export function renderHeader(headerChips: LovelaceCard[]): TemplateResult {
                 <div class="date">${formattedDate()}</div>
             </div>
             <div class="header-chips">
-                ${headerChips.map(
-                    (chip) => html`<div class="chip">${chip}</div>`
-                )}
+                ${chips.map((chip) => html`<div class="chip">${chip}</div>`)}
             </div>
         </div>
     `;
