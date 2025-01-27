@@ -17,6 +17,7 @@ import {
     LovelaceCardConfig,
 } from '../types';
 import { getDeviceOrientation, getDeviceType } from '../utilities/device-info';
+import { loadYamlAsJson } from '../utilities/load-yaml-as-json';
 import { createElements } from '../utilities/create-elements';
 import { renderHeader } from './header';
 import { renderArea } from './area';
@@ -68,7 +69,7 @@ export class PanelCard extends LitElement implements LovelaceCard {
     private _timeIntervalId: ReturnType<typeof setInterval> | undefined;
     private _dashboardTimer: ReturnType<typeof setTimeout> | undefined;
     private _panelStyle: Record<string, string> = {};
-    private _headerChips: LovelaceCard[] = [];
+    private _headerChips?: LovelaceCard[];
     private _area: string | undefined;
     private _areaObj: HassArea | undefined;
     private _areaName: string | undefined;
@@ -120,13 +121,6 @@ export class PanelCard extends LitElement implements LovelaceCard {
                 (this.hass.user?.is_admin ?? false) ||
                 this.hass.states['input_boolean.admin_mode']?.state === 'on';
 
-            /* Fallback if chipsConfig doesn't exist
-            const chipsConfig = window.smartqasa.chipsConfig ?? [];
-            if (this._headerChips.length === 0 && chipsConfig.length > 0) {
-                this._headerChips = createElements(chipsConfig, this.hass);
-            }
-            */
-
             this._areaObj = this._area
                 ? this.hass?.areas[this._area]
                 : undefined;
@@ -136,13 +130,17 @@ export class PanelCard extends LitElement implements LovelaceCard {
     protected render(): TemplateResult | typeof nothing {
         if (!this.hass || !this._config || !this._area) return nothing;
 
+        if (this._headerChips === undefined) this._headerChips = [];
+
         return html`
             <div
                 class="panel"
                 style=${styleMap(this._panelStyle)}
                 ?admin=${this._isAdminMode}
             >
-                ${this._isTablet ? renderHeader(this._headerChips) : nothing}
+                ${this._isTablet
+                    ? renderHeader(this._headerChips ?? [])
+                    : nothing}
                 ${renderArea(
                     this._areaName,
                     this._areaPicture,
@@ -271,12 +269,9 @@ export class PanelCard extends LitElement implements LovelaceCard {
     }
 
     private async _loadContent(): Promise<void> {
-        if (!this.hass || !this._config) return;
-        const headerChipsConfig =
-            (this._config.header_chips?.length ?? 0) > 0
-                ? this._config.header_chips
-                : (window.smartqasa.chipsConfig ?? []);
-        this._headerChips = createElements(headerChipsConfig, this.hass);
+        if (!this._config || !this.hass) return;
+
+        if (!this._headerChips) this._loadHeaderChips();
 
         this._areaObj = this._area ? this.hass.areas[this._area] : undefined;
         this._areaName = this._config.name ?? this._areaObj?.name ?? 'Unknown';
@@ -297,6 +292,23 @@ export class PanelCard extends LitElement implements LovelaceCard {
         this._controlColumns = controlColumns;
     }
 
+    private async _loadHeaderChips(): Promise<void> {
+        if (!this._config || !this.hass) return;
+
+        if (!window.smartqasa.chipsConfig) {
+            const yamlFilePath = '/local/smartqasa/config/chips.yaml';
+            const chipsConfig =
+                await loadYamlAsJson<LovelaceCardConfig[]>(yamlFilePath);
+            window.smartqasa.chipsConfig = chipsConfig;
+        }
+        const chipsConfig =
+            (this._config.header_chips?.length ?? 0) > 0
+                ? this._config.header_chips
+                : (window.smartqasa.chipsConfig ?? []);
+        this._headerChips = createElements(chipsConfig, this.hass);
+        console.log('Chips config preloaded:', this._headerChips);
+    }
+
     protected _updateContent(): void {
         requestAnimationFrame(() => {
             const updateHassForCards = (cards: LovelaceCard[]) => {
@@ -305,7 +317,7 @@ export class PanelCard extends LitElement implements LovelaceCard {
                 });
             };
 
-            if (this._headerChips.length > 0)
+            if (this._headerChips && this._headerChips.length > 0)
                 updateHassForCards(this._headerChips);
 
             if (this._areaChips.length > 0) updateHassForCards(this._areaChips);
