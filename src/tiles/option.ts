@@ -119,6 +119,7 @@ export class OptionTile extends LitElement implements LovelaceCard {
                         this._stateObj.attributes.icon ||
                         'hass:form-dropdown';
                 }
+                console.log('Log', this._config?.option, icon);
                 iconAnimation = 'none';
                 iconColor =
                     this._stateObj.state === this._config!.option
