@@ -29,7 +29,7 @@ export const modeIcons: Record<string, string> = {
 };
 
 export const phaseIcons: Record<string, string> = {
-    'Pre-open': 'hass:weather-sunset-up',
+    Preparation: 'hass:weather-sunset-up',
     Morning: 'hass:weather-sunset-up',
     Day: 'hass:white-balance-sunny',
     Evening: 'hass:weather-night',
