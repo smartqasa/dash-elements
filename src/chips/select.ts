@@ -88,7 +88,6 @@ export class SelectChip extends LitElement implements LovelaceCard {
                 this._stateObj?.attributes?.icon ||
                 'hass:form-dropdown';
         }
-        console.log('State & Icon', icon, state);
         return html`
             <div class="container" @click=${this._showOptions}>
                 <div class="icon">
