@@ -259,16 +259,43 @@ export class PanelCard extends LitElement implements LovelaceCard {
         this._isLandscape = orientation === 'landscape';
     }
 
-    private _handleModeChanges(): void {
+    private async _handleModeChanges(): Promise<void> {
         const mode = this.hass?.themes.darkMode ? 'dark' : 'light';
-
         const baseUrl = new URL(location.href).origin;
 
-        const customImage = `url(${baseUrl}/local/smartqasa/config/${mode}.jpg)`;
-        const defaultImage = `url(${baseUrl}/local/smartqasa/backgrounds/default/${mode}.jpg)`;
+        const customImageUrl = `${baseUrl}/local/smartqasa/config/${mode}.jpg`;
 
+        try {
+            // Check if custom image exists
+            const response = await fetch(customImageUrl, { method: 'HEAD' });
+            if (response.ok) {
+                this._panelStyle = {
+                    backgroundImage: `url(${customImageUrl})`,
+                };
+                return;
+            }
+        } catch (error) {}
+
+        const backgroundFolder =
+            this.hass?.states['input_select.dashboard_background']?.state ||
+            'default';
+        const backgroundImageUrl = `${baseUrl}/local/smartqasa/backgrounds/${backgroundFolder}/${mode}.jpg`;
+
+        try {
+            const response = await fetch(backgroundImageUrl, {
+                method: 'HEAD',
+            });
+            if (response.ok) {
+                this._panelStyle = {
+                    backgroundImage: `url(${backgroundImageUrl})`,
+                };
+                return;
+            }
+        } catch (error) {}
+
+        const defaultImageUrl = `${baseUrl}/local/smartqasa/backgrounds/default/${mode}.jpg`;
         this._panelStyle = {
-            backgroundImage: `${customImage}, ${defaultImage}`,
+            backgroundImage: `url(${defaultImageUrl})`,
         };
     }
 
