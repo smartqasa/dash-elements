@@ -68,6 +68,7 @@ export class PanelCard extends LitElement implements LovelaceCard {
 
     private _timeIntervalId: ReturnType<typeof setInterval> | undefined;
     private _dashboardTimer: ReturnType<typeof setTimeout> | undefined;
+    private _themeStyle: string | undefined;
     private _themeMode: string | undefined;
     private _panelStyle: Record<string, string> = {};
     private _headerChips?: LovelaceCard[];
@@ -115,7 +116,7 @@ export class PanelCard extends LitElement implements LovelaceCard {
         }
 
         if (changedProps.has('hass') && this.hass) {
-            this._handleModeChanges();
+            this._handleBackgroundChange();
             this._handleRefreshDevice();
 
             this._isAdminMode =
@@ -260,43 +261,32 @@ export class PanelCard extends LitElement implements LovelaceCard {
         this._isLandscape = orientation === 'landscape';
     }
 
-    private async _handleModeChanges(): Promise<void> {
+    private async _handleBackgroundChange(): Promise<void> {
         if (!this.hass) return;
 
-        const mode = this.hass.themes.darkMode ? 'dark' : 'light';
-        if (this._themeMode === mode) return;
-        this._themeMode = mode;
-
-        const baseUrl = new URL(location.href).origin;
-        const customImageUrl = `${baseUrl}/local/smartqasa/config/${mode}.jpg`;
-
-        try {
-            // Check if custom image exists
-            const response = await fetch(customImageUrl, { method: 'HEAD' });
-            if (response.ok) {
-                this._panelStyle = {
-                    backgroundImage: `url(${customImageUrl})`,
-                };
-                return;
-            }
-        } catch (error) {}
-
-        const backgroundFolder =
+        const style =
             this.hass.states[
                 'input_select.dashboard_background'
             ]?.state.toLowerCase() || 'default';
-        const backgroundImageUrl = `${baseUrl}/local/smartqasa/backgrounds/${backgroundFolder}/${mode}.jpg`;
+        const mode = this.hass.themes.darkMode ? 'dark' : 'light';
 
-        try {
-            const response = await fetch(backgroundImageUrl, {
-                method: 'HEAD',
-            });
-            if (response.ok) {
-                this._panelStyle = {
-                    backgroundImage: `url(${backgroundImageUrl})`,
-                };
-            }
-        } catch (error) {}
+        if (this._themeStyle === style && this._themeMode === mode) return;
+
+        this._themeStyle = style;
+        this._themeMode = mode;
+
+        const baseUrl = new URL(location.href).origin;
+
+        let imagePath;
+        if (style === 'custom') {
+            imagePath = 'local/smartqasa/config';
+        } else {
+            imagePath = `local/smartqasa/backgrounds/${style}`;
+        }
+
+        this._panelStyle = {
+            backgroundImage: `url(${baseUrl}/${imagePath}/${mode}.jpg)`,
+        };
     }
 
     private _startDashboardTimer(): void {
