@@ -264,10 +264,9 @@ export class PanelCard extends LitElement implements LovelaceCard {
     private async _handleBackgroundChange(): Promise<void> {
         if (!this.hass) return;
 
-        const style =
-            this.hass.states[
-                'input_select.dashboard_background'
-            ]?.state.toLowerCase() || 'default';
+        const state =
+            this.hass.states['input_select.dashboard_background']?.state;
+        const style = state ? state.toLowerCase() : 'default';
         const mode = this.hass.themes.darkMode ? 'dark' : 'light';
 
         if (this._themeStyle === style && this._themeMode === mode) return;
@@ -277,12 +276,10 @@ export class PanelCard extends LitElement implements LovelaceCard {
 
         const baseUrl = new URL(location.href).origin;
 
-        let imagePath;
-        if (style === 'custom') {
-            imagePath = 'local/smartqasa/config';
-        } else {
-            imagePath = `local/smartqasa/backgrounds/${style}`;
-        }
+        const imagePath =
+            style === 'custom'
+                ? 'local/smartqasa/config'
+                : `local/smartqasa/backgrounds/${style}`;
 
         this._panelStyle = {
             backgroundImage: `url(${baseUrl}/${imagePath}/${mode}.jpg)`,
