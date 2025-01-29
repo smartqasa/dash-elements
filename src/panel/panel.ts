@@ -294,14 +294,8 @@ export class PanelCard extends LitElement implements LovelaceCard {
                 this._panelStyle = {
                     backgroundImage: `url(${backgroundImageUrl})`,
                 };
-                return;
             }
         } catch (error) {}
-
-        const defaultImageUrl = `${baseUrl}/local/smartqasa/backgrounds/default/${mode}.jpg`;
-        this._panelStyle = {
-            backgroundImage: `url(${defaultImageUrl})`,
-        };
     }
 
     private _startDashboardTimer(): void {
