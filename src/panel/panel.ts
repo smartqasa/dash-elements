@@ -68,6 +68,7 @@ export class PanelCard extends LitElement implements LovelaceCard {
 
     private _timeIntervalId: ReturnType<typeof setInterval> | undefined;
     private _dashboardTimer: ReturnType<typeof setTimeout> | undefined;
+    private _themeMode: string | undefined;
     private _panelStyle: Record<string, string> = {};
     private _headerChips?: LovelaceCard[];
     private _area: string | undefined;
@@ -260,9 +261,13 @@ export class PanelCard extends LitElement implements LovelaceCard {
     }
 
     private async _handleModeChanges(): Promise<void> {
-        const mode = this.hass?.themes.darkMode ? 'dark' : 'light';
-        const baseUrl = new URL(location.href).origin;
+        if (!this.hass) return;
 
+        const mode = this.hass.themes.darkMode ? 'dark' : 'light';
+        if (this._themeMode === mode) return;
+        this._themeMode = mode;
+
+        const baseUrl = new URL(location.href).origin;
         const customImageUrl = `${baseUrl}/local/smartqasa/config/${mode}.jpg`;
 
         try {
@@ -277,7 +282,7 @@ export class PanelCard extends LitElement implements LovelaceCard {
         } catch (error) {}
 
         const backgroundFolder =
-            this.hass?.states['input_select.dashboard_background']?.state ||
+            this.hass.states['input_select.dashboard_background']?.state ||
             'default';
         const backgroundImageUrl = `${baseUrl}/local/smartqasa/backgrounds/${backgroundFolder}/${mode}.jpg`;
 
