@@ -282,8 +282,9 @@ export class PanelCard extends LitElement implements LovelaceCard {
         } catch (error) {}
 
         const backgroundFolder =
-            this.hass.states['input_select.dashboard_background']?.state ||
-            'default';
+            this.hass.states[
+                'input_select.dashboard_background'
+            ]?.state.toLowerCase() || 'default';
         const backgroundImageUrl = `${baseUrl}/local/smartqasa/backgrounds/${backgroundFolder}/${mode}.jpg`;
 
         try {
