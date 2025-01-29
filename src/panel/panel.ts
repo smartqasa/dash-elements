@@ -263,11 +263,12 @@ export class PanelCard extends LitElement implements LovelaceCard {
         const mode = this.hass?.themes.darkMode ? 'dark' : 'light';
 
         const baseUrl = new URL(location.href).origin;
-        const imagePath = `/local/smartqasa/backgrounds/${mode}.jpg`;
-        const backgroundImage = `url(${baseUrl}${imagePath})`;
+
+        const customImage = `url(${baseUrl}/local/smartqasa/config/${mode}.jpg)`;
+        const defaultImage = `url(${baseUrl}/local/smartqasa/backgrounds/default/${mode}.jpg)`;
 
         this._panelStyle = {
-            backgroundImage: backgroundImage,
+            backgroundImage: `${customImage}, ${defaultImage}`,
         };
     }
 
