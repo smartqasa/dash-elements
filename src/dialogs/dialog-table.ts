@@ -221,7 +221,7 @@ export const dialogTable: DialogTable = {
         },
     },
 
-    display_modes: {
+    display_mode: {
         icon: 'hass:compare',
         name: 'Display Mode',
         data: {
