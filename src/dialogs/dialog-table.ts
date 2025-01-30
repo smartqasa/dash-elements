@@ -221,11 +221,11 @@ export const dialogTable: DialogTable = {
         },
     },
 
-    display_themes: {
+    display_modes: {
         icon: 'hass:compare',
-        name: 'Dispaly Themes',
+        name: 'Display Mode',
         data: {
-            title: 'Display Themes',
+            title: 'Display Mode',
             timeout: 60000,
             content: {
                 type: 'custom:smartqasa-vertical-stack',
@@ -308,6 +308,37 @@ export const dialogTable: DialogTable = {
         ),
     },
 
+    media_player: {
+        icon: 'hass:music',
+        name: 'Media Player',
+        data: {
+            title: 'Media Player',
+            timeout: 600000,
+            style: {
+                '--control-button-padding': 0,
+            },
+            content: {
+                type: 'custom:maxi-media-player',
+                sections: [
+                    'player',
+                    'media browser',
+                    'groups',
+                    'grouping',
+                    'volumes',
+                ],
+                entityPlatform: 'sonos',
+                artworkAsBackground: false,
+                showVolumeUpAndDownButtons: true,
+                showSourceInPlayer: true,
+                mediaBrowserTitle: 'Favorites',
+                hideBrowseMediaButton: true,
+                mediaBrowserHideTitleForThumbnailIcons: false,
+                mediaBrowserItemsPerRow: 4,
+                card_mod: mediaPlayerCardMod,
+            },
+        },
+    },
+
     menu: {
         icon: 'hass:menu',
         name: 'Menu',
@@ -370,37 +401,6 @@ export const dialogTable: DialogTable = {
             'cover.all_window_shades',
             'shade'
         ),
-    },
-
-    media_player: {
-        icon: 'hass:music',
-        name: 'Media Player',
-        data: {
-            title: 'Media Player',
-            timeout: 600000,
-            style: {
-                '--control-button-padding': 0,
-            },
-            content: {
-                type: 'custom:maxi-media-player',
-                sections: [
-                    'player',
-                    'media browser',
-                    'groups',
-                    'grouping',
-                    'volumes',
-                ],
-                entityPlatform: 'sonos',
-                artworkAsBackground: false,
-                showVolumeUpAndDownButtons: true,
-                showSourceInPlayer: true,
-                mediaBrowserTitle: 'Favorites',
-                hideBrowseMediaButton: true,
-                mediaBrowserHideTitleForThumbnailIcons: false,
-                mediaBrowserItemsPerRow: 4,
-                card_mod: mediaPlayerCardMod,
-            },
-        },
     },
 
     sonos_players: {

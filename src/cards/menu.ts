@@ -207,10 +207,17 @@ export class MenuCard extends LitElement implements LovelaceCard {
                     type: 'custom:smartqasa-dialog-tile',
                     dialog: 'clean_screen',
                 },
+
                 {
                     type: 'custom:smartqasa-dialog-tile',
-                    dialog: 'display_themes',
+                    dialog: 'display_mode',
                 },
+
+                {
+                    type: 'custom:smartqasa-select-tile',
+                    entity: 'input_select.dashboard_background',
+                },
+
                 {
                     type: 'custom:smartqasa-action-tile',
                     icon: 'mdi:refresh',
