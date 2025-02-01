@@ -189,7 +189,7 @@ export class MenuCard extends LitElement implements LovelaceCard {
     private async _loadMenuTabs(): Promise<void> {
         try {
             const tabsData = (await loadYamlAsJson(
-                '/local/smartqasa/config/menu.yaml'
+                '/local/smartqasa/custom/menu.yaml'
             )) as Tab[];
             if (!Array.isArray(tabsData)) {
                 throw new Error('Invalid tabs configuration');

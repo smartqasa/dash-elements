@@ -218,7 +218,7 @@ export class PanelCard extends LitElement implements LovelaceCard {
         if (!this._config || !this.hass) return;
 
         if (!window.smartqasa.chipsConfig) {
-            const yamlFilePath = '/local/smartqasa/config/chips.yaml';
+            const yamlFilePath = '/local/smartqasa/custom/chips.yaml';
             const chipsConfig =
                 await loadYamlAsJson<LovelaceCardConfig[]>(yamlFilePath);
             window.smartqasa.chipsConfig = chipsConfig;
