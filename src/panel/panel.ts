@@ -315,16 +315,16 @@ export class PanelCard extends LitElement implements LovelaceCard {
             setTimeout(() => {
                 window.fully?.restartApp();
             }, 1000);
-
-            return;
-        }
-
-        if (window.browser_mod !== undefined) {
-            window.browser_mod.service('refresh');
+        } else {
+            if (window.browser_mod !== undefined) {
+                window.browser_mod.service('refresh');
+            }
         }
     }
 
     private _handleRebootDevice(): void {
+        if (window.fully === undefined || window.fully === null) return;
+
         const rebootDeviceState =
             this.hass?.states['input_button.reboot_devices']?.state;
 
@@ -333,20 +333,11 @@ export class PanelCard extends LitElement implements LovelaceCard {
 
         if (this._rebootDeviceState === rebootDeviceState) return;
 
-        if (window.fully !== undefined && window.fully !== null) {
-            if (!window.fully.isInForeground())
-                window.fully.bringToForeground();
+        window.fully?.clearCache();
 
-            setTimeout(() => {
-                window.fully?.clearCache();
-            }, 1000);
-
-            setTimeout(() => {
-                window.fully?.reboot();
-            }, 1000);
-
-            return;
-        }
+        setTimeout(() => {
+            window.fully?.reboot();
+        }, 1000);
     }
 
     private _resetDashboard(): void {
