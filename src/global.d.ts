@@ -42,6 +42,7 @@ declare interface Window {
         bringToForeground: () => void;
         clearCache: () => void;
         isInForeground: () => boolean;
+        reboot: () => void;
         restartApp: () => void;
         startApplication: (packageName: string) => void;
     };

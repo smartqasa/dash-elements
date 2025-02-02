@@ -54,7 +54,8 @@ export class PanelCard extends LitElement implements LovelaceCard {
 
     @property({ attribute: false }) public hass?: HomeAssistant;
     @state() protected _config?: Config;
-    @state() private _refreshDashboardsState: String | undefined;
+    @state() private _refreshDashboardState: String | undefined;
+    @state() private _rebootDeviceState: String | undefined;
     @state() private _isAdminMode = false;
     @state() private _isPhone: boolean = getDeviceType() === 'phone';
     @state() private _isTablet: boolean = getDeviceType() === 'tablet';
@@ -117,7 +118,8 @@ export class PanelCard extends LitElement implements LovelaceCard {
 
         if (changedProps.has('hass') && this.hass) {
             this._handleBackgroundChange();
-            this._handleRefreshDevice();
+            this._handleRefreshDashboard();
+            this._handleRebootDevice();
 
             this._isAdminMode =
                 (this.hass.user?.is_admin ?? false) ||
@@ -275,50 +277,75 @@ export class PanelCard extends LitElement implements LovelaceCard {
         this._themeMode = mode;
 
         const baseUrl = new URL(location.href).origin;
-
         const imagePath =
             style === 'custom'
                 ? 'local/smartqasa/custom/backgrounds'
                 : `local/smartqasa/media/backgrounds/${style}`;
+
         this._panelStyle = {
             backgroundImage: `url(${baseUrl}/${imagePath}/${mode}.jpg)`,
         };
     }
 
     private _startDashboardTimer(): void {
-        if (this._dashboardTimer) {
-            clearTimeout(this._dashboardTimer);
-        }
-
+        clearTimeout(this._dashboardTimer);
         this._dashboardTimer = setTimeout(
-            () => {
-                this._resetDashboard();
-            },
+            () => this._resetDashboard(),
             5 * 60 * 1000
         );
     }
 
-    private _handleRefreshDevice(): void {
-        const refreshDashboardsState =
+    private _handleRefreshDashboard(): void {
+        const refreshDashboardState =
             this.hass?.states['input_button.refresh_dashboards']?.state;
-        if (!this._refreshDashboardsState)
-            this._refreshDashboardsState = refreshDashboardsState;
-        if (this._refreshDashboardsState === refreshDashboardsState) return;
 
-        if (typeof window.fully !== 'undefined') {
+        if (!this._refreshDashboardState)
+            this._refreshDashboardState = refreshDashboardState;
+
+        if (this._refreshDashboardState === refreshDashboardState) return;
+
+        if (window.fully !== undefined && window.fully !== null) {
             if (!window.fully.isInForeground())
                 window.fully.bringToForeground();
+
             setTimeout(() => {
                 window.fully?.clearCache();
-            }, 2000);
+            }, 1000);
+
             setTimeout(() => {
                 window.fully?.restartApp();
-            }, 2000);
+            }, 1000);
+
             return;
         }
 
-        if (typeof window.browser_mod !== 'undefined') {
+        if (window.browser_mod !== undefined) {
             window.browser_mod.service('refresh');
+        }
+    }
+
+    private _handleRebootDevice(): void {
+        const rebootDeviceState =
+            this.hass?.states['input_button.reboot_devices']?.state;
+
+        if (!this._rebootDeviceState)
+            this._rebootDeviceState = rebootDeviceState;
+
+        if (this._rebootDeviceState === rebootDeviceState) return;
+
+        if (window.fully !== undefined && window.fully !== null) {
+            if (!window.fully.isInForeground())
+                window.fully.bringToForeground();
+
+            setTimeout(() => {
+                window.fully?.clearCache();
+            }, 1000);
+
+            setTimeout(() => {
+                window.fully?.reboot();
+            }, 1000);
+
+            return;
         }
     }
 
