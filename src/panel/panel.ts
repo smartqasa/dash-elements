@@ -271,7 +271,7 @@ export class PanelCard extends LitElement implements LovelaceCard {
         const style = state ? state.toLowerCase() : 'default';
         const mode = this.hass.themes.darkMode ? 'dark' : 'light';
 
-        if (this._themeStyle !== style) {
+        if (this._themeStyle !== style || this._themeMode !== mode) {
             const baseUrl = new URL(location.href).origin;
             const imagePath =
                 style === 'custom'
