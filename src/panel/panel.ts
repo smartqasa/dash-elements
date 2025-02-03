@@ -52,7 +52,7 @@ export class PanelCard extends LitElement implements LovelaceCard {
         return 100;
     }
 
-    @property({ attribute: false }) public hass?: HomeAssistant;
+    @property({ attribute: false }) public hass: HomeAssistant | undefined;
     @state() protected _config?: Config;
     @state() private _refreshDashboardState: String | undefined;
     @state() private _rebootDeviceState: String | undefined;
