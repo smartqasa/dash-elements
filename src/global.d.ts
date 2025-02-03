@@ -45,6 +45,8 @@ declare interface Window {
         reboot: () => void;
         restartApp: () => void;
         startApplication: (packageName: string) => void;
+        turnScreenOff: (keepAlive: boolean) => void;
+        turnScreenOn: () => void;
     };
     smartqasa: {
         chipsConfig?: any;

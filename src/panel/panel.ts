@@ -271,20 +271,31 @@ export class PanelCard extends LitElement implements LovelaceCard {
         const style = state ? state.toLowerCase() : 'default';
         const mode = this.hass.themes.darkMode ? 'dark' : 'light';
 
-        if (this._themeStyle === style && this._themeMode === mode) return;
+        if (this._themeStyle !== style) {
+            const baseUrl = new URL(location.href).origin;
+            const imagePath =
+                style === 'custom'
+                    ? 'local/smartqasa/custom/backgrounds'
+                    : `local/smartqasa/media/backgrounds/${style}`;
 
-        this._themeStyle = style;
-        this._themeMode = mode;
+            this._panelStyle = {
+                backgroundImage: `url(${baseUrl}/${imagePath}/${mode}.jpg)`,
+            };
 
-        const baseUrl = new URL(location.href).origin;
-        const imagePath =
-            style === 'custom'
-                ? 'local/smartqasa/custom/backgrounds'
-                : `local/smartqasa/media/backgrounds/${style}`;
+            this._themeStyle = style;
+        }
 
-        this._panelStyle = {
-            backgroundImage: `url(${baseUrl}/${imagePath}/${mode}.jpg)`,
-        };
+        if (this._themeMode !== mode) {
+            if (window.fully !== undefined && window.fully !== null) {
+                window.fully.turnScreenOff(true);
+
+                setTimeout(() => {
+                    window.fully?.turnScreenOn();
+                }, 500);
+            }
+
+            this._themeMode = mode;
+        }
     }
 
     private _startDashboardTimer(): void {
