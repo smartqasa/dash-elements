@@ -341,6 +341,12 @@ export class PanelCard extends LitElement implements LovelaceCard {
     private _handleRebootDevice(): void {
         if (window.fully === undefined || window.fully === null) return;
 
+        const rebootDeviceState =
+            this.hass?.states['input_button.reboot_devices']?.state;
+        if (this._rebootDeviceState === rebootDeviceState) return;
+
+        this._rebootDeviceState = rebootDeviceState;
+
         window.fully?.clearCache();
 
         setTimeout(() => {
