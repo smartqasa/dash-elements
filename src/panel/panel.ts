@@ -117,9 +117,6 @@ export class PanelCard extends LitElement implements LovelaceCard {
         }
 
         if (changedProps.has('hass') && this.hass) {
-            this._handleRefreshDashboard();
-            this._handleRebootDevice();
-
             this._isAdminMode =
                 (this.hass.user?.is_admin ?? false) ||
                 this.hass.states['input_boolean.admin_mode']?.state === 'on';
@@ -181,7 +178,6 @@ export class PanelCard extends LitElement implements LovelaceCard {
                 this._handleRefreshDashboard();
             }
 
-            // Check if reboot device state has changed
             if (
                 changedProps.get('hass')?.states['input_button.reboot_devices']
                     ?.state !==
@@ -344,14 +340,6 @@ export class PanelCard extends LitElement implements LovelaceCard {
 
     private _handleRebootDevice(): void {
         if (window.fully === undefined || window.fully === null) return;
-
-        const rebootDeviceState =
-            this.hass?.states['input_button.reboot_devices']?.state;
-
-        if (!this._rebootDeviceState)
-            this._rebootDeviceState = rebootDeviceState;
-
-        if (this._rebootDeviceState === rebootDeviceState) return;
 
         window.fully?.clearCache();
 
