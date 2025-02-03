@@ -315,17 +315,11 @@ export class PanelCard extends LitElement implements LovelaceCard {
 
         if (this._refreshDashboardState === refreshDashboardState) return;
 
-        if (window.fully !== undefined && window.fully !== null) {
+        if (window.fully) {
             if (!window.fully.isInForeground())
                 window.fully.bringToForeground();
-
-            setTimeout(() => {
-                window.fully?.clearCache();
-            }, 1000);
-
-            setTimeout(() => {
-                window.fully?.restartApp();
-            }, 1000);
+            setTimeout(() => window.fully?.clearCache(), 1000);
+            setTimeout(() => window.fully?.restartApp(), 1000);
         } else {
             if (window.browser_mod !== undefined) {
                 window.browser_mod.service('refresh');
@@ -334,23 +328,22 @@ export class PanelCard extends LitElement implements LovelaceCard {
     }
 
     private _handleRebootDevice(): void {
-        if (!window.fully) console.log('window.fully is not available');
+        if (!window.fully || !this.hass) return;
 
-        if (window.fully === undefined || window.fully === null) return;
+        const state = this.hass.states['input_button.reboot_devices']?.state;
 
-        const rebootDeviceState =
-            this.hass?.states['input_button.reboot_devices']?.state;
+        if (
+            this._rebootDeviceState === undefined ||
+            this._rebootDeviceState === state
+        ) {
+            this._rebootDeviceState = state;
+            return;
+        }
 
-        if (!this._rebootDeviceState)
-            this._rebootDeviceState = rebootDeviceState;
+        this._rebootDeviceState = state;
 
-        if (this._rebootDeviceState === rebootDeviceState) return;
-
-        window.fully?.clearCache();
-
-        setTimeout(() => {
-            window.fully?.reboot();
-        }, 1000);
+        window.fully.clearCache();
+        setTimeout(() => window.fully?.reboot(), 1000);
     }
 
     private _resetDashboard(): void {
