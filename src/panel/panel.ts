@@ -117,6 +117,10 @@ export class PanelCard extends LitElement implements LovelaceCard {
         }
 
         if (changedProps.has('hass') && this.hass) {
+            this._handleBackgroundChange();
+            this._handleRefreshDashboard();
+            this._handleRebootDevice();
+
             this._isAdminMode =
                 (this.hass.user?.is_admin ?? false) ||
                 this.hass.states['input_boolean.admin_mode']?.state === 'on';
@@ -162,30 +166,6 @@ export class PanelCard extends LitElement implements LovelaceCard {
         super.updated(changedProps);
 
         if (changedProps.has('hass') && this.hass) {
-            if (
-                changedProps.get('hass')?.themes.darkMode !==
-                this.hass.themes.darkMode
-            ) {
-                this._handleBackgroundChange();
-            }
-
-            if (
-                changedProps.get('hass')?.states[
-                    'input_button.refresh_dashboards'
-                ]?.state !==
-                this.hass.states['input_button.refresh_dashboards']?.state
-            ) {
-                this._handleRefreshDashboard();
-            }
-
-            if (
-                changedProps.get('hass')?.states['input_button.reboot_devices']
-                    ?.state !==
-                this.hass.states['input_button.reboot_devices']?.state
-            ) {
-                this._handleRebootDevice();
-            }
-
             this._updateContent();
         }
     }
@@ -286,10 +266,9 @@ export class PanelCard extends LitElement implements LovelaceCard {
     private async _handleBackgroundChange(): Promise<void> {
         if (!this.hass) return;
 
-        const style =
-            this.hass.states[
-                'input_select.dashboard_background'
-            ]?.state?.toLowerCase() ?? 'default';
+        const state =
+            this.hass.states['input_select.dashboard_background']?.state;
+        const style = state ? state.toLowerCase() : 'default';
         const mode = this.hass.themes.darkMode ? 'dark' : 'light';
 
         if (this._themeStyle === style && this._themeMode === mode) return;
@@ -297,9 +276,14 @@ export class PanelCard extends LitElement implements LovelaceCard {
         this._themeStyle = style;
         this._themeMode = mode;
 
-        const imagePath = `local/smartqasa/${style === 'custom' ? 'custom/backgrounds' : `media/backgrounds/${style}`}`;
+        const baseUrl = new URL(location.href).origin;
+        const imagePath =
+            style === 'custom'
+                ? 'local/smartqasa/custom/backgrounds'
+                : `local/smartqasa/media/backgrounds/${style}`;
+
         this._panelStyle = {
-            backgroundImage: `url(${location.origin}/${imagePath}/${mode}.jpg)`,
+            backgroundImage: `url(${baseUrl}/${imagePath}/${mode}.jpg)`,
         };
     }
 
@@ -343,9 +327,11 @@ export class PanelCard extends LitElement implements LovelaceCard {
 
         const rebootDeviceState =
             this.hass?.states['input_button.reboot_devices']?.state;
-        if (this._rebootDeviceState === rebootDeviceState) return;
 
-        this._rebootDeviceState = rebootDeviceState;
+        if (!this._rebootDeviceState)
+            this._rebootDeviceState = rebootDeviceState;
+
+        if (this._rebootDeviceState === rebootDeviceState) return;
 
         window.fully?.clearCache();
 
