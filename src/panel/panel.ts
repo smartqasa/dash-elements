@@ -117,7 +117,6 @@ export class PanelCard extends LitElement implements LovelaceCard {
         }
 
         if (changedProps.has('hass') && this.hass) {
-            this._handleBackgroundChange();
             this._handleRefreshDashboard();
             this._handleRebootDevice();
 
@@ -166,6 +165,7 @@ export class PanelCard extends LitElement implements LovelaceCard {
         super.updated(changedProps);
 
         if (changedProps.has('hass') && this.hass) {
+            this._handleBackgroundChange();
             this._updateContent();
         }
     }
@@ -281,29 +281,22 @@ export class PanelCard extends LitElement implements LovelaceCard {
             this._panelStyle = {
                 backgroundImage: `url(${baseUrl}/${imagePath}/${mode}.jpg)`,
             };
-
             this._themeStyle = style;
         }
 
         if (this._themeMode !== mode) {
             if (window.fully !== undefined && window.fully !== null) {
                 window.fully.turnScreenOff(true);
-
-                setTimeout(() => {
-                    window.fully?.turnScreenOn();
-                }, 500);
+                setTimeout(() => window.fully?.turnScreenOn(), 1000);
             }
-
             this._themeMode = mode;
         }
     }
 
     private _startDashboardTimer(): void {
         clearTimeout(this._dashboardTimer);
-        this._dashboardTimer = setTimeout(
-            () => this._resetDashboard(),
-            5 * 60 * 1000
-        );
+        const delay = 5 * 60 * 1000;
+        this._dashboardTimer = setTimeout(() => this._resetDashboard(), delay);
     }
 
     private _handleRefreshDashboard(): void {
@@ -318,8 +311,8 @@ export class PanelCard extends LitElement implements LovelaceCard {
         if (window.fully) {
             if (!window.fully.isInForeground())
                 window.fully.bringToForeground();
-            setTimeout(() => window.fully?.clearCache(), 1000);
-            setTimeout(() => window.fully?.restartApp(), 1000);
+            setTimeout(() => window.fully?.clearCache(), 500);
+            setTimeout(() => window.fully?.restartApp(), 500);
         } else {
             if (window.browser_mod !== undefined) {
                 window.browser_mod.service('refresh');
