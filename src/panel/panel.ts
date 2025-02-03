@@ -334,6 +334,8 @@ export class PanelCard extends LitElement implements LovelaceCard {
     }
 
     private _handleRebootDevice(): void {
+        if (!window.fully) console.log('window.fully is not available');
+
         if (window.fully === undefined || window.fully === null) return;
 
         const rebootDeviceState =
