@@ -285,6 +285,8 @@ export class PanelCard extends LitElement implements LovelaceCard {
         this._panelStyle = {
             backgroundImage: `url(${baseUrl}/${imagePath}/${mode}.jpg)`,
         };
+
+        this.requestUpdate();
     }
 
     private _startDashboardTimer(): void {
