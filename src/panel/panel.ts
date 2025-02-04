@@ -134,8 +134,6 @@ export class PanelCard extends LitElement implements LovelaceCard {
     protected render(): TemplateResult | typeof nothing {
         if (!this.hass || !this._config || !this._area) return nothing;
 
-        if (this._headerChips === undefined) this._headerChips = [];
-
         return html`
             <div
                 class="panel"
@@ -229,7 +227,7 @@ export class PanelCard extends LitElement implements LovelaceCard {
             (this._config.header_chips?.length ?? 0) > 0
                 ? this._config.header_chips
                 : (window.smartqasa.chipsConfig ?? []);
-        this._headerChips = createElements(chipsConfig, this.hass);
+        this._headerChips = createElements(chipsConfig, this.hass) || [];
     }
 
     protected _updateContent(): void {

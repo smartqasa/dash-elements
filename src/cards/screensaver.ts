@@ -127,14 +127,6 @@ export class ScreenSaver extends LitElement implements LovelaceCard {
         this._config = config;
     }
 
-    protected firstUpdated(changedProps: PropertyValues): void {
-        super.firstUpdated(changedProps);
-
-        this._updateElement();
-        this._startClock();
-        this._cycleElement();
-    }
-
     protected render(): TemplateResult | typeof nothing {
         if (!this._config) return nothing;
 
@@ -167,6 +159,15 @@ export class ScreenSaver extends LitElement implements LovelaceCard {
         `;
     }
 
+    protected firstUpdated(changedProps: PropertyValues): void {
+        super.firstUpdated(changedProps);
+
+        this._cycleScreen();
+        this._updateElement();
+        this._startClock();
+        this._cycleElement();
+    }
+
     public disconnectedCallback(): void {
         super.disconnectedCallback();
         if (this._timeIntervalId !== undefined) {
@@ -174,6 +175,15 @@ export class ScreenSaver extends LitElement implements LovelaceCard {
         }
         if (this._moveTimerId !== undefined) {
             window.clearTimeout(this._moveTimerId);
+        }
+    }
+
+    private _cycleScreen(): void {
+        if (window.fully) {
+            if (!window.fully.isInForeground())
+                window.fully.bringToForeground();
+            setTimeout(() => window.fully?.turnScreenOff(true), 500);
+            setTimeout(() => window.fully?.turnScreenOn(), 500);
         }
     }
 
@@ -200,10 +210,17 @@ export class ScreenSaver extends LitElement implements LovelaceCard {
             setTimeout(() => {
                 element.style.animation = '';
                 setTimeout(() => {
-                    element.style.animation = 'fade-out 1.5s forwards';
+                    element.style.animation = 'fade-out 1s forwards';
+                    if (window.fully) {
+                        setTimeout(
+                            () => window.fully?.turnScreenOff(true),
+                            500
+                        );
+                        window.fully?.turnScreenOn();
+                    }
                     setTimeout(() => {
                         this._moveElement();
-                        element.style.animation = 'fade-in 1.5s forwards';
+                        element.style.animation = 'fade-in 1s forwards';
                         this._cycleElement();
                     }, 1500);
                 }, moveTimer);
