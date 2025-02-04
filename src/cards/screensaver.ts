@@ -162,7 +162,6 @@ export class ScreenSaver extends LitElement implements LovelaceCard {
     protected firstUpdated(changedProps: PropertyValues): void {
         super.firstUpdated(changedProps);
 
-        this._cycleScreen();
         this._updateElement();
         this._startClock();
         this._cycleElement();
@@ -175,15 +174,6 @@ export class ScreenSaver extends LitElement implements LovelaceCard {
         }
         if (this._moveTimerId !== undefined) {
             window.clearTimeout(this._moveTimerId);
-        }
-    }
-
-    private _cycleScreen(): void {
-        if (window.fully) {
-            if (!window.fully.isInForeground())
-                window.fully.bringToForeground();
-            setTimeout(() => window.fully?.turnScreenOff(true), 500);
-            setTimeout(() => window.fully?.turnScreenOn(), 500);
         }
     }
 
@@ -211,7 +201,6 @@ export class ScreenSaver extends LitElement implements LovelaceCard {
                 element.style.animation = '';
                 setTimeout(() => {
                     element.style.animation = 'fade-out 1s forwards';
-                    this._cycleScreen();
                     setTimeout(() => {
                         this._moveElement();
                         element.style.animation = 'fade-in 1s forwards';
