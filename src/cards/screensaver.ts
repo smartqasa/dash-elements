@@ -211,13 +211,7 @@ export class ScreenSaver extends LitElement implements LovelaceCard {
                 element.style.animation = '';
                 setTimeout(() => {
                     element.style.animation = 'fade-out 1s forwards';
-                    if (window.fully) {
-                        setTimeout(
-                            () => window.fully?.turnScreenOff(true),
-                            500
-                        );
-                        window.fully?.turnScreenOn();
-                    }
+                    this._cycleScreen();
                     setTimeout(() => {
                         this._moveElement();
                         element.style.animation = 'fade-in 1s forwards';
