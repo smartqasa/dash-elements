@@ -52,7 +52,7 @@ export class PanelCard extends LitElement implements LovelaceCard {
         return 100;
     }
 
-    @property({ attribute: false }) public hass: HomeAssistant | undefined;
+    @property({ attribute: false }) public hass?: HomeAssistant;
     @state() protected _config?: Config;
     @state() private _refreshDashboardState: String | undefined;
     @state() private _rebootDeviceState: String | undefined;
@@ -119,6 +119,7 @@ export class PanelCard extends LitElement implements LovelaceCard {
         if (changedProps.has('hass') && this.hass) {
             this._handleRefreshDashboard();
             this._handleRebootDevice();
+            this._handleBackgroundChange();
 
             this._isAdminMode =
                 (this.hass.user?.is_admin ?? false) ||
@@ -165,7 +166,6 @@ export class PanelCard extends LitElement implements LovelaceCard {
         super.updated(changedProps);
 
         if (changedProps.has('hass') && this.hass) {
-            this._handleBackgroundChange();
             this._updateContent();
         }
     }
@@ -263,33 +263,26 @@ export class PanelCard extends LitElement implements LovelaceCard {
         this._isLandscape = orientation === 'landscape';
     }
 
-    private async _handleBackgroundChange(): Promise<void> {
+    private _handleBackgroundChange(): void {
         if (!this.hass) return;
 
+        const mode = this.hass.themes.darkMode ? 'dark' : 'light';
         const state =
             this.hass.states['input_select.dashboard_background']?.state;
         const style = state ? state.toLowerCase() : 'default';
-        const mode = this.hass.themes.darkMode ? 'dark' : 'light';
 
-        if (this._themeStyle !== style || this._themeMode !== mode) {
+        if (this._themeMode !== mode || this._themeStyle !== style) {
             const baseUrl = new URL(location.href).origin;
             const imagePath =
                 style === 'custom'
                     ? 'local/smartqasa/custom/backgrounds'
                     : `local/smartqasa/media/backgrounds/${style}`;
-
             this._panelStyle = {
                 backgroundImage: `url(${baseUrl}/${imagePath}/${mode}.jpg)`,
             };
-            this._themeStyle = style;
-        }
 
-        if (this._themeMode !== mode) {
-            if (window.fully !== undefined && window.fully !== null) {
-                window.fully.turnScreenOff(true);
-                setTimeout(() => window.fully?.turnScreenOn(), 1000);
-            }
             this._themeMode = mode;
+            this._themeStyle = style;
         }
     }
 
