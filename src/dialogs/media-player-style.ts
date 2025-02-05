@@ -25,8 +25,15 @@ const playerControlsStyles = `
   }
 `;
 
+const playerCardStyles = `
+  ha-card {
+    min-width: 40rem !important;
+  }
+`;
+
 export const mediaPlayerCardMod = {
     style: {
+        'ha-card': playerCardStyles,
         'mxmp-player$ mxmp-player-header$': playerHeaderStyles,
         'mxmp-player$ mxmp-player-controls$': playerControlsStyles,
     },
