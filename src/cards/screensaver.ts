@@ -175,6 +175,9 @@ export class ScreenSaver extends LitElement implements LovelaceCard {
         if (this._moveTimerId !== undefined) {
             window.clearTimeout(this._moveTimerId);
         }
+
+        const panelCard = document.querySelector('smartqasa-panel-card') as any;
+        if (panelCard) panelCard.requestUpdate();
     }
 
     private _startClock(): void {
