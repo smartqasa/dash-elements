@@ -166,8 +166,6 @@ export class PanelCard extends LitElement implements LovelaceCard {
         if (changedProps.has('hass') && this.hass) {
             this._updateContent();
         }
-
-        this.style.opacity = '1';
     }
 
     public disconnectedCallback(): void {
