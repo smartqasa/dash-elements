@@ -313,7 +313,7 @@ export class PanelCard extends LitElement implements LovelaceCard {
         if (window.fully) {
             if (!window.fully.isInForeground())
                 window.fully.bringToForeground();
-            setTimeout(() => window.fully?.clearCache(), 500);
+            setTimeout(() => window.fully?.clearCache(), 2000);
             setTimeout(() => window.fully?.restartApp(), 2000);
         } else {
             if (window.browser_mod !== undefined) {
@@ -338,7 +338,7 @@ export class PanelCard extends LitElement implements LovelaceCard {
         this._rebootDeviceState = state;
 
         if (!window.fully.isInForeground()) window.fully.bringToForeground();
-        setTimeout(() => window.fully?.clearCache(), 500);
+        setTimeout(() => window.fully?.clearCache(), 2000);
         setTimeout(() => window.fully?.reboot(), 2000);
     }
 
