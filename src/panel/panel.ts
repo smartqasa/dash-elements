@@ -39,11 +39,6 @@ interface Config extends LovelaceCardConfig {
     tiles?: LovelaceCardConfig[];
 }
 
-window.smartqasa.handleScreensaverStop = (): void => {
-    const panelCard = document.querySelector('smartqasa-panel-card') as any;
-    if (panelCard) panelCard.requestUpdate();
-};
-
 window.customCards.push({
     type: 'smartqasa-panel-card',
     name: 'SmartQasa Panel Card',

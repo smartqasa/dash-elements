@@ -5,6 +5,11 @@ window.smartqasa = window.smartqasa || {};
 window.smartqasa.startArea =
     window.smartqasa.startArea || location.pathname.split('/').pop();
 
+window.smartqasa.handleScreensaverStop = (): void => {
+    const panelCard = document.querySelector('smartqasa-panel-card') as any;
+    if (panelCard) panelCard.requestUpdate();
+};
+
 import './panel/panel';
 
 import './cards/areas';
