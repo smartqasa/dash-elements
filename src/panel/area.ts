@@ -10,15 +10,9 @@ export function renderArea(
     isPhone: boolean,
     isLandscape: boolean
 ): TemplateResult {
-    // Check if Fully Kiosk is present and append ' (F)' to the area name
-    const isFullyKiosk = typeof window.fully !== 'undefined';
-    const displayName = isFullyKiosk && name ? `${name} (F)` : name;
-
     return html`
         <div class="area-container">
-            <div class="area-name ${isPhone ? 'overlay' : ''}">
-                ${displayName}
-            </div>
+            <div class="area-name ${isPhone ? 'overlay' : ''}">${name}</div>
             <img
                 class="area-picture"
                 src="/local/smartqasa/custom/pictures/${picture}"
