@@ -39,6 +39,7 @@ declare interface Window {
     };
     customCards: Array<Object>;
     fully?: {
+        bind: (event: string, action: string) => void;
         bringToForeground: () => void;
         clearCache: () => void;
         isInForeground: () => boolean;
@@ -51,6 +52,7 @@ declare interface Window {
     smartqasa: {
         chipsConfig?: any;
         darkModeImage: string;
+        handleScreensaverStop: () => void;
         lightModeImage: string;
         menuConfig?: any;
         menuTab: number;

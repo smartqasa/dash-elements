@@ -39,6 +39,11 @@ interface Config extends LovelaceCardConfig {
     tiles?: LovelaceCardConfig[];
 }
 
+window.smartqasa.handleScreensaverStop = (): void => {
+    const panelCard = document.querySelector('smartqasa-panel-card') as any;
+    if (panelCard) panelCard.requestUpdate();
+};
+
 window.customCards.push({
     type: 'smartqasa-panel-card',
     name: 'SmartQasa Panel Card',
@@ -105,6 +110,13 @@ export class PanelCard extends LitElement implements LovelaceCard {
         window.addEventListener('touchstart', this._boundStartDashboardTimer, {
             passive: true,
         });
+
+        if (window.fully && typeof window.fully.bind === 'function') {
+            window.fully.bind(
+                'onScreensaverStop',
+                'window.smartqasa.handleScreensaverStop()'
+            );
+        }
 
         this._startDashboardTimer();
     }
@@ -184,6 +196,10 @@ export class PanelCard extends LitElement implements LovelaceCard {
             'touchstart',
             this._boundStartDashboardTimer
         );
+
+        if (window.fully && typeof window.fully.bind === 'function') {
+            window.fully.bind('onScreensaverStop', '');
+        }
 
         if (this._dashboardTimer) {
             clearTimeout(this._dashboardTimer);
