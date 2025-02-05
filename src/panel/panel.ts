@@ -106,13 +106,6 @@ export class PanelCard extends LitElement implements LovelaceCard {
             passive: true,
         });
 
-        if (window.fully && typeof window.fully.bind === 'function') {
-            window.fully.bind(
-                'onScreensaverStop',
-                'window.smartqasa.handleScreensaverStop()'
-            );
-        }
-
         this._startDashboardTimer();
     }
 
@@ -124,8 +117,8 @@ export class PanelCard extends LitElement implements LovelaceCard {
         }
 
         if (changedProps.has('hass') && this.hass) {
-            this._handleRefreshDashboard();
             this._handleRebootDevice();
+            this._handleRefreshDashboard();
             this._handleBackgroundChange();
 
             this._isAdminMode =
@@ -173,6 +166,8 @@ export class PanelCard extends LitElement implements LovelaceCard {
         if (changedProps.has('hass') && this.hass) {
             this._updateContent();
         }
+
+        this.style.opacity = '1';
     }
 
     public disconnectedCallback(): void {
@@ -191,10 +186,6 @@ export class PanelCard extends LitElement implements LovelaceCard {
             'touchstart',
             this._boundStartDashboardTimer
         );
-
-        if (window.fully && typeof window.fully.bind === 'function') {
-            window.fully.bind('onScreensaverStop', '');
-        }
 
         if (this._dashboardTimer) {
             clearTimeout(this._dashboardTimer);
@@ -280,19 +271,19 @@ export class PanelCard extends LitElement implements LovelaceCard {
             this.hass.states['input_select.dashboard_background']?.state;
         const style = state ? state.toLowerCase() : 'default';
 
-        if (this._themeMode !== mode || this._themeStyle !== style) {
-            const baseUrl = new URL(location.href).origin;
-            const imagePath =
-                style === 'custom'
-                    ? 'local/smartqasa/custom/backgrounds'
-                    : `local/smartqasa/media/backgrounds/${style}`;
-            this._panelStyle = {
-                backgroundImage: `url(${baseUrl}/${imagePath}/${mode}.jpg)`,
-            };
+        if (this._themeMode === mode && this._themeStyle === style) return;
 
-            this._themeMode = mode;
-            this._themeStyle = style;
-        }
+        const baseUrl = new URL(location.href).origin;
+        const imagePath =
+            style === 'custom'
+                ? 'local/smartqasa/custom/backgrounds'
+                : `local/smartqasa/media/backgrounds/${style}`;
+        this._panelStyle = {
+            backgroundImage: `url(${baseUrl}/${imagePath}/${mode}.jpg)`,
+        };
+
+        this._themeMode = mode;
+        this._themeStyle = style;
     }
 
     private _startDashboardTimer(): void {
@@ -313,8 +304,8 @@ export class PanelCard extends LitElement implements LovelaceCard {
         if (window.fully) {
             if (!window.fully.isInForeground())
                 window.fully.bringToForeground();
-            setTimeout(() => window.fully?.clearCache(), 2000);
-            setTimeout(() => window.fully?.restartApp(), 2000);
+            setTimeout(() => window.fully?.clearCache(), 500);
+            setTimeout(() => window.fully?.restartApp(), 1000);
         } else {
             if (window.browser_mod !== undefined) {
                 window.browser_mod.service('refresh');
