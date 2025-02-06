@@ -180,6 +180,7 @@ export class ScreenSaver extends LitElement implements LovelaceCard {
         if (panelCard) {
             panelCard.style.opacity = '1';
             panelCard.requestUpdate();
+            console.log('Panel card opacity reset.');
         }
     }
 
