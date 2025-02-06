@@ -71,7 +71,7 @@ export class PanelCard extends LitElement implements LovelaceCard {
     private _dashboardTimer: ReturnType<typeof setTimeout> | undefined;
     private _themeStyle: string | undefined;
     private _themeMode: string | undefined;
-    private _panelStyle: Record<string, string> = {};
+    private _backgroundImage: string | undefined;
     private _headerChips?: LovelaceCard[];
     private _area: string | undefined;
     private _areaObj: HassArea | undefined;
@@ -117,9 +117,9 @@ export class PanelCard extends LitElement implements LovelaceCard {
         }
 
         if (changedProps.has('hass') && this.hass) {
+            this._handleBackgroundChange();
             this._handleRebootDevice();
             this._handleRefreshDashboard();
-            this._handleBackgroundChange();
 
             this._isAdminMode =
                 (this.hass.user?.is_admin ?? false) ||
@@ -134,10 +134,15 @@ export class PanelCard extends LitElement implements LovelaceCard {
     protected render(): TemplateResult | typeof nothing {
         if (!this.hass || !this._config || !this._area) return nothing;
 
+        const panelStyle = {
+            opacity: 1,
+            backgroundImage: this._backgroundImage || 'none',
+        };
+
         return html`
             <div
                 class="panel"
-                style=${styleMap(this._panelStyle)}
+                style=${styleMap(panelStyle)}
                 ?admin=${this._isAdminMode}
             >
                 ${this._isTablet
@@ -265,9 +270,10 @@ export class PanelCard extends LitElement implements LovelaceCard {
         if (!this.hass) return;
 
         const mode = this.hass.themes.darkMode ? 'dark' : 'light';
-        const state =
-            this.hass.states['input_select.dashboard_background']?.state;
-        const style = state ? state.toLowerCase() : 'default';
+        const style =
+            this.hass.states[
+                'input_select.dashboard_background'
+            ]?.state?.toLowerCase() || 'default';
 
         if (this._themeMode === mode && this._themeStyle === style) return;
 
@@ -276,9 +282,8 @@ export class PanelCard extends LitElement implements LovelaceCard {
             style === 'custom'
                 ? 'local/smartqasa/custom/backgrounds'
                 : `local/smartqasa/media/backgrounds/${style}`;
-        this._panelStyle = {
-            backgroundImage: `url(${baseUrl}/${imagePath}/${mode}.jpg)`,
-        };
+
+        this._backgroundImage = `url(${baseUrl}/${imagePath}/${mode}.jpg)`;
 
         this._themeMode = mode;
         this._themeStyle = style;
@@ -327,8 +332,8 @@ export class PanelCard extends LitElement implements LovelaceCard {
         this._rebootDeviceState = state;
 
         if (!window.fully.isInForeground()) window.fully.bringToForeground();
-        setTimeout(() => window.fully?.clearCache(), 2000);
-        setTimeout(() => window.fully?.reboot(), 2000);
+        setTimeout(() => window.fully?.clearCache(), 500);
+        setTimeout(() => window.fully?.reboot(), 1000);
     }
 
     private _resetDashboard(): void {
