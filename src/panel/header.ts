@@ -1,9 +1,6 @@
-import { LovelaceCard } from '../types';
 import { html, TemplateResult } from 'lit';
-import {
-    formattedTimeBlink,
-    formattedDate,
-} from '../utilities/format-date-time';
+import { LovelaceCard } from '../types';
+import { formattedTime2, formattedDate } from '../utilities/format-date-time';
 import { launchApp } from '../utilities/launch-app';
 
 function launchClock(e: Event): void {
@@ -17,7 +14,7 @@ export function renderHeader(headerChips?: LovelaceCard[]): TemplateResult {
     return html`
         <div class="header-container">
             <div class="header-time-date" @click="${launchClock}">
-                <div class="time">${formattedTimeBlink()}</div>
+                <div class="time">${formattedTime2()}</div>
                 <div class="date">${formattedDate()}</div>
             </div>
             <div class="header-chips">
