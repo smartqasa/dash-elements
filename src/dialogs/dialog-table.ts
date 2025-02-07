@@ -326,6 +326,7 @@ export const dialogTable: DialogTable = {
                     'grouping',
                     'volumes',
                 ],
+                widthPercentage: 100,
                 entityPlatform: 'sonos',
                 artworkAsBackground: false,
                 showVolumeUpAndDownButtons: true,
