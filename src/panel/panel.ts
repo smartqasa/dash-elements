@@ -24,10 +24,7 @@ import { renderArea } from './area';
 import { loadControlTiles, renderControls } from './control';
 import { renderFooter } from './footer';
 import { navigateToArea } from '../utilities/navigate-to-area';
-import {
-    handleDeviceRefresh,
-    handleDeviceReboot,
-} from '../utilities/device-actions';
+import { deviceRefresh, deviceReboot } from '../utilities/device-actions';
 
 import panelStyles from '../css/panel.css';
 
@@ -174,12 +171,12 @@ export class PanelCard extends LitElement implements LovelaceCard {
         super.updated(changedProps);
 
         if (changedProps.has('hass') && this.hass) {
-            this._deviceRefreshState = handleDeviceRefresh(
+            this._deviceRefreshState = deviceRefresh(
                 this.hass,
                 this._deviceRefreshState
             );
 
-            this._deviceRebootState = handleDeviceReboot(
+            this._deviceRebootState = deviceReboot(
                 this.hass,
                 this._deviceRebootState
             );

@@ -10,10 +10,7 @@ import {
 import { customElement, property, state } from 'lit/decorators.js';
 import { HomeAssistant, LovelaceCard, LovelaceCardConfig } from '../types';
 import { formattedDate, formattedTime } from '../utilities/format-date-time';
-import {
-    handleDeviceRefresh,
-    handleDeviceReboot,
-} from '../utilities/device-actions';
+import { deviceRefresh, deviceReboot } from '../utilities/device-actions';
 import logoImage from '../assets/images/logo.png';
 
 interface Config extends LovelaceCardConfig {
@@ -178,12 +175,12 @@ export class ScreenSaver extends LitElement implements LovelaceCard {
         super.updated(changedProps);
 
         if (changedProps.has('hass') && this.hass) {
-            this._deviceRefreshState = handleDeviceRefresh(
+            this._deviceRefreshState = deviceRefresh(
                 this.hass,
                 this._deviceRefreshState
             );
 
-            this._deviceRebootState = handleDeviceReboot(
+            this._deviceRebootState = deviceReboot(
                 this.hass,
                 this._deviceRebootState
             );

@@ -6,12 +6,11 @@ function executeFullyAction(action: 'restartApp' | 'reboot'): void {
     if (!window.fully.isInForeground()) {
         window.fully.bringToForeground();
     }
-
     setTimeout(() => window.fully?.clearCache(), 500);
     setTimeout(() => window.fully?.[action](), 1000);
 }
 
-export const handleDeviceRefresh = (
+export const deviceRefresh = (
     hass: HomeAssistant,
     deviceRefreshState: string | undefined
 ): string => {
@@ -29,7 +28,7 @@ export const handleDeviceRefresh = (
     return state;
 };
 
-export const handleDeviceReboot = (
+export const deviceReboot = (
     hass: HomeAssistant,
     deviceRebootState: string | undefined
 ): string => {
