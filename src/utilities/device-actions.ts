@@ -15,7 +15,7 @@ export const handleDeviceRefresh = (
     hass: HomeAssistant,
     deviceRefreshState: string | undefined
 ): string => {
-    const state = hass.states['input_button.reboot_devices']?.state;
+    const state = hass.states['input_button.refresh_devices']?.state;
     if (deviceRefreshState === undefined || deviceRefreshState === state) {
         return state;
     }
@@ -33,7 +33,7 @@ export const handleDeviceReboot = (
     hass: HomeAssistant,
     deviceRebootState: string | undefined
 ): string => {
-    const state = hass.states['input_button.refresh_devices']?.state;
+    const state = hass.states['input_button.reboot_devices']?.state;
     if (deviceRebootState === undefined || deviceRebootState === state) {
         return state;
     }
