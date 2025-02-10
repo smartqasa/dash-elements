@@ -24,7 +24,10 @@ import { renderArea } from './area';
 import { loadControlTiles, renderControls } from './control';
 import { renderFooter } from './footer';
 import { navigateToArea } from '../utilities/navigate-to-area';
-import { executeFullyAction } from '../utilities/fully-action';
+import {
+    handleDeviceRefresh,
+    handleDeviceReboot,
+} from '../utilities/device-actions';
 
 import panelStyles from '../css/panel.css';
 
@@ -71,8 +74,8 @@ export class PanelCard extends LitElement implements LovelaceCard {
     private _dashboardTimer: ReturnType<typeof setTimeout> | undefined;
     private _themeStyle: string | undefined;
     private _themeMode: string | undefined;
-    private _refreshDashboardState: String | undefined;
-    private _rebootDeviceState: String | undefined;
+    private _deviceRefreshState: string | undefined;
+    private _deviceRebootState: string | undefined;
     private _backgroundImage: string | undefined;
     private _headerChips?: LovelaceCard[];
     private _area: string | undefined;
@@ -171,8 +174,16 @@ export class PanelCard extends LitElement implements LovelaceCard {
         super.updated(changedProps);
 
         if (changedProps.has('hass') && this.hass) {
-            this._handleRebootDevice();
-            this._handleRefreshDashboard();
+            this._deviceRefreshState = handleDeviceRefresh(
+                this.hass,
+                this._deviceRefreshState
+            );
+
+            this._deviceRebootState = handleDeviceReboot(
+                this.hass,
+                this._deviceRebootState
+            );
+
             this._updateContent();
         }
     }
@@ -293,6 +304,7 @@ export class PanelCard extends LitElement implements LovelaceCard {
         this._dashboardTimer = setTimeout(() => this._resetDashboard(), delay);
     }
 
+    /*
     private _handleRefreshDashboard(): void {
         const state =
             this.hass?.states['input_button.refresh_dashboards']?.state;
@@ -326,7 +338,8 @@ export class PanelCard extends LitElement implements LovelaceCard {
 
         this._rebootDeviceState = state;
         executeFullyAction('reboot');
-    }
+    } 
+    */
 
     private _resetDashboard(): void {
         this._startDashboardTimer();
