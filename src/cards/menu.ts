@@ -221,12 +221,25 @@ export class MenuCard extends LitElement implements LovelaceCard {
                 {
                     type: 'custom:smartqasa-action-tile',
                     icon: 'mdi:refresh',
-                    name: 'Refresh Dashboards',
+                    name: 'Refresh Devices',
                     actions: [
                         {
                             action: 'input_button.press',
                             data: {
-                                entity_id: 'input_button.refresh_dashboards',
+                                entity_id: 'input_button.refresh_devices',
+                            },
+                        },
+                    ],
+                },
+                {
+                    type: 'custom:smartqasa-action-tile',
+                    icon: 'mdi:restart',
+                    name: 'Reboot Devices',
+                    actions: [
+                        {
+                            action: 'input_button.press',
+                            data: {
+                                entity_id: 'input_button.reboot_devices',
                             },
                         },
                     ],
@@ -234,7 +247,7 @@ export class MenuCard extends LitElement implements LovelaceCard {
                 {
                     type: 'custom:smartqasa-action-tile',
                     icon: 'mdi:wiper',
-                    name: 'Clear Cache',
+                    name: 'Clear Cache (this device)',
                     actions: [
                         {
                             action: 'browser_mod.javascript',
