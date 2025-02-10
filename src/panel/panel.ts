@@ -293,14 +293,15 @@ export class PanelCard extends LitElement implements LovelaceCard {
     }
 
     private _handleRefreshDashboard(): void {
-        if (!this.hass) return;
-
         const state =
-            this.hass.states['input_button.refresh_dashboards']?.state;
+            this.hass?.states['input_button.refresh_dashboards']?.state;
+
         if (!this._refreshDashboardState) {
             this._refreshDashboardState = state;
             return;
         }
+
+        if (this._refreshDashboardState === state) return;
 
         this._refreshDashboardState = state;
 
