@@ -6,6 +6,7 @@ window.smartqasa.startArea =
     window.smartqasa.startArea || location.pathname.split('/').pop();
 
 import './panel/panel';
+import './panel/screensaver';
 
 import './cards/areas';
 import './cards/clean';
@@ -16,7 +17,6 @@ import './cards/light-grid';
 import './cards/menu';
 import './cards/more-info';
 import './cards/pin-verify';
-import './cards/screensaver';
 import './cards/vertical-stack';
 import './cards/tv-remote';
 import './cards/weather';

@@ -24,6 +24,7 @@ import { renderArea } from './area';
 import { loadControlTiles, renderControls } from './control';
 import { renderFooter } from './footer';
 import { navigateToArea } from '../utilities/navigate-to-area';
+import { executeFullyAction } from '../utilities/fully-action';
 
 import panelStyles from '../css/panel.css';
 
@@ -94,7 +95,9 @@ export class PanelCard extends LitElement implements LovelaceCard {
         super.connectedCallback();
 
         this._timeIntervalId = setInterval(() => {
-            this.requestUpdate();
+            if (document.visibilityState === 'visible') {
+                this.requestUpdate();
+            }
         }, 1000);
 
         window.addEventListener('resize', this._boundHandleDeviceChanges);
@@ -118,8 +121,6 @@ export class PanelCard extends LitElement implements LovelaceCard {
 
         if (changedProps.has('hass') && this.hass) {
             this._handleBackgroundChange();
-            this._handleRebootDevice();
-            this._handleRefreshDashboard();
 
             this._isAdminMode =
                 (this.hass.user?.is_admin ?? false) ||
@@ -169,6 +170,8 @@ export class PanelCard extends LitElement implements LovelaceCard {
         super.updated(changedProps);
 
         if (changedProps.has('hass') && this.hass) {
+            this._handleRebootDevice();
+            this._handleRefreshDashboard();
             this._updateContent();
         }
     }
@@ -178,6 +181,12 @@ export class PanelCard extends LitElement implements LovelaceCard {
 
         if (this._timeIntervalId) {
             clearInterval(this._timeIntervalId);
+            this._timeIntervalId = undefined;
+        }
+
+        if (this._dashboardTimer) {
+            clearTimeout(this._dashboardTimer);
+            this._dashboardTimer = undefined;
         }
 
         window.removeEventListener('resize', this._boundHandleDeviceChanges);
@@ -189,10 +198,6 @@ export class PanelCard extends LitElement implements LovelaceCard {
             'touchstart',
             this._boundStartDashboardTimer
         );
-
-        if (this._dashboardTimer) {
-            clearTimeout(this._dashboardTimer);
-        }
     }
 
     private _loadContent(): void {
@@ -228,40 +233,32 @@ export class PanelCard extends LitElement implements LovelaceCard {
                 await loadYamlAsJson<LovelaceCardConfig[]>(yamlFilePath);
             window.smartqasa.chipsConfig = chipsConfig;
         }
-        const chipsConfig =
-            (this._config.header_chips?.length ?? 0) > 0
-                ? this._config.header_chips
-                : (window.smartqasa.chipsConfig ?? []);
+        const chipsConfig = this._config.header_chips?.length
+            ? this._config.header_chips
+            : (window.smartqasa.chipsConfig ?? []);
         this._headerChips = createElements(chipsConfig, this.hass) || [];
     }
 
     protected _updateContent(): void {
         requestAnimationFrame(() => {
             const updateHassForCards = (cards: LovelaceCard[]) => {
-                cards.forEach((card) => {
+                for (const card of cards) {
                     if (card.hass !== this.hass) card.hass = this.hass;
-                });
+                }
             };
 
-            if (this._headerChips && this._headerChips.length > 0)
-                updateHassForCards(this._headerChips);
-
-            if (this._areaChips.length > 0) updateHassForCards(this._areaChips);
-
-            if (this._controlTiles.length > 0) {
-                this._controlTiles.forEach((page) => {
-                    updateHassForCards(page);
-                });
-            }
+            [this._headerChips, this._areaChips, ...this._controlTiles].forEach(
+                (group) => group?.length && updateHassForCards(group)
+            );
         });
     }
 
     private _handleDeviceChanges(): void {
-        const type = getDeviceType();
+        const type = getDeviceType() ?? 'desktop';
         this._isPhone = type === 'phone';
         this._isTablet = type === 'tablet';
 
-        const orientation = getDeviceOrientation();
+        const orientation = getDeviceOrientation() ?? 'landscape';
         this._isPortrait = orientation === 'portrait';
         this._isLandscape = orientation === 'landscape';
     }
@@ -296,21 +293,21 @@ export class PanelCard extends LitElement implements LovelaceCard {
     }
 
     private _handleRefreshDashboard(): void {
-        const refreshDashboardState =
-            this.hass?.states['input_button.refresh_dashboards']?.state;
+        if (!this.hass) return;
 
-        if (!this._refreshDashboardState)
-            this._refreshDashboardState = refreshDashboardState;
+        const state =
+            this.hass.states['input_button.refresh_dashboards']?.state;
+        if (!this._refreshDashboardState) {
+            this._refreshDashboardState = state;
+            return;
+        }
 
-        if (this._refreshDashboardState === refreshDashboardState) return;
+        this._refreshDashboardState = state;
 
         if (window.fully) {
-            if (!window.fully.isInForeground())
-                window.fully.bringToForeground();
-            setTimeout(() => window.fully?.clearCache(), 500);
-            setTimeout(() => window.fully?.restartApp(), 1000);
+            executeFullyAction('restartApp');
         } else {
-            if (window.browser_mod !== undefined) {
+            if (window.browser_mod) {
                 window.browser_mod.service('refresh');
             }
         }
@@ -320,20 +317,15 @@ export class PanelCard extends LitElement implements LovelaceCard {
         if (!window.fully || !this.hass) return;
 
         const state = this.hass.states['input_button.reboot_devices']?.state;
-
-        if (
-            this._rebootDeviceState === undefined ||
-            this._rebootDeviceState === state
-        ) {
+        if (!this._rebootDeviceState) {
             this._rebootDeviceState = state;
             return;
         }
 
-        this._rebootDeviceState = state;
+        if (this._rebootDeviceState === state) return;
 
-        if (!window.fully.isInForeground()) window.fully.bringToForeground();
-        setTimeout(() => window.fully?.clearCache(), 500);
-        setTimeout(() => window.fully?.reboot(), 1000);
+        this._rebootDeviceState = state;
+        executeFullyAction('reboot');
     }
 
     private _resetDashboard(): void {
@@ -342,13 +334,11 @@ export class PanelCard extends LitElement implements LovelaceCard {
         const swiperContainer = this.shadowRoot?.querySelector(
             'swiper-container'
         ) as any;
+        if (!swiperContainer?.swiper) return;
 
-        if (swiperContainer && swiperContainer.swiper) {
-            const currentPage = swiperContainer.swiper.activeIndex;
-            if (currentPage !== 0) {
-                swiperContainer.swiper.slideTo(0);
-                return;
-            }
+        if (swiperContainer.swiper.activeIndex !== 0) {
+            swiperContainer.swiper.slideTo(0);
+            return;
         }
 
         const area = location.pathname.split('/').pop();

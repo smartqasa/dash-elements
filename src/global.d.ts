@@ -46,6 +46,7 @@ declare interface Window {
         reboot: () => void;
         restartApp: () => void;
         startApplication: (packageName: string) => void;
+        stopScreensaver: () => void;
         turnScreenOff: (keepAlive: boolean) => void;
         turnScreenOn: () => void;
     };
