@@ -55,8 +55,7 @@ export class PanelCard extends LitElement implements LovelaceCard {
 
     @property({ attribute: false }) public hass?: HomeAssistant;
     @state() protected _config?: Config;
-    @state() private _refreshDashboardState: String | undefined;
-    @state() private _rebootDeviceState: String | undefined;
+
     @state() private _isAdminMode = false;
     @state() private _isPhone: boolean = getDeviceType() === 'phone';
     @state() private _isTablet: boolean = getDeviceType() === 'tablet';
@@ -72,6 +71,8 @@ export class PanelCard extends LitElement implements LovelaceCard {
     private _dashboardTimer: ReturnType<typeof setTimeout> | undefined;
     private _themeStyle: string | undefined;
     private _themeMode: string | undefined;
+    private _refreshDashboardState: String | undefined;
+    private _rebootDeviceState: String | undefined;
     private _backgroundImage: string | undefined;
     private _headerChips?: LovelaceCard[];
     private _area: string | undefined;
@@ -296,7 +297,7 @@ export class PanelCard extends LitElement implements LovelaceCard {
         const state =
             this.hass?.states['input_button.refresh_dashboards']?.state;
 
-        if (!this._refreshDashboardState) {
+        if (this._refreshDashboardState === undefined) {
             this._refreshDashboardState = state;
             return;
         }
@@ -308,9 +309,7 @@ export class PanelCard extends LitElement implements LovelaceCard {
         if (window.fully) {
             executeFullyAction('restartApp');
         } else {
-            if (window.browser_mod) {
-                window.browser_mod.service('refresh');
-            }
+            window.browser_mod?.service('refresh');
         }
     }
 
@@ -318,7 +317,7 @@ export class PanelCard extends LitElement implements LovelaceCard {
         if (!window.fully || !this.hass) return;
 
         const state = this.hass.states['input_button.reboot_devices']?.state;
-        if (!this._rebootDeviceState) {
+        if (this._rebootDeviceState === undefined) {
             this._rebootDeviceState = state;
             return;
         }
@@ -335,9 +334,8 @@ export class PanelCard extends LitElement implements LovelaceCard {
         const swiperContainer = this.shadowRoot?.querySelector(
             'swiper-container'
         ) as any;
-        if (!swiperContainer?.swiper) return;
 
-        if (swiperContainer.swiper.activeIndex !== 0) {
+        if (swiperContainer?.swiper?.activeIndex !== 0) {
             swiperContainer.swiper.slideTo(0);
             return;
         }
