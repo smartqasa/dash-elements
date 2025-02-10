@@ -10,7 +10,10 @@ import {
 import { customElement, property, state } from 'lit/decorators.js';
 import { HomeAssistant, LovelaceCard, LovelaceCardConfig } from '../types';
 import { formattedDate, formattedTime } from '../utilities/format-date-time';
-import { executeFullyAction } from '../utilities/fully-action';
+import {
+    handleDeviceRefresh,
+    handleDeviceReboot,
+} from '../utilities/device-actions';
 import logoImage from '../assets/images/logo.png';
 
 interface Config extends LovelaceCardConfig {
@@ -39,8 +42,8 @@ export class ScreenSaver extends LitElement implements LovelaceCard {
 
     private _moveTimerId: number | undefined;
     private _timeIntervalId: number | undefined;
-    private _refreshDashboardState: String | undefined;
-    private _rebootDeviceState: String | undefined;
+    private _deviceRefreshState: string | undefined;
+    private _deviceRebootState: string | undefined;
 
     static get styles(): CSSResultGroup {
         return css`
@@ -175,8 +178,15 @@ export class ScreenSaver extends LitElement implements LovelaceCard {
         super.updated(changedProps);
 
         if (changedProps.has('hass') && this.hass) {
-            this._handleRebootDevice();
-            this._handleRefreshDashboard();
+            this._deviceRefreshState = handleDeviceRefresh(
+                this.hass,
+                this._deviceRefreshState
+            );
+
+            this._deviceRebootState = handleDeviceReboot(
+                this.hass,
+                this._deviceRebootState
+            );
         }
     }
 
@@ -252,40 +262,5 @@ export class ScreenSaver extends LitElement implements LovelaceCard {
 
     private _handleImageError(): void {
         console.error('Failed to load image.');
-    }
-
-    private _handleRefreshDashboard(): void {
-        const state =
-            this.hass?.states['input_button.refresh_dashboards']?.state;
-
-        if (!this._refreshDashboardState === undefined) {
-            this._refreshDashboardState = state;
-            return;
-        }
-
-        if (this._refreshDashboardState === state) return;
-
-        this._refreshDashboardState = state;
-
-        if (window.fully) {
-            executeFullyAction('restartApp');
-        } else {
-            window.browser_mod?.service('refresh');
-        }
-    }
-
-    private _handleRebootDevice(): void {
-        if (!window.fully) return;
-
-        const state = this.hass?.states['input_button.reboot_devices']?.state;
-        if (this._rebootDeviceState === undefined) {
-            this._rebootDeviceState = state;
-            return;
-        }
-
-        if (this._rebootDeviceState === state) return;
-
-        this._rebootDeviceState = state;
-        executeFullyAction('reboot');
     }
 }
