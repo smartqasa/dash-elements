@@ -22,8 +22,7 @@ import chipBaseStyle from '../css/chip-base.css';
 import chipTextStyle from '../css/chip-text.css';
 
 interface Config extends LovelaceCardConfig {
-    entity: string;
-    automation?: string;
+    automation: string;
     sensor?: string;
     name?: string;
 }
@@ -58,7 +57,7 @@ export class MotionChip extends LitElement implements LovelaceCard {
     }
 
     public setConfig(config: Config): void {
-        if (!config.entity?.startsWith('automation.')) {
+        if (!config.automation?.startsWith('automation.')) {
             console.error('A valid automation entity must be provided.');
             this._config = undefined;
             return;
@@ -70,7 +69,7 @@ export class MotionChip extends LitElement implements LovelaceCard {
         }
 
         this._config = config;
-        this._automation = config.automation || config.entity;
+        this._automation = config.automation;
         this._sensor = config.sensor;
     }
 
