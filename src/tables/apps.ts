@@ -47,6 +47,7 @@ import uberIcon from '../assets/app_icons/uber.webp';
 import uberEatsIcon from '../assets/app_icons/uber_eats.webp';
 import weatherChannelIcon from '../assets/app_icons/weather_channel.webp';
 import weatherUndergroundIcon from '../assets/app_icons/weather_underground.webp';
+import yukaIcon from '../assets/app_icons/yuka.webp';
 import yummlyIcon from '../assets/app_icons/yummly.webp';
 
 interface AppTable {
@@ -401,6 +402,13 @@ export const appTable: AppTable = {
         app_icon: weatherUndergroundIcon,
         launcher: 'package',
         package: 'com.wunderground.android.weather',
+        uri_scheme: '',
+    },
+    yuka: {
+        name: 'Yuka',
+        app_icon: yukaIcon,
+        launcher: 'package',
+        package: 'io.yuka.android',
         uri_scheme: '',
     },
     yummly: {
