@@ -113,6 +113,13 @@ export class MotionChip extends LitElement implements LovelaceCard {
     }
 
     private _updateState(): void {
+        this._automationObj = this._automation
+            ? this.hass?.states[this._automation]
+            : undefined;
+        this._sensorObj = this._sensor
+            ? this.hass?.states[this._sensor]
+            : undefined;
+
         const { icon, iconColor } = this._getIconAndColor();
         this._icon = icon;
         this._name = this._config?.name || '';
