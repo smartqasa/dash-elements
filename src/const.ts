@@ -22,6 +22,7 @@ export const modeIcons: Record<string, string> = {
     Entertain: 'hass:glass-cocktail',
     Guest: 'hass:account-multiple',
     Home: 'hass:home-account',
+    Private: 'hass:party-popper',
     Regular: 'hass:calendar-check',
     Special: 'hass:calendar-star',
     Vacation: 'hass:airplane',
@@ -29,10 +30,11 @@ export const modeIcons: Record<string, string> = {
 };
 
 export const phaseIcons: Record<string, string> = {
-    Preparation: 'hass:weather-sunset-up',
+    Prep: 'hass:silverware-clean',
     Morning: 'hass:weather-sunset-up',
     Day: 'hass:white-balance-sunny',
     Evening: 'hass:weather-night',
+    Clean: 'hass:broom',
     Night: 'hass:sleep',
     Closed: 'hass:sleep',
     default: 'hass:help-rhombus',
