@@ -64,8 +64,6 @@ export class WeatherCard extends LitElement implements LovelaceCard {
     }
 
     protected willUpdate(changedProps: PropertyValues): void {
-        super.willUpdate(changedProps);
-
         if (!this._entity) return;
 
         if (changedProps.has('hass') && this.hass) {

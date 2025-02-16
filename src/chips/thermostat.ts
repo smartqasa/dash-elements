@@ -63,17 +63,20 @@ export class ThermostatChip extends LitElement implements LovelaceCard {
     }
 
     protected shouldUpdate(changedProps: PropertyValues): boolean {
-        if (!this._config) return false;
-        return !!(
-            (changedProps.has('hass') &&
-                this._entity &&
-                this.hass?.states[this._entity] !== this._stateObj) ||
-            changedProps.has('_config')
-        );
+        if (changedProps.has('_config')) return true;
+
+        if (changedProps.has('hass')) {
+            const newState = this._entity
+                ? this.hass?.states[this._entity]
+                : undefined;
+
+            return newState !== this._stateObj;
+        }
+
+        return false;
     }
 
     protected willUpdate(changedProps: PropertyValues): void {
-        super.willUpdate(changedProps);
         this._updateState();
     }
 

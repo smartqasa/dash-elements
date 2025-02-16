@@ -73,6 +73,30 @@ export class MotionChip extends LitElement implements LovelaceCard {
         this._sensor = config.sensor;
     }
 
+    protected shouldUpdate(changedProps: PropertyValues): boolean {
+        if (changedProps.has('_config')) return true;
+
+        if (changedProps.has('hass')) {
+            const newAutomationState = this._automation
+                ? this.hass?.states[this._automation]
+                : undefined;
+            const newSensorState = this._sensor
+                ? this.hass?.states[this._sensor]
+                : undefined;
+
+            return (
+                newAutomationState !== this._automationObj ||
+                newSensorState !== this._sensorObj
+            );
+        }
+
+        return false;
+    }
+
+    protected willUpdate(changedProps: PropertyValues): void {
+        this._updateState();
+    }
+
     protected render(): TemplateResult | typeof nothing {
         if (!this._config || !this.hass) return nothing;
 
@@ -86,29 +110,6 @@ export class MotionChip extends LitElement implements LovelaceCard {
                     : null}
             </div>
         `;
-    }
-
-    protected updated(changedProps: PropertyValues): void {
-        super.updated(changedProps);
-        if (!this._config || !this.hass) return;
-
-        if (changedProps.has('_config')) {
-            this._updateState();
-        }
-
-        if (changedProps.has('hass')) {
-            const newAutomationObj = this.hass.states[this._automation ?? ''];
-            const newSensorObj = this.hass.states[this._sensor ?? ''];
-
-            if (
-                newAutomationObj?.state !== this._automationObj?.state ||
-                newSensorObj?.state !== this._sensorObj?.state
-            ) {
-                this._automationObj = newAutomationObj;
-                this._sensorObj = newSensorObj;
-                this._updateState();
-            }
-        }
     }
 
     private _updateState(): void {

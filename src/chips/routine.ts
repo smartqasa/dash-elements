@@ -45,6 +45,7 @@ export class RoutineChip extends LitElement implements LovelaceCard {
     @property({ attribute: false }) public hass?: HomeAssistant;
     @state() protected _config?: Config;
     @state() private _running: boolean = false;
+
     private _entity?: string;
     private _stateObj?: HassEntity;
     private _icon: string = 'hass:play-circle';
@@ -65,16 +66,20 @@ export class RoutineChip extends LitElement implements LovelaceCard {
     }
 
     protected shouldUpdate(changedProps: PropertyValues): boolean {
-        return !!(
-            (changedProps.has('hass') &&
-                this._entity &&
-                this.hass?.states[this._entity] !== this._stateObj) ||
-            (changedProps.has('_config') && this._config)
-        );
+        if (changedProps.has('_config')) return true;
+
+        if (changedProps.has('hass')) {
+            const newState = this._entity
+                ? this.hass?.states[this._entity]
+                : undefined;
+
+            return newState !== this._stateObj;
+        }
+
+        return false;
     }
 
     protected willUpdate(changedProps: PropertyValues): void {
-        super.willUpdate(changedProps);
         this._updateState();
     }
 

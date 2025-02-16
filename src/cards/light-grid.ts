@@ -84,16 +84,6 @@ export class LightGridCard extends LitElement implements LovelaceCard {
         this._config = config;
     }
 
-    protected willUpdate(changedProps: PropertyValues) {
-        super.willUpdate(changedProps);
-
-        if (!this.hass) return;
-
-        if (changedProps.has('_config')) {
-            this.requestUpdate();
-        }
-    }
-
     protected render(): TemplateResult | typeof nothing {
         if (!this._config || !this.hass) return nothing;
 
