@@ -45,18 +45,18 @@ window.customCards.push({
 @customElement('smartqasa-light-tile')
 export class LightTile extends LitElement implements LovelaceCard {
     public getCardSize(): number | Promise<number> {
-        return 2;
+        return 1;
     }
 
     @property({ attribute: false }) public hass?: HomeAssistant;
     @state() protected _config?: Config;
-    @state() private _iconStyles: Record<string, string> = {};
-    @state() private _name: string = 'Unknown Light';
-    @state() private _stateFmtd: string = 'Unknown State';
 
     private _entity?: string;
-    private _icon: string = 'hass:lightbulb-alert';
     private _stateObj?: HassEntity;
+    private _icon: string = 'hass:lightbulb-alert';
+    private _iconStyles: Record<string, string> = {};
+    private _name: string = 'Unknown Light';
+    private _stateFmtd: string = 'Unknown State';
 
     static get styles(): CSSResult {
         return unsafeCSS(tileStyle);
@@ -72,22 +72,22 @@ export class LightTile extends LitElement implements LovelaceCard {
         this._config = config;
     }
 
-    protected willUpdate(changedProps: PropertyValues): void {
-        if (changedProps.has('_config')) {
-            this._updateState();
-            return;
-        }
+    protected shouldUpdate(changedProps: PropertyValues): boolean {
+        return !!(
+            (changedProps.has('hass') &&
+                this._entity &&
+                this.hass?.states[this._entity] !== this._stateObj) ||
+            changedProps.has('_config')
+        );
+    }
 
-        if (changedProps.has('hass')) {
-            const newStateObj = this.hass?.states[this._entity ?? ''];
-            if (newStateObj?.state !== this._stateObj?.state) {
-                this._updateState();
-            }
-        }
+    protected willUpdate(changedProps: PropertyValues): void {
+        super.willUpdate(changedProps);
+        this._updateState();
     }
 
     protected render(): TemplateResult | typeof nothing {
-        console.log('Rendering Light Tile');
+        console.log('rendering light tile');
         return html`
             <div
                 class="container"
@@ -110,9 +110,12 @@ export class LightTile extends LitElement implements LovelaceCard {
     }
 
     private _updateState(): void {
-        let icon, iconColor, name, stateFmtd;
+        this._stateObj =
+            this.hass && this._entity
+                ? this.hass.states[this._entity]
+                : undefined;
 
-        this._stateObj = this.hass?.states[this._entity ?? ''];
+        let icon, iconColor, name, stateFmtd;
         if (this._stateObj) {
             const state = this._stateObj.state || 'unknown';
             icon =
