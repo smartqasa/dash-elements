@@ -113,10 +113,9 @@ export class LightTile extends LitElement implements LovelaceCard {
     }
 
     private _updateState(): void {
-        this._stateObj =
-            this.hass && this._entity
-                ? this.hass.states[this._entity]
-                : undefined;
+        this._stateObj = this._entity
+            ? this.hass?.states[this._entity]
+            : undefined;
 
         let icon, iconColor, name, stateFmtd;
         if (this._stateObj) {

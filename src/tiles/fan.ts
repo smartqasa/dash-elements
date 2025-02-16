@@ -110,10 +110,9 @@ export class FanTile extends LitElement implements LovelaceCard {
     private _updateState(): void {
         let icon, iconAnimation, iconColor, name, stateFmtd;
 
-        this._stateObj =
-            this.hass && this._entity
-                ? this.hass.states[this._entity]
-                : undefined;
+        this._stateObj = this._entity
+            ? this.hass?.states[this._entity]
+            : undefined;
 
         if (this._stateObj) {
             const state = this._stateObj.state || 'unknown';
