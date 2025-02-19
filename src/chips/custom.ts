@@ -94,14 +94,18 @@ export class CustomChip extends LitElement implements LovelaceCard {
                 console.error('Error evaluating icon color expression:', error);
             }
         }
-        let text = this._stateObj?.state || '';
-        switch (this._dialogObj.entity_type) {
-            case 'temperature':
-                text += '°';
-                break;
-            case 'percentage':
-                text += '%';
-                break;
+
+        let text = '';
+        if (this._dialogObj.show_state) {
+            text = this._stateObj?.state || '';
+            switch (this._dialogObj.entity_type) {
+                case 'temperature':
+                    text += '°';
+                    break;
+                case 'percentage':
+                    text += '%';
+                    break;
+            }
         }
 
         const iconStyles = {
