@@ -30,7 +30,7 @@ export const modeIcons: Record<string, string> = {
 };
 
 export const phaseIcons: Record<string, string> = {
-    Prep: 'hass:silverware-clean',
+    Prep: 'hass:chef-hat',
     Morning: 'hass:weather-sunset-up',
     Day: 'hass:white-balance-sunny',
     Evening: 'hass:weather-night',
