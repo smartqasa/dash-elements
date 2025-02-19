@@ -38,6 +38,7 @@ import './tiles/all-off';
 import './tiles/app';
 import './tiles/area';
 import './tiles/audio';
+import './tiles/custom';
 import './tiles/dialog';
 import './tiles/fan';
 import './tiles/garage';
