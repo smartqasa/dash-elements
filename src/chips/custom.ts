@@ -11,6 +11,7 @@ import { customElement, property, state } from 'lit/decorators.js';
 import { styleMap } from 'lit/directives/style-map.js';
 
 import {
+    DialogObj,
     HassEntity,
     HomeAssistant,
     LovelaceCard,
@@ -25,19 +26,11 @@ interface Config extends LovelaceCardConfig {
     dialog_file: string;
 }
 
-interface DialogObj {
-    icon: string;
-    icon_rgb?: string;
-    entity?: string;
-    entity_type?: string;
-    data: any;
-}
-
 window.customCards.push({
     type: 'smartqasa-custom-chip',
     name: 'SmartQasa Custom Chip',
     preview: true,
-    description: 'A SmartQasa chip for custom configurations.',
+    description: 'A SmartQasa chip for displaying a custom dialog.',
 });
 
 @customElement('smartqasa-custom-chip')

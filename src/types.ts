@@ -19,11 +19,60 @@ declare global {
     }
 }
 
+export interface Context {
+    id: string;
+    parent_id?: string;
+    user_id?: string | null;
+}
+
+export interface Credential {
+    auth_provider_type: string;
+    auth_provider_id: string;
+}
+
+export interface CurrentUser {
+    id: string;
+    is_owner: boolean;
+    is_admin: boolean;
+    name: string;
+    credentials: Credential[];
+    mfa_modules: MFAModule[];
+}
+
+export interface DeviceRegistryEntry {
+    id: string;
+    config_entries: string[];
+    connections: Array<[string, string]>;
+    identifiers: Array<[string, string]>;
+    manufacturer: string | null;
+    model: string | null;
+    name: string | null;
+    labels: string[];
+    sw_version: string | null;
+    hw_version: string | null;
+    serial_number: string | null;
+    via_device_id: string | null;
+    area_id: string | null;
+    name_by_user: string | null;
+    entry_type: 'service' | null;
+    disabled_by: 'user' | 'integration' | 'config_entry' | null;
+    configuration_url: string | null;
+}
+
 export interface DialogEntry {
     icon: string;
     name: string;
     entity?: string;
     color?: string;
+    data: any;
+}
+
+export interface DialogObj {
+    icon: string;
+    icon_rgb?: string;
+    entity?: string;
+    entity_type?: string;
+    name?: string;
     data: any;
 }
 
@@ -47,26 +96,6 @@ export interface EntityRegistryDisplayEntry {
     display_precision?: number;
 }
 
-export interface DeviceRegistryEntry {
-    id: string;
-    config_entries: string[];
-    connections: Array<[string, string]>;
-    identifiers: Array<[string, string]>;
-    manufacturer: string | null;
-    model: string | null;
-    name: string | null;
-    labels: string[];
-    sw_version: string | null;
-    hw_version: string | null;
-    serial_number: string | null;
-    via_device_id: string | null;
-    area_id: string | null;
-    name_by_user: string | null;
-    entry_type: 'service' | null;
-    disabled_by: 'user' | 'integration' | 'config_entry' | null;
-    configuration_url: string | null;
-}
-
 export interface HassArea {
     area_id: string;
     floor_id: string | null;
@@ -78,47 +107,6 @@ export interface HassArea {
 }
 
 export type { HassEntity };
-
-export interface Resources {
-    [language: string]: Record<string, string>;
-}
-
-export interface Credential {
-    auth_provider_type: string;
-    auth_provider_id: string;
-}
-
-export interface MFAModule {
-    id: string;
-    name: string;
-    enabled: boolean;
-}
-
-export interface CurrentUser {
-    id: string;
-    is_owner: boolean;
-    is_admin: boolean;
-    name: string;
-    credentials: Credential[];
-    mfa_modules: MFAModule[];
-}
-
-export interface ServiceCallRequest {
-    domain: string;
-    service: string;
-    serviceData?: Record<string, any>;
-    target?: HassServiceTarget;
-}
-
-export interface Context {
-    id: string;
-    parent_id?: string;
-    user_id?: string | null;
-}
-
-export interface ServiceCallResponse {
-    context: Context;
-}
 
 export interface HomeAssistant {
     auth: Auth;
@@ -166,6 +154,32 @@ export interface HomeAssistant {
     themes: Themes;
 }
 
+type LovelaceLayoutOptions = {
+    grid_columns?: number;
+    grid_rows?: number;
+};
+
+export interface MFAModule {
+    id: string;
+    name: string;
+    enabled: boolean;
+}
+
+export interface Resources {
+    [language: string]: Record<string, string>;
+}
+
+export interface ServiceCallRequest {
+    domain: string;
+    service: string;
+    serviceData?: Record<string, any>;
+    target?: HassServiceTarget;
+}
+
+export interface ServiceCallResponse {
+    context: Context;
+}
+
 export interface LovelaceCard extends HTMLElement {
     hass?: HomeAssistant;
     preview?: boolean;
@@ -183,11 +197,6 @@ export interface LovelaceCardConfig {
     type: string;
     [key: string]: any;
 }
-
-type LovelaceLayoutOptions = {
-    grid_columns?: number;
-    grid_rows?: number;
-};
 
 export interface ThemeVars {
     // Incomplete
