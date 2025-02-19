@@ -102,7 +102,8 @@ export class LockTile extends LitElement implements LovelaceCard {
     }
 
     protected shouldUpdate(changedProps: PropertyValues): boolean {
-        if (changedProps.has('_config')) return true;
+        if (changedProps.has('_config') || changedProps.has('_running'))
+            return true;
 
         if (changedProps.has('hass')) {
             const newState = this._entity
