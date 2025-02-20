@@ -118,7 +118,7 @@ export class LightTile extends LitElement implements LovelaceCard {
             ? this.hass?.states[this._entity]
             : undefined;
 
-        let icon, iconColor, iconAlpha, name, stateFmtd;
+        let backgroundAlpha, backgroundColor, icon, iconColor, name, stateFmtd;
         if (this._stateObj) {
             const state = this._stateObj.state || 'unknown';
             icon =
@@ -131,14 +131,16 @@ export class LightTile extends LitElement implements LovelaceCard {
                 state === 'on' &&
                 this._stateObj.attributes.rgb_color
             ) {
-                iconColor = this._stateObj.attributes.rgb_color.join(',');
-                iconAlpha = 0.35;
+                iconColor = 'var(--sq-inactive-rgb)';
+                backgroundColor = this._stateObj.attributes.rgb_color.join(',');
+                backgroundAlpha = 0.8;
             } else {
                 iconColor =
                     state === 'on'
                         ? 'var(--sq-light-on-rgb)'
                         : 'var(--sq-inactive-rgb)';
-                iconAlpha = 'var(--sq-icon-alpha)';
+                backgroundColor = iconColor;
+                backgroundAlpha = 'var(--sq-icon-alpha)';
             }
 
             name =
@@ -149,14 +151,15 @@ export class LightTile extends LitElement implements LovelaceCard {
         } else {
             icon = this._config?.icon || 'hass:lightbulb-alert';
             iconColor = 'var(--sq-unavailable-rgb)';
-            iconAlpha = 'var(--sq-icon-alpha)';
+            backgroundColor = iconColor;
+            backgroundAlpha = 'var(--sq-icon-alpha)';
             name = this._config?.name || 'Unknown Light';
             stateFmtd = 'Unknown State';
         }
 
         this._iconStyles = {
             color: `rgb(${iconColor})`,
-            backgroundColor: `rgba(${iconColor}, ${iconAlpha})`,
+            backgroundColor: `rgba(${backgroundColor}, ${backgroundAlpha})`,
         };
         this._icon = icon;
         this._name = name;
