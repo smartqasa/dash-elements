@@ -46,7 +46,7 @@ export class AppTile extends LitElement implements LovelaceCard {
         if (this._appObj) {
             if (this._config?.icon) {
                 iconStyle =
-                    'color: rgb(var(--sq-inactive-rgb)); background-color: rgba(var(--sq-inactive-rgb), var(--sq-icon-opacity));';
+                    'color: rgb(var(--sq-inactive-rgb)); background-color: rgba(var(--sq-inactive-rgb), var(--sq-icon-alpha));';
                 iconTemplate = html`<ha-icon
                     icon=${this._config.icon}
                 ></ha-icon>`;
@@ -60,14 +60,14 @@ export class AppTile extends LitElement implements LovelaceCard {
                 />`;
             } else {
                 iconStyle =
-                    'color: rgb(var(--sq-unavailable-rgb)); background-color: rgba(var(--sq-unavailable-rgb), var(--sq-icon-opacity));';
+                    'color: rgb(var(--sq-unavailable-rgb)); background-color: rgba(var(--sq-unavailable-rgb), var(--sq-icon-alpha));';
                 iconTemplate = html`<ha-icon
                     icon="hass:help-rhombus"
                 ></ha-icon>`;
             }
         } else {
             iconStyle =
-                'color: rgb(var(--sq-unavailable-rgb)); background-color: rgba(var(--sq-unavailable-rgb), var(--sq-icon-opacity));';
+                'color: rgb(var(--sq-unavailable-rgb)); background-color: rgba(var(--sq-unavailable-rgb), var(--sq-icon-alpha));';
             iconTemplate = html`<ha-icon icon="hass:alert-rhombus"></ha-icon>`;
         }
         name = this._config?.name || this._appObj?.name || this._config?.app;

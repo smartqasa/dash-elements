@@ -128,7 +128,7 @@ export class SensorTile extends LitElement implements LovelaceCard {
 
         this._iconStyles = {
             color: `rgb(${iconColor})`,
-            backgroundColor: `rgba(${iconColor}, var(--sq-icon-opacity))`,
+            backgroundColor: `rgba(${iconColor}, var(--sq-icon-alpha))`,
         };
         this._iconTemplate = iconTemplate;
         this._name = name;

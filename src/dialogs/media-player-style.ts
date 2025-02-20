@@ -15,13 +15,13 @@ const playerControlsStyles = `
     --mdc-icon-size: 2rem !important;
     --mdc-icon-button-size: 3rem !important;
     border-radius: 50%;
-    background-color: rgba(var(--sq-inactive-rgb), var(--sq-icon-opacity));
+    background-color: rgba(var(--sq-inactive-rgb), var(--sq-icon-alpha));
   }
   .big-icon {
     --mdc-icon-size: 3rem !important;
     --mdc-icon-button-size: 4rem !important;
     border-radius: 50%;
-    background-color: rgba(var(--sq-inactive-rgb), var(--sq-icon-opacity));
+    background-color: rgba(var(--sq-inactive-rgb), var(--sq-icon-alpha));
   }
 `;
 

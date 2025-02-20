@@ -49,7 +49,7 @@ export class EntntiesTile extends LitElement implements LovelaceCard {
     protected render(): TemplateResult {
         const iconStyles = {
             color: 'rgb(var(--sq-unavailable-rgb))',
-            backgroundColor: 'rgba(var(--sq-unavailable-rgb), var(--sq-icon-opacity))',
+            backgroundColor: 'rgba(var(--sq-unavailable-rgb), var(--sq-icon-alpha))',
         };
         return html`
             <div class="container" @click=${this._showDialog}>

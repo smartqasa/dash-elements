@@ -162,7 +162,7 @@ export class RobotTile extends LitElement implements LovelaceCard {
 
         this._iconStyles = {
             color: `rgb(${iconColor})`,
-            backgroundColor: `rgba(${iconColor}, var(--sq-icon-opacity, 0.2))`,
+            backgroundColor: `rgba(${iconColor}, var(--sq-icon-alpha, 0.2))`,
             animation: iconAnimation,
         };
         this._icon = icon;

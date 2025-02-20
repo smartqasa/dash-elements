@@ -28,7 +28,7 @@
     padding: var(--sq-tile-padding);
     border-radius: var(--sq-icon-border-radius);
     color: rgb(var(--sq-inactive-rgb));
-    background-color: rgba(var(--sq-inactive-rgb), var(--sq-icon-opacity));
+    background-color: rgba(var(--sq-inactive-rgb), var(--sq-icon-alpha));
     transition: var(--sq-icon-transition);
 }
 

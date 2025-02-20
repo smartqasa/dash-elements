@@ -166,7 +166,7 @@ export class LockTile extends LitElement implements LovelaceCard {
 
         this._iconStyles = {
             color: `rgb(${iconColor})`,
-            backgroundColor: `rgba(${iconColor}, var(--sq-icon-opacity))`,
+            backgroundColor: `rgba(${iconColor}, var(--sq-icon-alpha))`,
             animation: iconAnimation,
         };
         this._icon = icon;

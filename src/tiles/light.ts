@@ -118,7 +118,7 @@ export class LightTile extends LitElement implements LovelaceCard {
             ? this.hass?.states[this._entity]
             : undefined;
 
-        let icon, iconColor, name, stateFmtd;
+        let icon, iconColor, iconAlpha, name, stateFmtd;
         if (this._stateObj) {
             const state = this._stateObj.state || 'unknown';
             icon =
@@ -132,11 +132,13 @@ export class LightTile extends LitElement implements LovelaceCard {
                 this._stateObj.attributes.rgb_color
             ) {
                 iconColor = this._stateObj.attributes.rgb_color.join(',');
+                iconAlpha = 0.35;
             } else {
                 iconColor =
                     state === 'on'
                         ? 'var(--sq-light-on-rgb)'
                         : 'var(--sq-inactive-rgb)';
+                iconAlpha = 'var(--sq-icon-alpha)';
             }
 
             name =
@@ -147,13 +149,14 @@ export class LightTile extends LitElement implements LovelaceCard {
         } else {
             icon = this._config?.icon || 'hass:lightbulb-alert';
             iconColor = 'var(--sq-unavailable-rgb)';
+            iconAlpha = 'var(--sq-icon-alpha)';
             name = this._config?.name || 'Unknown Light';
             stateFmtd = 'Unknown State';
         }
 
         this._iconStyles = {
             color: `rgb(${iconColor})`,
-            backgroundColor: `rgba(${iconColor}, var(--sq-icon-opacity))`,
+            backgroundColor: `rgba(${iconColor}, iconAlpha)`,
         };
         this._icon = icon;
         this._name = name;

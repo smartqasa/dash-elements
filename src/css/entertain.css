@@ -37,7 +37,7 @@
     padding: var(--sq-tile-padding);
     border-radius: 50%;
     color: rgb(var(--sq-inactive-rgb));
-    background: rgba(var(--sq-inactive-rgb), var(--sq-icon-opacity));
+    background: rgba(var(--sq-inactive-rgb), var(--sq-icon-alpha));
 }
 
 .entertain-button span {

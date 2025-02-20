@@ -24,7 +24,7 @@
     margin: auto 0;
     padding: var(--sq-tile-padding);
     color: rgb(var(--sq-inactive-rgb));
-    background-color: rgba(var(--sq-inactive-rgb), var(--sq-icon-opacity));
+    background-color: rgba(var(--sq-inactive-rgb), var(--sq-icon-alpha));
     transition:
         background-color 0.5s ease-in-out,
         color 0.5s ease-in-out;
@@ -34,7 +34,7 @@
     margin: auto 0;
     padding: var(--sq-tile-padding);
     color: rgb(var(--sq-inactive-rgb));
-    background-color: rgba(var(--sq-inactive-rgb), var(--sq-icon-opacity));
+    background-color: rgba(var(--sq-inactive-rgb), var(--sq-icon-alpha));
     transition:
         background-color 0.5s ease-in-out,
         color 0.5s ease-in-out;

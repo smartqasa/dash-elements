@@ -87,7 +87,7 @@ export class LightTile extends LitElement {
     protected render(): TemplateResult {
         const iconStyles = {
             color: `rgb(${this._iconColor})`,
-            backgroundColor: `rgba(${this._iconColor}, var(--sq-icon-opacity))`,
+            backgroundColor: `rgba(${this._iconColor}, var(--sq-icon-alpha))`,
             animation: this._iconAnimation,
         };
 
