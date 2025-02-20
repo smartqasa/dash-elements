@@ -28,7 +28,7 @@ interface Config extends LovelaceCardConfig {
     entity: string;
     group?: string;
     icon?: string;
-    icon_rgb?: boolean;
+    color_icon?: boolean;
     name?: string;
     grid?: boolean;
     grid_columns?: number;
