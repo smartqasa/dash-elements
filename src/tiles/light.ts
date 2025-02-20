@@ -133,7 +133,7 @@ export class LightTile extends LitElement implements LovelaceCard {
             ) {
                 iconColor = 'var(--sq-inactive-rgb)';
                 backgroundColor = this._stateObj.attributes.rgb_color.join(',');
-                backgroundAlpha = 0.8;
+                backgroundAlpha = 0.5;
             } else {
                 iconColor =
                     state === 'on'
