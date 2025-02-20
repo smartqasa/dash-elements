@@ -28,6 +28,7 @@ interface Config extends LovelaceCardConfig {
     entity: string;
     group?: string;
     icon?: string;
+    icon_rgb?: boolean;
     name?: string;
     grid?: boolean;
     grid_columns?: number;
@@ -124,10 +125,20 @@ export class LightTile extends LitElement implements LovelaceCard {
                 this._config!.icon ||
                 this._stateObj.attributes.icon ||
                 'hass:lightbulb';
-            iconColor =
-                state === 'on'
-                    ? 'var(--sq-light-on-rgb)'
-                    : 'var(--sq-inactive-rgb)';
+
+            if (
+                this._config?.color_icon &&
+                state === 'on' &&
+                this._stateObj.attributes.rgb_color
+            ) {
+                iconColor = this._stateObj.attributes.rgb_color.join(',');
+            } else {
+                iconColor =
+                    state === 'on'
+                        ? 'var(--sq-light-on-rgb)'
+                        : 'var(--sq-inactive-rgb)';
+            }
+
             name =
                 this._config!.name ||
                 this._stateObj.attributes.friendly_name ||

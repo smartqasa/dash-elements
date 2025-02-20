@@ -46,7 +46,7 @@ export class DialogTile extends LitElement implements LovelaceCard {
     @state() private _stateObj?: HassEntity;
 
     private _entity?: string;
-    private _icon: string = 'hass:help-rhombus';
+    private _icon: string = 'mdi:help-circle';
     private _iconStyles: Record<string, string> = {};
     private _name: string = 'Unknown Dialog';
     private _stateFmtd: string = 'Unknown State';
@@ -67,6 +67,12 @@ export class DialogTile extends LitElement implements LovelaceCard {
             this._entity = this._dialogObj.entity;
         } catch (error) {
             console.error('Failed to load YAML:', error);
+        } finally {
+            if (this._dialogObj) {
+                this._icon =
+                    config.icon || this._dialogObj.icon || 'mdi:help-circle';
+                this._name = config.name || this._dialogObj.name || 'Unknown';
+            }
         }
 
         this._config = config;
@@ -75,11 +81,8 @@ export class DialogTile extends LitElement implements LovelaceCard {
     protected shouldUpdate(changedProps: PropertyValues): boolean {
         if (changedProps.has('_config')) return true;
 
-        if (changedProps.has('hass')) {
-            const newState = this._entity
-                ? this.hass?.states[this._entity]
-                : undefined;
-
+        if (changedProps.has('hass') && this._entity) {
+            const newState = this.hass?.states[this._entity];
             return newState !== this._stateObj;
         }
 
@@ -105,30 +108,22 @@ export class DialogTile extends LitElement implements LovelaceCard {
     }
 
     private _updateState(): void {
-        this._stateObj = this._entity
-            ? this.hass?.states[this._entity]
-            : undefined;
+        if (!this._entity) return;
 
-        let icon, iconColor, name, stateFmtd;
+        this._stateObj = this.hass?.states[this._entity];
+
+        let iconColor, stateFmtd;
+
         if (this._stateObj) {
             const state = this._stateObj.state || 'unknown';
-            icon =
-                this._config!.icon ||
-                this._stateObj.attributes.icon ||
-                'hass:cctv';
             iconColor =
                 state === 'on'
                     ? 'var(--sq-orange-rgb)'
                     : 'var(--sq-inactive-rgb)';
-            name =
-                this._config!.name ||
-                this._stateObj.attributes.friendly_name ||
-                'Cameras';
+
             stateFmtd = state === 'on' ? 'Detected' : 'Clear';
         } else {
-            icon = this._config?.icon || 'hass:cctv-off';
             iconColor = 'var(--sq-unavailable-rgb)';
-            name = this._config?.name || 'Unknown';
             stateFmtd = 'Unknown State';
         }
 
@@ -136,8 +131,6 @@ export class DialogTile extends LitElement implements LovelaceCard {
             color: `rgb(${iconColor})`,
             backgroundColor: `rgba(${iconColor}, var(--sq-icon-opacity))`,
         };
-        this._icon = icon;
-        this._name = name;
         this._stateFmtd = stateFmtd;
     }
 

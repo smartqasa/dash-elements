@@ -73,6 +73,7 @@ export interface DialogObj {
     entity?: string;
     entity_type?: string;
     show_state?: boolean;
+    state_color?: string;
     name?: string;
     data: any;
 }
