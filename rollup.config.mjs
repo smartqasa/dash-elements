@@ -10,52 +10,52 @@ import url from '@rollup/plugin-url';
 
 import { readFileSync } from 'fs';
 const { version } = JSON.parse(
-    readFileSync(new URL('./package.json', import.meta.url), 'utf8')
+  readFileSync(new URL('./package.json', import.meta.url), 'utf8')
 );
 
 const timestamp = new Date().toISOString();
 
 export default {
-    input: 'src/index.ts',
-    output: {
-        file: 'dist/elements.js',
-        format: 'es',
-        name: 'SmartQasaElements',
-    },
-    plugins: [
-        babel({
-            exclude: 'node_modules/**',
-            babelHelpers: 'bundled',
-        }),
-        commonjs({
-            include: 'node_modules/**',
-        }),
-        image(),
-        json(),
-        litcss(),
-        resolve({
-            browser: true,
-            extensions: ['.js', '.ts'],
-            preferBuiltins: false,
-        }),
-        replace({
-            preventAssignment: true,
-            __BUILD_VERSION__: JSON.stringify(version),
-            __BUILD_TIMESTAMP__: JSON.stringify(timestamp),
-        }),
-        typescript(),
-        url({
-            destDir: 'dist/assets',
-            fileName: '[dirname][hash][extname]',
-            include: [
-                '**/*.webp',
-                '**/*.png',
-                '**/*.jpg',
-                '**/*.jpeg',
-                '**/*.gif',
-                '**/*.svg',
-            ],
-            limit: 0,
-        }),
-    ],
+  input: 'src/index.ts',
+  output: {
+    file: 'dist/elements.js',
+    format: 'es',
+    name: 'SmartQasaElements',
+  },
+  plugins: [
+    babel({
+      exclude: 'node_modules/**',
+      babelHelpers: 'bundled',
+    }),
+    commonjs({
+      include: 'node_modules/**',
+    }),
+    image(),
+    json(),
+    litcss(),
+    resolve({
+      browser: true,
+      extensions: ['.js', '.ts'],
+      preferBuiltins: false,
+    }),
+    replace({
+      preventAssignment: true,
+      __BUILD_VERSION__: JSON.stringify(version),
+      __BUILD_TIMESTAMP__: JSON.stringify(timestamp),
+    }),
+    typescript(),
+    url({
+      destDir: 'dist/assets',
+      fileName: '[dirname][hash][extname]',
+      include: [
+        '**/*.webp',
+        '**/*.png',
+        '**/*.jpg',
+        '**/*.jpeg',
+        '**/*.gif',
+        '**/*.svg',
+      ],
+      limit: 0,
+    }),
+  ],
 };

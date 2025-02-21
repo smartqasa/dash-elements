@@ -32,9 +32,9 @@ const playerCardStyles = `
 `;
 
 export const mediaPlayerCardMod = {
-    style: {
-        'ha-card': playerCardStyles,
-        'mxmp-player$ mxmp-player-header$': playerHeaderStyles,
-        'mxmp-player$ mxmp-player-controls$': playerControlsStyles,
-    },
+  style: {
+    'ha-card': playerCardStyles,
+    'mxmp-player$ mxmp-player-header$': playerHeaderStyles,
+    'mxmp-player$ mxmp-player-controls$': playerControlsStyles,
+  },
 };

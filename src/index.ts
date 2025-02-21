@@ -3,7 +3,7 @@ window.smartqasa = window.smartqasa || {};
 
 // Save the Initial Area
 window.smartqasa.startArea =
-    window.smartqasa.startArea || location.pathname.split('/').pop();
+  window.smartqasa.startArea || location.pathname.split('/').pop();
 
 import './panels/panel';
 import './panels/screensaver';
@@ -61,6 +61,6 @@ import './tiles/thermostat';
 import './tiles/webpage';
 
 console.info(
-    `%c SmartQasa ⏏ ${__BUILD_VERSION__} (Built: ${__BUILD_TIMESTAMP__}) `,
-    'background-color: #0000ff; color: #ffffff; font-weight: 700;'
+  `%c SmartQasa ⏏ ${__BUILD_VERSION__} (Built: ${__BUILD_TIMESTAMP__}) `,
+  'background-color: #0000ff; color: #ffffff; font-weight: 700;'
 );

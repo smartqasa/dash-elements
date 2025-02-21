@@ -1,64 +1,64 @@
 @keyframes sound {
-    0% {
-        opacity: 0.35;
-        height: 0.15rem;
-    }
-    100% {
-        opacity: 1;
-        height: var(--sq-icon-size, 1.8rem);
-    }
+  0% {
+    opacity: 0.35;
+    height: 0.15rem;
+  }
+  100% {
+    opacity: 1;
+    height: var(--sq-icon-size, 1.8rem);
+  }
 }
 
 .bars {
-    display: flex;
-    flex: 0 0 auto;
-    width: var(--sq-icon-size);
-    height: var(--sq-icon-size);
-    padding: var(--sq-chip-padding);
-    border-radius: 50%;
-    justify-content: center;
-    align-items: flex-end;
+  display: flex;
+  flex: 0 0 auto;
+  width: var(--sq-icon-size);
+  height: var(--sq-icon-size);
+  padding: var(--sq-chip-padding);
+  border-radius: 50%;
+  justify-content: center;
+  align-items: flex-end;
 }
 
 .bars.chip {
-    margin: auto 0;
-    padding: var(--sq-tile-padding);
-    color: rgb(var(--sq-inactive-rgb));
-    background-color: rgba(var(--sq-inactive-rgb), var(--sq-icon-alpha));
-    transition:
-        background-color 0.5s ease-in-out,
-        color 0.5s ease-in-out;
+  margin: auto 0;
+  padding: var(--sq-tile-padding);
+  color: rgb(var(--sq-inactive-rgb));
+  background-color: rgba(var(--sq-inactive-rgb), var(--sq-icon-alpha));
+  transition:
+    background-color 0.5s ease-in-out,
+    color 0.5s ease-in-out;
 }
 
 .bars.tile {
-    margin: auto 0;
-    padding: var(--sq-tile-padding);
-    color: rgb(var(--sq-inactive-rgb));
-    background-color: rgba(var(--sq-inactive-rgb), var(--sq-icon-alpha));
-    transition:
-        background-color 0.5s ease-in-out,
-        color 0.5s ease-in-out;
+  margin: auto 0;
+  padding: var(--sq-tile-padding);
+  color: rgb(var(--sq-inactive-rgb));
+  background-color: rgba(var(--sq-inactive-rgb), var(--sq-icon-alpha));
+  transition:
+    background-color 0.5s ease-in-out,
+    color 0.5s ease-in-out;
 }
 
 .bars > div {
-    background: var(--accent-color);
-    height: 0.15rem;
-    width: 0.35rem;
-    animation: sound 500ms linear -800ms infinite alternate;
+  background: var(--accent-color);
+  height: 0.15rem;
+  width: 0.35rem;
+  animation: sound 500ms linear -800ms infinite alternate;
 }
 
 .bars > div:first-child {
-    animation-duration: 800ms;
+  animation-duration: 800ms;
 }
 
 .bars > div:nth-child(2) {
-    animation-duration: 700ms;
+  animation-duration: 700ms;
 }
 
 .bars > div:nth-child(3) {
-    animation-duration: 750ms;
+  animation-duration: 750ms;
 }
 
 .bars > div:last-child {
-    animation-duration: 850ms;
+  animation-duration: 850ms;
 }
