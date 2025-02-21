@@ -16,16 +16,12 @@ const { version } = JSON.parse(
 const timestamp = new Date().toISOString();
 
 export default {
-    input: {
-        elements: 'src/index.ts',
-        panel: 'src/panels/panel.ts',
-    },
+    input: 'src/index.ts',
     output: {
-        dir: 'dist',
+        file: 'dist/elements.js',
         format: 'es',
-        entryFileNames: '[name].js',
+        name: 'SmartQasaElements',
     },
-
     plugins: [
         babel({
             exclude: 'node_modules/**',

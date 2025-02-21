@@ -9,7 +9,7 @@
         "url": "https://github.com/smartqasa/dashboard"
     },
     "scripts": {
-        "clean": "rm -f dist/elements.js dist/panel.ts",
+        "clean": "rm -f dist/elements.js",
         "build": "npm run clean && rollup -c",
         "watch": "npm run clean && rollup -c --watch",
         "lint": "eslint .",

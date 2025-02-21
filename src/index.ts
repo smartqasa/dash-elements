@@ -5,6 +5,7 @@ window.smartqasa = window.smartqasa || {};
 window.smartqasa.startArea =
     window.smartqasa.startArea || location.pathname.split('/').pop();
 
+import './panels/panel';
 import './panels/screensaver';
 
 import './cards/areas';
