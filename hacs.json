@@ -2,6 +2,6 @@
     "name": "SmartQasa Dashboard Elements",
     "homeassistant": "2024.10.0",
     "render_readme": true,
-    "filename": "elements.js",
+    "filename": ["elements.js", "panel-card.js"],
     "content_in_root": false
 }

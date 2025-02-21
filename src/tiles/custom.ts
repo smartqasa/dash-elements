@@ -2,6 +2,7 @@ import {
     CSSResult,
     html,
     LitElement,
+    nothing,
     PropertyValues,
     TemplateResult,
     unsafeCSS,
@@ -101,30 +102,36 @@ export class DialogTile extends LitElement implements LovelaceCard {
                 </div>
                 <div class="text">
                     <div class="name">${this._name}</div>
-                    <div class="state">${this._stateFmtd}</div>
+                    ${this._stateFmtd
+                        ? html`<div class="state">${this._stateFmtd}</div>`
+                        : nothing}
                 </div>
             </div>
         `;
     }
 
     private _updateState(): void {
-        if (!this._entity) return;
-
-        this._stateObj = this.hass?.states[this._entity];
-
         let iconColor, stateFmtd;
 
-        if (this._stateObj) {
-            const state = this._stateObj.state || 'unknown';
-            iconColor =
-                state === 'on'
-                    ? 'var(--sq-orange-rgb)'
-                    : 'var(--sq-inactive-rgb)';
+        if (this._entity) {
+            this._stateObj = this.hass?.states[this._entity];
 
-            stateFmtd = state === 'on' ? 'Detected' : 'Clear';
+            if (this._stateObj) {
+                const state = this._stateObj.state || 'unknown';
+                iconColor =
+                    state === 'on'
+                        ? (this._config?.dialog?.active_color ??
+                          this._config?.active_color ??
+                          'var(--sq-orange-rgb)')
+                        : 'var(--sq-inactive-rgb)';
+                stateFmtd = formatState(this.hass!, this._entity);
+            } else {
+                iconColor = 'var(--sq-unavailable-rgb)';
+                stateFmtd = 'Unknown State';
+            }
         } else {
-            iconColor = 'var(--sq-unavailable-rgb)';
-            stateFmtd = 'Unknown State';
+            iconColor = 'var(--sq-inactive-rgb)';
+            stateFmtd = '';
         }
 
         this._iconStyles = {
