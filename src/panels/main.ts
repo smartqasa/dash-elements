@@ -28,17 +28,7 @@ import { deviceRefresh, deviceReboot } from '../utilities/device-actions';
 
 import panelStyles from '../css/main.css';
 
-interface Config extends LovelaceCardConfig {
-  area: string;
-  name: string | undefined;
-  picture: string | undefined;
-  audio_player?: string;
-  video_player?: string;
-  video_sound?: string;
-  header_chips?: LovelaceCardConfig[];
-  area_chips?: LovelaceCardConfig[];
-  tiles?: LovelaceCardConfig[];
-}
+interface Config extends LovelaceCardConfig {}
 
 window.customCards.push({
   type: 'smartqasa-main-card',
