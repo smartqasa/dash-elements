@@ -50,14 +50,14 @@ export class LightTile extends LitElement implements LovelaceCard {
   }
 
   @property({ attribute: false }) public hass?: HomeAssistant;
-  @state() protected _config?: Config;
+  @state() protected config?: Config;
 
-  private _entity?: string;
-  private _stateObj?: HassEntity;
-  private _icon: string = 'hass:lightbulb-alert';
-  private _iconStyles: Record<string, string> = {};
-  private _name: string = 'Unknown Light';
-  private _stateFmtd: string = 'Unknown State';
+  private entity?: string;
+  private stateObj?: HassEntity;
+  private icon: string = 'hass:lightbulb-alert';
+  private iconStyles: Record<string, string> = {};
+  private name: string = 'Unknown Light';
+  private stateFmtd: string = 'Unknown State';
 
   static get styles(): CSSResult {
     return unsafeCSS(tileStyle);
@@ -66,71 +66,67 @@ export class LightTile extends LitElement implements LovelaceCard {
   public setConfig(config: Config): void {
     if (!config.entity?.startsWith('light.')) {
       console.error('Invalid light entity provided in the config.');
-      this._entity = undefined;
+      this.entity = undefined;
     } else {
-      this._entity = config.entity;
+      this.entity = config.entity;
     }
-    this._config = config;
+    this.config = config;
   }
 
   protected shouldUpdate(changedProps: PropertyValues): boolean {
     if (changedProps.has('_config')) return true;
 
     if (changedProps.has('hass')) {
-      const newState = this._entity
-        ? this.hass?.states[this._entity]
-        : undefined;
+      const newState = this.entity ? this.hass?.states[this.entity] : undefined;
 
-      return newState !== this._stateObj;
+      return newState !== this.stateObj;
     }
 
     return false;
   }
 
   protected willUpdate(changedProps: PropertyValues): void {
-    this._updateState();
+    this.updateState();
   }
 
   protected render(): TemplateResult | typeof nothing {
     return html`
       <div
         class="container"
-        @click=${this._toggleEntity}
-        @contextmenu=${this._showEntityList}
+        @click=${this.toggleEntity}
+        @contextmenu=${this.showEntityList}
       >
         <div
           class="icon"
-          @click=${this._showMoreInfo}
-          style=${styleMap(this._iconStyles)}
+          @click=${this.showMoreInfo}
+          style=${styleMap(this.iconStyles)}
         >
-          <ha-icon icon=${this._icon}></ha-icon>
+          <ha-icon icon=${this.icon}></ha-icon>
         </div>
         <div class="text">
-          <div class="name">${this._name}</div>
-          <div class="state">${this._stateFmtd}</div>
+          <div class="name">${this.name}</div>
+          <div class="state">${this.stateFmtd}</div>
         </div>
       </div>
     `;
   }
 
-  private _updateState(): void {
-    this._stateObj = this._entity ? this.hass?.states[this._entity] : undefined;
+  private updateState(): void {
+    this.stateObj = this.entity ? this.hass?.states[this.entity] : undefined;
 
     let backgroundAlpha, backgroundColor, icon, iconColor, name, stateFmtd;
-    if (this._stateObj) {
-      const state = this._stateObj.state || 'unknown';
+    if (this.stateObj) {
+      const state = this.stateObj.state || 'unknown';
       icon =
-        this._config!.icon ||
-        this._stateObj.attributes.icon ||
-        'hass:lightbulb';
+        this.config!.icon || this.stateObj.attributes.icon || 'hass:lightbulb';
 
       if (
-        this._config?.color_icon &&
+        this.config?.color_icon &&
         state === 'on' &&
-        this._stateObj.attributes.rgb_color
+        this.stateObj.attributes.rgb_color
       ) {
         iconColor = 'var(--sq-inactive-rgb)';
-        backgroundColor = this._stateObj.attributes.rgb_color.join(',');
+        backgroundColor = this.stateObj.attributes.rgb_color.join(',');
         backgroundAlpha = 0.5;
       } else {
         iconColor =
@@ -140,85 +136,82 @@ export class LightTile extends LitElement implements LovelaceCard {
       }
 
       name =
-        this._config!.name ||
-        this._stateObj.attributes.friendly_name ||
-        'Light';
-      stateFmtd = formatState(this.hass!, this._entity!);
+        this.config!.name || this.stateObj.attributes.friendly_name || 'Light';
+      stateFmtd = formatState(this.hass!, this.entity!);
     } else {
-      icon = this._config?.icon || 'hass:lightbulb-alert';
+      icon = this.config?.icon || 'hass:lightbulb-alert';
       iconColor = 'var(--sq-unavailable-rgb)';
       backgroundColor = iconColor;
       backgroundAlpha = 'var(--sq-icon-alpha)';
-      name = this._config?.name || 'Unknown Light';
+      name = this.config?.name || 'Unknown Light';
       stateFmtd = 'Unknown State';
     }
 
-    this._iconStyles = {
+    this.iconStyles = {
       color: `rgb(${iconColor})`,
       backgroundColor: `rgba(${backgroundColor}, ${backgroundAlpha})`,
     };
-    this._icon = icon;
-    this._name = name;
-    this._stateFmtd = stateFmtd;
+    this.icon = icon;
+    this.name = name;
+    this.stateFmtd = stateFmtd;
   }
 
-  private _toggleEntity(e: Event): void {
+  private toggleEntity(e: Event): void {
     e.stopPropagation();
 
-    if (this._stateObj?.state === 'on') {
+    if (this.stateObj?.state === 'on') {
       callService(this.hass, 'light', 'turn_off', {
-        entity_id: this._entity,
+        entity_id: this.entity,
         transition: 2,
       });
     } else {
       callService(this.hass, 'light', 'turn_on', {
-        entity_id: this._entity,
+        entity_id: this.entity,
       });
     }
   }
 
-  private _showMoreInfo(e: Event): void {
+  private showMoreInfo(e: Event): void {
     e.stopPropagation();
-    moreInfoDialog(this._stateObj, this._config?.callingDialog);
+    moreInfoDialog(this.stateObj, this.config?.callingDialog);
   }
 
-  private _showEntityList(e: Event): void {
+  private showEntityList(e: Event): void {
     e.stopPropagation();
-    if (!this.hass || !this._config || !this._stateObj) return;
+    if (!this.hass || !this.config || !this.stateObj) return;
 
-    if (!this._config.grid) {
+    if (!this.config.grid) {
       let group;
-      if (this._config.group) {
-        group = this._config.group;
+      if (this.config.group) {
+        group = this.config.group;
         const groupObj = this.hass.states[group];
         if (!groupObj || groupObj.attributes?.entity_id?.length === 0) return;
-      } else if (this._stateObj.attributes?.entity_id?.length > 0) {
-        group = this._entity;
+      } else if (this.stateObj.attributes?.entity_id?.length > 0) {
+        group = this.entity;
       } else {
-        group = `${this._entity}_group`;
+        group = `${this.entity}_group`;
         const groupObj = this.hass.states[group];
         if (!groupObj || groupObj.attributes?.entity_id?.length === 0) return;
       }
 
-      const friendlyName =
-        this._stateObj.attributes?.friendly_name ?? 'Unknown';
+      const friendlyName = this.stateObj.attributes?.friendly_name ?? 'Unknown';
       entityListDialog(friendlyName, 'group', group, 'light');
     }
 
-    const entities = Array.isArray(this._config.grid_entities)
-      ? this._config.grid_entities
+    const entities = Array.isArray(this.config.grid_entities)
+      ? this.config.grid_entities
       : [];
     if (entities.length === 0) return;
 
-    const columns = this._config.grid_columns ?? 2;
-    const style = this._config.grid_style ?? 'circle';
+    const columns = this.config.grid_columns ?? 2;
+    const style = this.config.grid_style ?? 'circle';
 
     const dialogConfig = {
-      title: this._stateObj.attributes.friendly_name || 'Light Group',
+      title: this.stateObj.attributes.friendly_name || 'Light Group',
       timeout: 120000,
       content: {
         type: 'custom:smartqasa-light-grid-card',
-        title: this._stateObj.attributes.friendly_name || 'Light Group',
+        title: this.stateObj.attributes.friendly_name || 'Light Group',
         columns: columns,
         style: style,
         entities: entities,

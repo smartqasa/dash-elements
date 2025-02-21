@@ -33,8 +33,8 @@ export class GridStack extends LitElement implements LovelaceCard {
   }
 
   @property({ attribute: false }) public hass?: HomeAssistant;
-  @state() protected _config?: Config;
-  @state() private _cards: LovelaceCard[] = [];
+  @state() protected config?: Config;
+  @state() private cards: LovelaceCard[] = [];
 
   static get styles() {
     return css`
@@ -53,28 +53,24 @@ export class GridStack extends LitElement implements LovelaceCard {
     if (!config.cards || config.cards.length === 0) {
       throw new Error('No card configurations provided.');
     }
-    this._config = config;
+    this.config = config;
   }
 
   protected willUpdate(changedProps: PropertyValues) {
     if (!this.hass) return;
 
-    if (changedProps.has('_config')) {
-      this._createCards();
-    } else if (
-      changedProps.has('hass') &&
-      this.hass &&
-      this._cards.length > 0
-    ) {
-      this._cards.forEach((card) => {
+    if (changedProps.has('config')) {
+      this.createCards();
+    } else if (changedProps.has('hass') && this.hass && this.cards.length > 0) {
+      this.cards.forEach((card) => {
         if (card.hass !== this.hass) card.hass = this.hass;
       });
     }
   }
 
   protected render(): TemplateResult | typeof nothing {
-    if (!this._config || !this.hass || this._cards.length === 0) return nothing;
-    const columns = this._config.columns || 3;
+    if (!this.config || !this.hass || this.cards.length === 0) return nothing;
+    const columns = this.config.columns || 3;
     const gridStyle = {
       gridTemplateColumns:
         deviceType === 'phone'
@@ -84,23 +80,23 @@ export class GridStack extends LitElement implements LovelaceCard {
 
     return html`
       <div class="container" style=${styleMap(gridStyle)}>
-        ${this._cards.map((card) => html`<div class="element">${card}</div>`)}
+        ${this.cards.map((card) => html`<div class="element">${card}</div>`)}
       </div>
     `;
   }
 
-  private async _createCards(): Promise<void> {
-    if (!this._config || !this.hass) return;
+  private async createCards(): Promise<void> {
+    if (!this.config || !this.hass) return;
 
-    if (this._config.cards.length > 0) {
+    if (this.config.cards.length > 0) {
       try {
-        this._cards = createElements(this._config.cards, this.hass);
+        this.cards = createElements(this.config.cards, this.hass);
       } catch (error) {
-        this._cards = [];
+        this.cards = [];
         console.error('Error creating cards:', error);
       }
     } else {
-      this._cards = [];
+      this.cards = [];
       console.warn('No cards defined in configuration');
     }
   }

@@ -27,10 +27,10 @@ export class MoreInfoCard extends LitElement implements LovelaceCard {
   }
 
   @property({ attribute: false }) public hass?: HomeAssistant;
-  @state() protected _config?: Config;
+  @state() protected config?: Config;
 
-  private _entity?: string;
-  private _stateObj?: HassEntity;
+  private entity?: string;
+  private stateObj?: HassEntity;
 
   static styles = css`
     .container {
@@ -58,44 +58,42 @@ export class MoreInfoCard extends LitElement implements LovelaceCard {
   `;
 
   public setConfig(config: Config): void {
-    this._config = config;
-    this._entity = this._config?.entity;
+    this.config = config;
+    this.entity = this.config?.entity;
   }
 
   protected shouldUpdate(changedProps: PropertyValues): boolean {
-    if (changedProps.has('_config')) return true;
+    if (changedProps.has('config')) return true;
 
     if (changedProps.has('hass')) {
-      const newState = this._entity
-        ? this.hass?.states[this._entity]
-        : undefined;
+      const newState = this.entity ? this.hass?.states[this.entity] : undefined;
 
-      return newState !== this._stateObj;
+      return newState !== this.stateObj;
     }
 
     return false;
   }
 
   protected willUpdate(changedProps: PropertyValues): void {
-    if (changedProps.has('hass') && this.hass && this._entity) {
-      this._stateObj = this.hass.states[this._entity];
+    if (changedProps.has('hass') && this.hass && this.entity) {
+      this.stateObj = this.hass.states[this.entity];
     }
   }
 
   protected render(): TemplateResult | typeof nothing {
-    if (!this._config || !this.hass || !this._stateObj) return nothing;
+    if (!this.config || !this.hass || !this.stateObj) return nothing;
 
-    const containerClass = this._config.background
+    const containerClass = this.config.background
       ? 'container'
       : 'container-transparent';
 
     return html`
       <div>
         <div class="${containerClass}">
-          ${this._config.title
-            ? html`<div class="title">${this._config.title}</div>`
+          ${this.config.title
+            ? html`<div class="title">${this.config.title}</div>`
             : nothing}
-          <more-info-content .hass=${this.hass} .stateObj=${this._stateObj}>
+          <more-info-content .hass=${this.hass} .stateObj=${this.stateObj}>
           </more-info-content>
         </div>
       </div>

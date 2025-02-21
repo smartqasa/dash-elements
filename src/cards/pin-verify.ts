@@ -24,12 +24,12 @@ export class PinVerifyCard extends LitElement implements LovelaceCard {
   }
 
   @property({ attribute: false }) public hass?: HomeAssistant;
-  @state() protected _config?: Config;
-  @state() private _inputPin: string = '';
-  @state() private _maskedPin: string = '';
-  @state() private _pinState: string = '';
-  private _pinEntity?: string;
-  private _outcomeEntity?: string;
+  @state() protected config?: Config;
+  @state() private inputPin: string = '';
+  @state() private maskedPin: string = '';
+  @state() private pinState: string = '';
+  private pinEntity?: string;
+  private outcomeEntity?: string;
 
   static styles = css`
     :host {
@@ -91,19 +91,19 @@ export class PinVerifyCard extends LitElement implements LovelaceCard {
   `;
 
   public setConfig(config: Config): void {
-    this._config = config;
-    this._validateEntities();
+    this.config = config;
+    this.validateEntities();
   }
 
-  private _validateEntities(): void {
-    if (!this._config) return;
+  private validateEntities(): void {
+    if (!this.config) return;
 
-    this._pinEntity = this._config.pin_entity || 'input_text.admin_pin_code';
-    this._outcomeEntity =
-      this._config.outcome_entity || 'input_boolean.admin_mode';
+    this.pinEntity = this.config.pin_entity || 'input_text.admin_pin_code';
+    this.outcomeEntity =
+      this.config.outcome_entity || 'input_boolean.admin_mode';
 
-    const pinDomain = this._pinEntity.split('.')[0];
-    const outcomeDomain = this._outcomeEntity.split('.')[0];
+    const pinDomain = this.pinEntity.split('.')[0];
+    const outcomeDomain = this.outcomeEntity.split('.')[0];
     if (pinDomain !== 'input_text') {
       throw new Error(
         `Invalid entity domain: PIN entity should be of domain "input_text", got "${pinDomain}" instead.`
@@ -117,17 +117,17 @@ export class PinVerifyCard extends LitElement implements LovelaceCard {
   }
 
   protected render(): TemplateResult | typeof nothing {
-    if (!this._config) return nothing;
+    if (!this.config) return nothing;
 
-    const title = this._config.title || 'Enter PIN';
+    const title = this.config.title || 'Enter PIN';
 
     let maskedPin, pinStyles;
-    if (!this._pinState) {
-      maskedPin = this._maskedPin;
+    if (!this.pinState) {
+      maskedPin = this.maskedPin;
       pinStyles = {
         color: 'var(--sq-primary-font-rgb)',
       };
-    } else if (this._pinState === 'valid') {
+    } else if (this.pinState === 'valid') {
       maskedPin = 'PIN Accepted';
       pinStyles = {
         color: 'rgb(var(--sq-green-rgb))',
@@ -149,64 +149,64 @@ export class PinVerifyCard extends LitElement implements LovelaceCard {
         </div>
         <div class="grid">
           ${[1, 2, 3, 4, 5, 6, 7, 8, 9, '☓', 0, '✓'].map((digit) =>
-            this._renderButton(digit)
+            this.renderButton(digit)
           )}
         </div>
       </div>
     `;
   }
 
-  private _renderButton(digit: number | string): TemplateResult {
-    return html`<div class="button" @click=${() => this._handleInput(digit)}>
+  private renderButton(digit: number | string): TemplateResult {
+    return html`<div class="button" @click=${() => this.handleInput(digit)}>
       ${digit}
     </div>`;
   }
 
-  private _handleInput(digit: number | string): void {
-    if (this._pinState) return;
+  private handleInput(digit: number | string): void {
+    if (this.pinState) return;
 
     if (digit === '✓') {
-      this._verifyPin();
+      this.verifyPin();
     } else if (digit === '☓') {
-      this._inputPin = '';
-      this._maskedPin = '';
+      this.inputPin = '';
+      this.maskedPin = '';
     } else {
-      this._inputPin += digit;
-      this._maskedPin += '*';
+      this.inputPin += digit;
+      this.maskedPin += '*';
     }
   }
 
-  private _verifyPin(): void {
-    if (!this.hass || !this._pinEntity || !this._outcomeEntity) return;
+  private verifyPin(): void {
+    if (!this.hass || !this.pinEntity || !this.outcomeEntity) return;
 
-    const pinStateObj = this.hass.states[this._pinEntity];
+    const pinStateObj = this.hass.states[this.pinEntity];
     if (!pinStateObj) {
-      console.error(`Entity ${this._pinEntity} not found.`);
+      console.error(`Entity ${this.pinEntity} not found.`);
       return;
     }
 
     const adminPin = pinStateObj.state;
-    if (this._inputPin === adminPin) {
-      this._pinState = 'valid';
+    if (this.inputPin === adminPin) {
+      this.pinState = 'valid';
       try {
         this.hass.callService('input_boolean', 'turn_on', {
-          entity_id: this._outcomeEntity,
+          entity_id: this.outcomeEntity,
         });
       } catch (error) {
         console.error('Failed to turn on the admin mode entity:', error);
       }
       setTimeout(() => {
-        this._inputPin = '';
-        this._maskedPin = '';
-        this._pinState = '';
+        this.inputPin = '';
+        this.maskedPin = '';
+        this.pinState = '';
         window.browser_mod?.service('close_popup', {});
       }, 5000);
     } else {
-      this._pinState = 'invalid';
+      this.pinState = 'invalid';
       setTimeout(() => {
-        this._inputPin = '';
-        this._maskedPin = '';
-        this._pinState = '';
+        this.inputPin = '';
+        this.maskedPin = '';
+        this.pinState = '';
       }, 2000);
     }
   }

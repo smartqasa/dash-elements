@@ -31,8 +31,8 @@ export class GroupStack extends LitElement implements LovelaceCard {
   }
 
   @property({ attribute: false }) public hass?: HomeAssistant;
-  @state() protected _config?: Config;
-  @state() private _cards: LovelaceCard[] = [];
+  @state() protected config?: Config;
+  @state() private cards: LovelaceCard[] = [];
 
   static get styles() {
     return css`
@@ -55,48 +55,44 @@ export class GroupStack extends LitElement implements LovelaceCard {
         'filter_type, filter_value, and tile_type must be provided in the config.'
       );
     }
-    this._config = config;
+    this.config = config;
   }
 
   protected willUpdate(changedProps: PropertyValues) {
-    if (!this._config || !this.hass) return;
+    if (!this.config || !this.hass) return;
 
-    if (changedProps.has('_config')) {
-      this._createCards();
-    } else if (
-      changedProps.has('hass') &&
-      this.hass &&
-      this._cards.length > 0
-    ) {
-      this._cards.forEach((card) => {
+    if (changedProps.has('config')) {
+      this.createCards();
+    } else if (changedProps.has('hass') && this.hass && this.cards.length > 0) {
+      this.cards.forEach((card) => {
         if (card.hass !== this.hass) card.hass = this.hass;
       });
     }
   }
 
   protected render(): TemplateResult | typeof nothing {
-    if (!this.hass || this._cards.length === 0) return nothing;
+    if (!this.hass || this.cards.length === 0) return nothing;
 
     return html`
       <div class="container">
-        ${this._cards.map(
+        ${this.cards.map(
           (card, index) => html` <div class="card" .key=${index}>${card}</div> `
         )}
       </div>
     `;
   }
 
-  private _createCards(): void {
-    if (!this._config || !this.hass) return;
+  private createCards(): void {
+    if (!this.config || !this.hass) return;
 
     let entityIds: string[] = [];
-    if (this._config.filter_type === 'group') {
-      const groupEntity = this.hass.states[this._config.filter_value];
+    if (this.config.filter_type === 'group') {
+      const groupEntity = this.hass.states[this.config.filter_value];
       if (groupEntity && groupEntity.attributes.entity_id) {
         entityIds = groupEntity.attributes.entity_id as string[];
       }
-    } else if (this._config.filter_type === 'domain') {
-      const domain = this._config.filter_value;
+    } else if (this.config.filter_type === 'domain') {
+      const domain = this.config.filter_value;
       entityIds = Object.keys(this.hass.states).filter((entityId) => {
         return entityId.startsWith(`${domain}.`);
       });
@@ -115,17 +111,17 @@ export class GroupStack extends LitElement implements LovelaceCard {
       );
       entityIds = entityNameMap.map((item) => item.entityId);
 
-      this._cards = entityIds.map((entityId) => {
+      this.cards = entityIds.map((entityId) => {
         const cardConfig: LovelaceCardConfig = {
-          type: this._config!.tile_type,
+          type: this.config!.tile_type,
           entity: entityId,
-          callingDialog: this._config!.callingDialog,
+          callingDialog: this.config!.callingDialog,
         };
         const card = createElement(cardConfig, this.hass) as LovelaceCard;
         return card;
       });
     } else {
-      this._cards = [];
+      this.cards = [];
     }
   }
 }

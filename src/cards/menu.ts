@@ -27,14 +27,14 @@ export class MenuCard extends LitElement implements LovelaceCard {
   }
 
   @property({ attribute: false }) public hass?: HomeAssistant;
-  @state() private _tabs: Tab[] = [];
-  @state() private _bodyTiles: LovelaceCard[][] = [];
-  @state() private _menuTab: number = window.smartqasa.menuTab || 0;
-  @state() private _isAdminMode: boolean = false;
-  private _gridStyle = {};
+  @state() private tabs: Tab[] = [];
+  @state() private bodyTiles: LovelaceCard[][] = [];
+  @state() private menuTab: number = window.smartqasa.menuTab || 0;
+  @state() private isAdminMode: boolean = false;
+  private gridStyle = {};
 
-  private _boundHandleDeviceChanges: () => void;
-  private _deviceType = getDeviceType();
+  private boundHandleDeviceChanges: () => void;
+  private deviceType = getDeviceType();
 
   public setConfig(): void {}
 
@@ -96,65 +96,62 @@ export class MenuCard extends LitElement implements LovelaceCard {
 
   constructor() {
     super();
-    this._boundHandleDeviceChanges = this._handleDeviceChanges.bind(this);
+    this.boundHandleDeviceChanges = this.handleDeviceChanges.bind(this);
   }
 
   public connectedCallback(): void {
     super.connectedCallback();
 
-    this._loadMenuTabs().catch((error) => {
+    this.loadMenuTabs().catch((error) => {
       console.error('Error loading menu tabs and tiles:', error);
     });
 
-    this._handleDeviceChanges();
+    this.handleDeviceChanges();
 
-    window.addEventListener('resize', this._boundHandleDeviceChanges);
-    window.addEventListener(
-      'orientationchange',
-      this._boundHandleDeviceChanges
-    );
+    window.addEventListener('resize', this.boundHandleDeviceChanges);
+    window.addEventListener('orientationchange', this.boundHandleDeviceChanges);
   }
 
   protected willUpdate(changedProps: PropertyValues): void {
     super.willUpdate(changedProps);
     if (changedProps.has('hass') && this.hass) {
-      const currentTiles = this._bodyTiles[this._menuTab] || [];
+      const currentTiles = this.bodyTiles[this.menuTab] || [];
       currentTiles.forEach((tile) => {
         if (tile.hass !== this.hass) tile.hass = this.hass;
       });
 
       const isAdminMode =
         this.hass.states['input_boolean.admin_mode']?.state === 'on';
-      this._isAdminMode = (this.hass.user?.is_admin ?? false) || isAdminMode;
+      this.isAdminMode = (this.hass.user?.is_admin ?? false) || isAdminMode;
     }
   }
 
   public disconnectedCallback(): void {
     super.disconnectedCallback();
 
-    window.removeEventListener('resize', this._boundHandleDeviceChanges);
+    window.removeEventListener('resize', this.boundHandleDeviceChanges);
     window.removeEventListener(
       'orientationchange',
-      this._boundHandleDeviceChanges
+      this.boundHandleDeviceChanges
     );
   }
 
   protected render(): TemplateResult {
-    const currentTiles = this._bodyTiles[this._menuTab] || [];
+    const currentTiles = this.bodyTiles[this.menuTab] || [];
 
     return html`
       <div class="container">
         <div class="tab-bar">
-          ${this._tabs.map((tab, index) => {
-            if (tab.tab === 'Utilities' && !this._isAdminMode) {
+          ${this.tabs.map((tab, index) => {
+            if (tab.tab === 'Utilities' && !this.isAdminMode) {
               return nothing;
             }
             return html`
               <div
                 class="tab"
-                ?selected=${this._menuTab === index}
-                @click="${() => this._setMenuTab(index)}"
-                ?icon-only=${this._deviceType === 'phone'}
+                ?selected=${this.menuTab === index}
+                @click="${() => this.setMenuTab(index)}"
+                ?icon-only=${this.deviceType === 'phone'}
               >
                 <ha-icon icon="${tab.icon}"></ha-icon>
                 <span>${tab.tab}</span>
@@ -162,29 +159,29 @@ export class MenuCard extends LitElement implements LovelaceCard {
             `;
           })}
         </div>
-        <div class="tiles" style=${styleMap(this._gridStyle)}>
+        <div class="tiles" style=${styleMap(this.gridStyle)}>
           ${currentTiles.map((tile) => html`<div>${tile}</div>`)}
         </div>
       </div>
     `;
   }
 
-  private _handleDeviceChanges(): void {
+  private handleDeviceChanges(): void {
     const type = getDeviceType();
     const orientation = getDeviceOrientation();
 
     if (type === 'phone') {
-      this._gridStyle = {
+      this.gridStyle = {
         gridTemplateColumns: orientation === 'landscape' ? '1fr 1fr' : '1fr',
       };
     } else {
-      this._gridStyle = {
+      this.gridStyle = {
         gridTemplateColumns: 'repeat(3, var(--sq-tile-width, 19.5rem))',
       };
     }
   }
 
-  private async _loadMenuTabs(): Promise<void> {
+  private async loadMenuTabs(): Promise<void> {
     try {
       const tabsData = (await loadYamlAsJson(
         '/local/smartqasa/custom/menu.yaml'
@@ -192,7 +189,7 @@ export class MenuCard extends LitElement implements LovelaceCard {
       if (!Array.isArray(tabsData)) {
         throw new Error('Invalid tabs configuration');
       }
-      this._tabs = tabsData;
+      this.tabs = tabsData;
     } catch (error) {
       console.error('Error loading menu tabs and tiles:', error);
     }
@@ -287,14 +284,14 @@ export class MenuCard extends LitElement implements LovelaceCard {
       ],
     };
 
-    this._tabs.push(utilMenuTab);
+    this.tabs.push(utilMenuTab);
 
-    this._bodyTiles = await Promise.all(
-      this._tabs.map((tab) => this._loadMenuTiles(tab.tiles))
+    this.bodyTiles = await Promise.all(
+      this.tabs.map((tab) => this.loadMenuTiles(tab.tiles))
     );
   }
 
-  private async _loadMenuTiles(
+  private async loadMenuTiles(
     tilesConfig: LovelaceCardConfig[]
   ): Promise<LovelaceCard[]> {
     const tiles: LovelaceCard[] = [];
@@ -317,11 +314,11 @@ export class MenuCard extends LitElement implements LovelaceCard {
     return tiles;
   }
 
-  private _setMenuTab(index: number): void {
-    this._menuTab = index;
+  private setMenuTab(index: number): void {
+    this.menuTab = index;
     window.smartqasa.menuTab = index;
 
-    const currentTiles = this._bodyTiles[this._menuTab] || [];
+    const currentTiles = this.bodyTiles[this.menuTab] || [];
     currentTiles.forEach((tile) => {
       tile.hass = this.hass;
     });

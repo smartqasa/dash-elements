@@ -30,9 +30,9 @@ export class HorizontalStack extends LitElement implements LovelaceCard {
   }
 
   @property({ attribute: false }) public hass?: HomeAssistant;
-  @state() protected _config?: Config;
-  @state() private _cards: LovelaceCard[] = [];
-  private _justifyRight: boolean = false;
+  @state() protected config?: Config;
+  @state() private cards: LovelaceCard[] = [];
+  private justifyRight: boolean = false;
 
   static get styles() {
     return css`
@@ -56,32 +56,32 @@ export class HorizontalStack extends LitElement implements LovelaceCard {
   public setConfig(config: Config): void {
     if (!config.cards || config.cards.length === 0) return;
 
-    this._config = config;
-    this._justifyRight = config.justify_right || false;
+    this.config = config;
+    this.justifyRight = config.justify_right || false;
   }
 
   protected willUpdate(changedProps: PropertyValues) {
-    if (!this._config || !this.hass) return;
+    if (!this.config || !this.hass) return;
 
-    if (changedProps.has('_config')) {
-      this._createCards();
-    } else if (changedProps.has('hass') && this._cards.length > 0) {
-      this._cards.forEach((card) => {
+    if (changedProps.has('config')) {
+      this.createCards();
+    } else if (changedProps.has('hass') && this.cards.length > 0) {
+      this.cards.forEach((card) => {
         if (card.hass !== this.hass) card.hass = this.hass;
       });
     }
   }
 
   protected render(): TemplateResult | typeof nothing {
-    if (!this._config || !this.hass || this._cards.length === 0) return nothing;
+    if (!this.config || !this.hass || this.cards.length === 0) return nothing;
 
-    const containerClass = this._justifyRight
+    const containerClass = this.justifyRight
       ? 'container justify-right'
       : 'container';
 
     return html`
       <div class="${containerClass}">
-        ${this._cards.map(
+        ${this.cards.map(
           (card, index) =>
             html`<div class="element" .key=${index}>${card}</div>`
         )}
@@ -89,13 +89,13 @@ export class HorizontalStack extends LitElement implements LovelaceCard {
     `;
   }
 
-  private _createCards(): void {
-    if (!this._config || !this.hass) return;
+  private createCards(): void {
+    if (!this.config || !this.hass) return;
 
-    if (this._config.cards.length > 0) {
-      this._cards = createElements(this._config.cards, this.hass);
+    if (this.config.cards.length > 0) {
+      this.cards = createElements(this.config.cards, this.hass);
     } else {
-      this._cards = [];
+      this.cards = [];
     }
   }
 }

@@ -29,9 +29,9 @@ export class GroupStack extends LitElement implements LovelaceCard {
   }
 
   @property({ attribute: false }) public hass?: HomeAssistant;
-  @state() protected _config?: Config;
-  @state() private _tiles: LovelaceCard[] = [];
-  private _tileType: string = '';
+  @state() protected config?: Config;
+  @state() private tiles: LovelaceCard[] = [];
+  private tileType: string = '';
 
   static get styles() {
     return css`
@@ -54,28 +54,28 @@ export class GroupStack extends LitElement implements LovelaceCard {
         'filter_type, filter_value, and card_type must be provided in the config.'
       );
     }
-    this._config = config;
-    this._tileType = config.tile_type;
+    this.config = config;
+    this.tileType = config.tile_type;
   }
 
   protected willUpdate(changedProps: PropertyValues) {
-    if (!this._config || !this.hass) return;
+    if (!this.config || !this.hass) return;
 
     if (changedProps.has('_config')) {
-      this._createTiles();
-    } else if (changedProps.has('hass') && this._tiles.length > 0) {
-      this._tiles.forEach((tile) => {
+      this.createTiles();
+    } else if (changedProps.has('hass') && this.tiles.length > 0) {
+      this.tiles.forEach((tile) => {
         if (tile.hass !== this.hass) tile.hass = this.hass;
       });
     }
   }
 
   protected render(): TemplateResult | typeof nothing {
-    if (!this.hass || this._tiles.length === 0) return nothing;
+    if (!this.hass || this.tiles.length === 0) return nothing;
 
     return html`
       <div class="container">
-        ${this._tiles.map((tile) => html`<div class="tile">${tile}</div>`)}
+        ${this.tiles.map((tile) => html`<div class="tile">${tile}</div>`)}
       </div>
     `;
   }
@@ -84,23 +84,23 @@ export class GroupStack extends LitElement implements LovelaceCard {
     super.updated(changedProps);
 
     if (changedProps.has('hass') && this.hass) {
-      this._tiles.forEach((tile) => {
+      this.tiles.forEach((tile) => {
         if (this.hass !== tile.hass) tile.hass = this.hass!;
       });
     }
   }
 
-  private _createTiles() {
-    if (!this._config || !this.hass) return;
+  private createTiles() {
+    if (!this.config || !this.hass) return;
 
     let entityIds: string[] = [];
-    if (this._config.filter_type === 'group') {
-      const groupEntity = this.hass.states[this._config.filter_value];
+    if (this.config.filter_type === 'group') {
+      const groupEntity = this.hass.states[this.config.filter_value];
       if (groupEntity && groupEntity.attributes.entity_id) {
         entityIds = groupEntity.attributes.entity_id as string[];
       }
-    } else if (this._config.filter_type === 'domain') {
-      const domain = this._config.filter_value;
+    } else if (this.config.filter_type === 'domain') {
+      const domain = this.config.filter_value;
       entityIds = Object.keys(this.hass.states).filter((entityId) => {
         return entityId.startsWith(`${domain}.`);
       });
@@ -119,16 +119,16 @@ export class GroupStack extends LitElement implements LovelaceCard {
       );
       entityIds = entityNameMap.map((item) => item.entityId);
 
-      this._tiles = entityIds.map((entityId) => {
+      this.tiles = entityIds.map((entityId) => {
         const tileConfig: LovelaceCardConfig = {
-          type: this._config!.tile_type,
+          type: this.config!.tile_type,
           entity: entityId,
         };
         const tile = createElement(tileConfig, this.hass) as LovelaceCard;
         return tile;
       });
     } else {
-      this._tiles = [];
+      this.tiles = [];
     }
   }
 }
