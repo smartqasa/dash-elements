@@ -43,14 +43,14 @@ export class FanTile extends LitElement implements LovelaceCard {
   }
 
   @property({ attribute: false }) public hass?: HomeAssistant;
-  @state() protected _config?: Config;
+  @state() protected config?: Config;
 
-  private _entity?: string;
-  private _stateObj?: HassEntity;
-  private _icon: string = 'hass:fan-alert';
-  private _iconStyles: Record<string, string> = {};
-  private _name: string = 'Unknown Fan';
-  private _stateFmtd: string = 'Unknown State';
+  private entity?: string;
+  private stateObj?: HassEntity;
+  private icon: string = 'hass:fan-alert';
+  private iconStyles: Record<string, string> = {};
+  private name: string = 'Unknown Fan';
+  private stateFmtd: string = 'Unknown State';
 
   static get styles(): CSSResult {
     return unsafeCSS(tileStyle);
@@ -59,22 +59,20 @@ export class FanTile extends LitElement implements LovelaceCard {
   public setConfig(config: Config): void {
     if (!config.entity?.startsWith('fan.')) {
       console.error('Invalid fan entity provided in the config.');
-      this._entity = undefined;
+      this.entity = undefined;
     } else {
-      this._entity = config.entity;
+      this.entity = config.entity;
     }
-    this._config = config;
+    this.config = config;
   }
 
   protected shouldUpdate(changedProps: PropertyValues): boolean {
-    if (changedProps.has('_config')) return true;
+    if (changedProps.has('config')) return true;
 
     if (changedProps.has('hass')) {
-      const newState = this._entity
-        ? this.hass?.states[this._entity]
-        : undefined;
+      const newState = this.entity ? this.hass?.states[this.entity] : undefined;
 
-      return newState !== this._stateObj;
+      return newState !== this.stateObj;
     }
 
     return false;
@@ -82,44 +80,44 @@ export class FanTile extends LitElement implements LovelaceCard {
 
   protected willUpdate(changedProps: PropertyValues): void {
     super.willUpdate(changedProps);
-    this._updateState();
+    this.updateState();
   }
 
   protected render(): TemplateResult | typeof nothing {
     return html`
       <div
         class="container"
-        @click=${this._toggleEntity}
-        @contextmenu=${this._showEntityList}
+        @click=${this.toggleEntity}
+        @contextmenu=${this.showEntityList}
       >
         <div
           class="icon"
-          @click=${this._showMoreInfo}
-          style=${styleMap(this._iconStyles)}
+          @click=${this.showMoreInfo}
+          style=${styleMap(this.iconStyles)}
         >
-          <ha-icon icon=${this._icon}></ha-icon>
+          <ha-icon icon=${this.icon}></ha-icon>
         </div>
         <div class="text">
-          <div class="name">${this._name}</div>
-          <div class="state">${this._stateFmtd}</div>
+          <div class="name">${this.name}</div>
+          <div class="state">${this.stateFmtd}</div>
         </div>
       </div>
     `;
   }
 
-  private _updateState(): void {
+  private updateState(): void {
     let icon, iconAnimation, iconColor, name, stateFmtd;
 
-    this._stateObj = this._entity ? this.hass?.states[this._entity] : undefined;
+    this.stateObj = this.entity ? this.hass?.states[this.entity] : undefined;
 
-    if (this._stateObj) {
-      const state = this._stateObj.state || 'unknown';
-      icon = this._config!.icon || this._stateObj.attributes.icon || 'hass:fan';
+    if (this.stateObj) {
+      const state = this.stateObj.state || 'unknown';
+      icon = this.config!.icon || this.stateObj.attributes.icon || 'hass:fan';
       if (state == 'on' && icon === 'hass:fan') {
-        if (this._stateObj.attributes.percentage) {
-          const speed = 0.5 + (1 - this._stateObj.attributes.percentage / 100);
+        if (this.stateObj.attributes.percentage) {
+          const speed = 0.5 + (1 - this.stateObj.attributes.percentage / 100);
           const direction =
-            this._stateObj.attributes.direction == 'reverse'
+            this.stateObj.attributes.direction == 'reverse'
               ? 'reverse'
               : 'normal';
           iconAnimation = `spin ${speed}s linear infinite ${direction}`;
@@ -132,49 +130,49 @@ export class FanTile extends LitElement implements LovelaceCard {
       iconColor =
         state === 'on' ? 'var(--sq-fan-on-rgb)' : 'var(--sq-inactive-rgb)';
       name =
-        this._config!.name || this._stateObj.attributes.friendly_name || 'Fan';
-      stateFmtd = formatState(this.hass!, this._entity!);
+        this.config!.name || this.stateObj.attributes.friendly_name || 'Fan';
+      stateFmtd = formatState(this.hass!, this.entity!);
     } else {
-      icon = this._config!.icon || 'hass:fan-alert';
+      icon = this.config!.icon || 'hass:fan-alert';
       iconAnimation = 'none';
       iconColor = 'var(--sq-unavailable-rgb)';
-      name = this._config?.name || 'Unknown';
+      name = this.config?.name || 'Unknown';
       stateFmtd = 'Unknown';
     }
 
-    this._iconStyles = {
+    this.iconStyles = {
       color: `rgb(${iconColor})`,
       backgroundColor: `rgba(${iconColor}, var(--sq-icon-alpha))`,
       animation: iconAnimation,
     };
-    this._icon = icon;
-    this._name = name;
-    this._stateFmtd = stateFmtd;
+    this.icon = icon;
+    this.name = name;
+    this.stateFmtd = stateFmtd;
   }
 
-  private _toggleEntity(e: Event): void {
+  private toggleEntity(e: Event): void {
     e.stopPropagation();
-    if (!this._stateObj) return;
-    callService(this.hass, 'fan', 'toggle', { entity_id: this._entity });
+    if (!this.stateObj) return;
+    callService(this.hass, 'fan', 'toggle', { entity_id: this.entity });
   }
 
-  private _showMoreInfo(e: Event): void {
+  private showMoreInfo(e: Event): void {
     e.stopPropagation();
-    moreInfoDialog(this._stateObj, this._config?.callingDialog);
+    moreInfoDialog(this.stateObj, this.config?.callingDialog);
   }
 
-  private _showEntityList(e: Event): void {
+  private showEntityList(e: Event): void {
     e.stopPropagation();
-    if (!this.hass || !this._stateObj) return;
+    if (!this.hass || !this.stateObj) return;
 
-    const group = this._config!.group || this._entity;
+    const group = this.config!.group || this.entity;
     const groupObj = this.hass.states[group];
     if (!groupObj) return;
 
     const entityIds = groupObj.attributes?.entity_id;
     if (entityIds.length === 0) return;
 
-    const friendlyName = this._stateObj.attributes?.friendly_name || 'Unknown';
+    const friendlyName = this.stateObj.attributes?.friendly_name || 'Unknown';
     entityListDialog(friendlyName, 'group', group, 'fan');
   }
 }

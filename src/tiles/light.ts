@@ -74,7 +74,7 @@ export class LightTile extends LitElement implements LovelaceCard {
   }
 
   protected shouldUpdate(changedProps: PropertyValues): boolean {
-    if (changedProps.has('_config')) return true;
+    if (changedProps.has('config')) return true;
 
     if (changedProps.has('hass')) {
       const newState = this.entity ? this.hass?.states[this.entity] : undefined;

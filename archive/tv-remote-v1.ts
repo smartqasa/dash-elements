@@ -151,13 +151,13 @@ export class TVRemoteCardV1 extends LitElement implements LovelaceCard {
             (changedProps.has('hass') &&
                 this.entity &&
                 this.hass?.states[this.entity] !== this.stateObj) ||
-            (changedProps.has('_config') && this.config) ||
+            (changedProps.has('config') && this.config) ||
             (changedProps.has('mode') && this.mode)
         );
     }
 
     protected updated(changedProps: PropertyValues): void {
-        if (changedProps.has('hass') || changedProps.has('_config')) {
+        if (changedProps.has('hass') || changedProps.has('config')) {
             this.initializeEntities();
         }
     }
@@ -227,18 +227,18 @@ export class TVRemoteCardV1 extends LitElement implements LovelaceCard {
 
         const content =
             this.mode === 'app_select'
-                ? this._renderAppSelectMode()
-                : this._renderRemoteMode();
+                ? this.renderAppSelectMode()
+                : this.renderRemoteMode();
 
         return html`
             <div class="container">
-                ${this._renderHeader()}
+                ${this.renderHeader()}
                 <div class="body">${content}</div>
             </div>
         `;
     }
 
-    private _renderHeader(): TemplateResult {
+    private renderHeader(): TemplateResult {
         return html`
             <div class="name">
                 ${this.config!.name ||
@@ -251,57 +251,57 @@ export class TVRemoteCardV1 extends LitElement implements LovelaceCard {
             </div>
 
             <div class="row">
-                ${this._renderButton('navigate', 'remote', 'mdi:remote-tv')}
-                ${this._renderButton('power', 'power', 'mdi:power')}
-                ${this._renderButton('navigate', 'app_select', 'mdi:apps')}
+                ${this.renderButton('navigate', 'remote', 'mdi:remote-tv')}
+                ${this.renderButton('power', 'power', 'mdi:power')}
+                ${this.renderButton('navigate', 'app_select', 'mdi:apps')}
             </div>
         `;
     }
 
-    private _renderRemoteMode(): TemplateResult {
+    private renderRemoteMode(): TemplateResult {
         return html`
             <div class="row">
-                ${this._renderButton('command', 'back', 'mdi:restore')}
-                ${this._renderButton('command', 'info', 'mdi:asterisk')}
-                ${this._renderButton('command', 'home', 'mdi:home')}
+                ${this.renderButton('command', 'back', 'mdi:restore')}
+                ${this.renderButton('command', 'info', 'mdi:asterisk')}
+                ${this.renderButton('command', 'home', 'mdi:home')}
             </div>
 
             <div class="row">
-                ${this._renderButton('command', 'up', 'mdi:chevron-up')}
+                ${this.renderButton('command', 'up', 'mdi:chevron-up')}
             </div>
 
             <div class="row">
-                ${this._renderButton('command', 'left', 'mdi:chevron-left')}
-                ${this._renderButton(
+                ${this.renderButton('command', 'left', 'mdi:chevron-left')}
+                ${this.renderButton(
                     'command',
                     'select',
                     'mdi:checkbox-blank-circle'
                 )}
-                ${this._renderButton('command', 'right', 'mdi:chevron-right')}
+                ${this.renderButton('command', 'right', 'mdi:chevron-right')}
             </div>
 
             <div class="row">
-                ${this._renderButton('command', 'down', 'mdi:chevron-down')}
+                ${this.renderButton('command', 'down', 'mdi:chevron-down')}
             </div>
 
             <div class="row">
-                ${this._renderButton('command', 'reverse', 'mdi:rewind')}
-                ${this._renderButton('command', 'play', 'mdi:play-pause')}
-                ${this._renderButton('command', 'forward', 'mdi:fast-forward')}
+                ${this.renderButton('command', 'reverse', 'mdi:rewind')}
+                ${this.renderButton('command', 'play', 'mdi:play-pause')}
+                ${this.renderButton('command', 'forward', 'mdi:fast-forward')}
             </div>
 
             <div class="row">
-                ${this._renderButton(
+                ${this.renderButton(
                     'volume',
                     'volume_down',
                     'mdi:volume-minus'
                 )}
-                ${this._renderButton(
+                ${this.renderButton(
                     'volume_mute',
                     'volume_mute',
                     'mdi:volume-mute'
                 )}
-                ${this._renderButton(
+                ${this.renderButton(
                     'volume_up',
                     'volume_up',
                     'mdi:volume-plus'
@@ -310,7 +310,7 @@ export class TVRemoteCardV1 extends LitElement implements LovelaceCard {
         `;
     }
 
-    private _renderButton(
+    private renderButton(
         category: string,
         button: string,
         icon: string
@@ -320,14 +320,14 @@ export class TVRemoteCardV1 extends LitElement implements LovelaceCard {
                 class="icon"
                 data-category=${category}
                 data-button=${button}
-                @pointerdown=${this._handleButton}
+                @pointerdown=${this.handleButton}
             >
                 <ha-icon .icon=${icon}></ha-icon>
             </div>
         `;
     }
 
-    private _renderAppSelectMode(): TemplateResult {
+    private renderAppSelectMode(): TemplateResult {
         return html`
             <div class="app-list">
                 ${this.stateObj!.attributes.source_list.map((app: string) => {
@@ -336,7 +336,7 @@ export class TVRemoteCardV1 extends LitElement implements LovelaceCard {
                         <div
                             class="app-item"
                             @click=${() => this.selectApp(app)}
-                            style="${this._getAppItemStyle(icon)}"
+                            style="${this.getAppItemStyle(icon)}"
                         >
                             ${icon
                                 ? html`<img src="${icon}" alt="${app}" />`
@@ -348,7 +348,7 @@ export class TVRemoteCardV1 extends LitElement implements LovelaceCard {
         `;
     }
 
-    private _getAppItemStyle(icon: string | undefined): string {
+    private getAppItemStyle(icon: string | undefined): string {
         if (icon) {
             return '';
         } else {
@@ -363,7 +363,7 @@ export class TVRemoteCardV1 extends LitElement implements LovelaceCard {
         }
     }
 
-    private _handleButton(e: Event): void {
+    private handleButton(e: Event): void {
         e.stopPropagation();
         if (!this.hass || !this.entity) return;
 

@@ -40,11 +40,11 @@ export class CustomChip extends LitElement implements LovelaceCard {
   }
 
   @property({ attribute: false }) public hass?: HomeAssistant;
-  @state() protected _config?: Config;
-  @state() private _dialogObj?: DialogObj;
-  @state() private _stateObj?: HassEntity;
+  @state() protected config?: Config;
+  @state() private dialogObj?: DialogObj;
+  @state() private stateObj?: HassEntity;
 
-  private _entity?: string;
+  private entity?: string;
 
   static get styles(): CSSResultGroup {
     return [unsafeCSS(chipBaseStyle), unsafeCSS(chipTextStyle)];
@@ -58,35 +58,35 @@ export class CustomChip extends LitElement implements LovelaceCard {
 
     try {
       const path = `/local/smartqasa/custom/dialogs/${config.dialog_file}`;
-      this._dialogObj = (await loadYamlAsJson(path)) as DialogObj;
-      this._entity = this._dialogObj.entity;
+      this.dialogObj = (await loadYamlAsJson(path)) as DialogObj;
+      this.entity = this.dialogObj.entity;
     } catch (error) {
       console.error('Failed to load YAML:', error);
     }
 
-    this._config = config;
+    this.config = config;
   }
 
   protected shouldUpdate(changedProps: PropertyValues): boolean {
     return !!(
       (changedProps.has('hass') &&
-        this._entity &&
-        this.hass?.states[this._entity] !== this._stateObj) ||
-      changedProps.has('_config')
+        this.entity &&
+        this.hass?.states[this.entity] !== this.stateObj) ||
+      changedProps.has('config')
     );
   }
 
   protected render(): TemplateResult | typeof nothing {
-    if (!this._config || !this._dialogObj) return nothing;
+    if (!this.config || !this.dialogObj) return nothing;
 
-    this._stateObj = this._entity ? this.hass?.states[this._entity] : undefined;
+    this.stateObj = this.entity ? this.hass?.states[this.entity] : undefined;
 
-    const icon = this._dialogObj.icon || 'mdi:help-circle';
+    const icon = this.dialogObj.icon || 'mdi:help-circle';
     let iconColor = 'var(--sq-inactive-rgb)';
 
-    if (this.hass && this._dialogObj.icon_rgb) {
+    if (this.hass && this.dialogObj.icon_rgb) {
       try {
-        const func = new Function('states', this._dialogObj.icon_rgb);
+        const func = new Function('states', this.dialogObj.icon_rgb);
         iconColor = func(this.hass.states);
       } catch (error) {
         console.error('Error evaluating icon color expression:', error);
@@ -94,9 +94,9 @@ export class CustomChip extends LitElement implements LovelaceCard {
     }
 
     let text = '';
-    if (this._dialogObj.show_state) {
-      text = this._stateObj?.state || '';
-      switch (this._dialogObj.entity_type) {
+    if (this.dialogObj.show_state) {
+      text = this.stateObj?.state || '';
+      switch (this.dialogObj.entity_type) {
         case 'temperature':
           text += '°';
           break;
@@ -115,7 +115,7 @@ export class CustomChip extends LitElement implements LovelaceCard {
     };
 
     return html`
-      <div class="container" @click=${this._showDialog}>
+      <div class="container" @click=${this.showDialog}>
         <div class="icon" style="${styleMap(iconStyles)}">
           <ha-icon icon=${icon}></ha-icon>
         </div>
@@ -124,9 +124,9 @@ export class CustomChip extends LitElement implements LovelaceCard {
     `;
   }
 
-  private _showDialog(e: Event): void {
+  private showDialog(e: Event): void {
     e.stopPropagation();
-    const dialogObj = this._dialogObj;
+    const dialogObj = this.dialogObj;
     if (dialogObj?.data) window.browser_mod?.service('popup', dialogObj.data);
   }
 }

@@ -40,14 +40,14 @@ export class ThermostatTile extends LitElement implements LovelaceCard {
   }
 
   @property({ attribute: false }) public hass?: HomeAssistant;
-  @state() protected _config?: Config;
+  @state() protected config?: Config;
 
-  private _entity?: string;
-  private _stateObj?: HassEntity;
-  private _icon: string = 'hass:thermostat';
-  private _iconStyles: Record<string, string> = {};
-  private _name: string = 'Unknown Thermostat';
-  private _stateFmtd: string = 'Unknown State';
+  private entity?: string;
+  private stateObj?: HassEntity;
+  private icon: string = 'hass:thermostat';
+  private iconStyles: Record<string, string> = {};
+  private name: string = 'Unknown Thermostat';
+  private stateFmtd: string = 'Unknown State';
 
   static get styles(): CSSResult {
     return unsafeCSS(tileStyle);
@@ -57,80 +57,78 @@ export class ThermostatTile extends LitElement implements LovelaceCard {
     if (!config.entity?.startsWith('climate.')) {
       console.error('Invalid climate entity provided in the config.');
     } else {
-      this._entity = config.entity;
+      this.entity = config.entity;
     }
-    this._config = config;
+    this.config = config;
   }
 
   protected shouldUpdate(changedProps: PropertyValues): boolean {
-    if (changedProps.has('_config')) return true;
+    if (changedProps.has('config')) return true;
 
     if (changedProps.has('hass')) {
-      const newState = this._entity
-        ? this.hass?.states[this._entity]
-        : undefined;
+      const newState = this.entity ? this.hass?.states[this.entity] : undefined;
 
-      return newState !== this._stateObj;
+      return newState !== this.stateObj;
     }
 
     return false;
   }
 
   protected willUpdate(changedProps: PropertyValues): void {
-    this._updateState();
+    this.updateState();
   }
 
   protected render(): TemplateResult {
     return html`
-      <div class="container" @click=${this._showMoreInfo}>
-        <div class="icon" style="${styleMap(this._iconStyles)}">
-          <ha-icon icon=${this._icon}></ha-icon>
+      <div class="container" @click=${this.showMoreInfo}>
+        <div class="icon" style="${styleMap(this.iconStyles)}">
+          <ha-icon icon=${this.icon}></ha-icon>
         </div>
         <div class="text">
-          <div class="name">${this._name}</div>
-          <div class="state">${this._stateFmtd}</div>
+          <div class="name">${this.name}</div>
+          <div class="state">${this.stateFmtd}</div>
         </div>
       </div>
     `;
   }
 
-  private _updateState(): void {
-    this._stateObj = this._entity ? this.hass?.states[this._entity] : undefined;
+  private updateState(): void {
+    this.stateObj = this.entity ? this.hass?.states[this.entity] : undefined;
 
     let icon, iconColor, name, stateFmtd;
-    if (this._stateObj && this.hass) {
-      const state = this._stateObj.state || 'unknown';
+    if (this.stateObj && this.hass) {
+      const state = this.stateObj.state || 'unknown';
 
       icon = thermostatIcons[state] || thermostatIcons.default;
-      const hvacAction = this._stateObj.attributes.hvac_action || 'idle';
+      const hvacAction = this.stateObj.attributes.hvac_action || 'idle';
       if (state === 'off') {
         iconColor = thermostatColors.off;
       } else {
         iconColor = thermostatColors[hvacAction] || thermostatColors.idle;
       }
       name =
-        this._config!.name ||
-        this._stateObj.attributes.friendly_name ||
+        this.config!.name ||
+        this.stateObj.attributes.friendly_name ||
         'Thermostat';
-      stateFmtd = formatState(this.hass!, this._entity!);
+      stateFmtd = formatState(this.hass!, this.entity!);
     } else {
-      icon = this._config!.icon || 'hass:thermostat';
+      icon = this.config!.icon || 'hass:thermostat';
       iconColor = 'var(--sq-unavailable-rgb)';
-      name = this._config?.name || 'Unknown';
+      name = this.config?.name || 'Unknown';
       stateFmtd = 'Unknown';
     }
 
-    this._iconStyles = {
+    this.iconStyles = {
       color: `rgb(${iconColor})`,
       backgroundColor: `rgba(${iconColor}, var(--sq-icon-alpha))`,
     };
-    this._icon = icon;
-    this._name = name;
-    this._stateFmtd = stateFmtd;
+    this.icon = icon;
+    this.name = name;
+    this.stateFmtd = stateFmtd;
   }
 
-  private _showMoreInfo(e: Event): void {
+  private showMoreInfo(e: Event): void {
     e.stopPropagation();
-    moreInfoDialog(this._stateObj, this._config?.callingDialog);
+    moreInfoDialog(this.stateObj, this.config?.callingDialog);
   }
 }

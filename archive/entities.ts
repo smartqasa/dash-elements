@@ -33,17 +33,17 @@ export class EntntiesTile extends LitElement implements LovelaceCard {
         return 1;
     }
 
-    @state() private _config?: Config;
+    @state() private config?: Config;
 
-    private _icon: string = 'hass:help-rhombus';
-    private _name: string = 'Unknown';
+    private icon: string = 'hass:help-rhombus';
+    private name: string = 'Unknown';
 
     static get styles(): CSSResult {
         return unsafeCSS(tileStyle);
     }
 
     public setConfig(config: Config): void {
-        this._config = config;
+        this.config = config;
     }
 
     protected render(): TemplateResult {
@@ -52,19 +52,19 @@ export class EntntiesTile extends LitElement implements LovelaceCard {
             backgroundColor: 'rgba(var(--sq-unavailable-rgb), var(--sq-icon-alpha))',
         };
         return html`
-            <div class="container" @click=${this._showDialog}>
-                <div class="icon" style="${styleMap(this._iconStyles)}">
-                    <ha-icon icon=${this._icon}></ha-icon>
+            <div class="container" @click=${this.showDialog}>
+                <div class="icon" style="${styleMap(this.iconStyles)}">
+                    <ha-icon icon=${this.icon}></ha-icon>
                 </div>
                 <div class="text">
-                    <div class="name">${this._name}</div>
+                    <div class="name">${this.name}</div>
                 </div>
             </div>
         `;
     }
 
 
-    private _showDialog(e: Event) {
+    private showDialog(e: Event) {
         e.stopPropagation();
 
         );

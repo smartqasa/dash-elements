@@ -20,9 +20,9 @@ window.customCards.push({
 @customElement('smartqasa-grid-stack')
 class VerticalStack extends LitElement {
     @property({ attribute: false }) private hass?: HomeAssistant;
-    @state() private _config?: Config;
-    @state() private _columns: number = 3;
-    @state() private _cards: LovelaceCard[] = [];
+    @state() private config?: Config;
+    @state() private columns: number = 3;
+    @state() private cards: LovelaceCard[] = [];
 
     static get styles() {
         return css`
@@ -38,18 +38,18 @@ class VerticalStack extends LitElement {
             throw new Error("You need to define 'cards'");
         }
 
-        this._config = { ...config };
-        this._columns = config.columns || 3;
-        this._createCards();
+        this.config = { ...config };
+        this.columns = config.columns || 3;
+        this.createCards();
     }
 
     protected update(changedProps: PropertyValues) {
-        if (changedProps.has('_config') && this._config) {
-            this._createCards();
+        if (changedProps.has('config') && this.config) {
+            this.createCards();
         }
 
         if (changedProps.has('hass') && this.hass) {
-            this._cards.forEach((card) => {
+            this.cards.forEach((card) => {
                 card.hass = this.hass;
             });
         }
@@ -58,22 +58,22 @@ class VerticalStack extends LitElement {
     }
 
     protected render() {
-        if (!this._config || !this.hass || !Array.isArray(this._cards))
+        if (!this.config || !this.hass || !Array.isArray(this.cards))
             return nothing;
 
         return html`
             <div class="container">
-                ${this._cards.map(
+                ${this.cards.map(
                     (card) => html`<div class="element">${card}</div>`
                 )}
             </div>
         `;
     }
 
-    private _createCards() {
-        if (!this._config || !this.hass) return;
+    private createCards() {
+        if (!this.config || !this.hass) return;
 
-        this._cards = this._config.cards.map((cardConfig) => {
+        this.cards = this.config.cards.map((cardConfig) => {
             const card = createElement(cardConfig) as LovelaceCard;
             card.hass = this.hass;
             return card;

@@ -43,15 +43,15 @@ export class ShadeTile extends LitElement implements LovelaceCard {
   }
 
   @property({ attribute: false }) public hass?: HomeAssistant;
-  @state() protected _config?: Config;
-  private _entity?: string;
-  private _stateObj?: HassEntity;
-  private _icon: string = 'hass:roller-shade';
-  private _iconStyles: Record<string, string> = {};
-  private _name: string = 'Unknown Shade';
-  private _stateFmtd: string = 'Unknown State';
+  @state() protected config?: Config;
+  private entity?: string;
+  private stateObj?: HassEntity;
+  private icon: string = 'hass:roller-shade';
+  private iconStyles: Record<string, string> = {};
+  private name: string = 'Unknown Shade';
+  private stateFmtd: string = 'Unknown State';
 
-  private readonly _stateMap: Record<
+  private readonly stateMap: Record<
     string,
     { stateIcon: string; stateAnimation: string; stateColor: string }
   > = {
@@ -89,135 +89,131 @@ export class ShadeTile extends LitElement implements LovelaceCard {
   public setConfig(config: Config): void {
     if (!config.entity?.startsWith('cover.')) {
       console.error('Invalid cover entity provided in the config.');
-      this._entity = undefined;
+      this.entity = undefined;
     } else {
-      this._entity = config.entity;
+      this.entity = config.entity;
     }
-    this._config = config;
+    this.config = config;
   }
 
   protected shouldUpdate(changedProps: PropertyValues): boolean {
-    if (changedProps.has('_config')) return true;
+    if (changedProps.has('config')) return true;
 
     if (changedProps.has('hass')) {
-      const newState = this._entity
-        ? this.hass?.states[this._entity]
-        : undefined;
+      const newState = this.entity ? this.hass?.states[this.entity] : undefined;
 
-      return newState !== this._stateObj;
+      return newState !== this.stateObj;
     }
 
     return false;
   }
 
   protected willUpdate(changedProps: PropertyValues): void {
-    this._updateState();
+    this.updateState();
   }
 
   protected render(): TemplateResult | typeof nothing {
     return html`
       <div
         class="container"
-        @click=${this._toggleEntity}
-        @contextmenu=${this._showEntityList}
+        @click=${this.toggleEntity}
+        @contextmenu=${this.showEntityList}
       >
         <div
           class="icon"
-          @click=${this._showMoreInfo}
-          style="${styleMap(this._iconStyles)}"
+          @click=${this.showMoreInfo}
+          style="${styleMap(this.iconStyles)}"
         >
-          <ha-icon icon=${this._icon}></ha-icon>
+          <ha-icon icon=${this.icon}></ha-icon>
         </div>
         <div class="text">
-          <div class="name">${this._name}</div>
-          <div class="state">${this._stateFmtd}</div>
+          <div class="name">${this.name}</div>
+          <div class="state">${this.stateFmtd}</div>
         </div>
       </div>
     `;
   }
 
-  private _updateState(): void {
-    this._stateObj = this._entity ? this.hass?.states[this._entity] : undefined;
+  private updateState(): void {
+    this.stateObj = this.entity ? this.hass?.states[this.entity] : undefined;
 
     let icon, iconAnimation, iconColor, name, stateFmtd;
-    if (this._stateObj) {
-      const state = this._stateObj.state || 'unknown';
+    if (this.stateObj) {
+      const state = this.stateObj.state || 'unknown';
       const { stateIcon, stateAnimation, stateColor } =
-        this._stateMap[state] || this._stateMap.default;
-      icon = this._config!.icon || stateIcon;
+        this.stateMap[state] || this.stateMap.default;
+      icon = this.config!.icon || stateIcon;
       iconAnimation = stateAnimation;
       iconColor = stateColor;
       name =
-        this._config!.name ||
-        this._stateObj.attributes.friendly_name ||
-        'Shade';
-      stateFmtd = formatState(this.hass!, this._entity!);
+        this.config!.name || this.stateObj.attributes.friendly_name || 'Shade';
+      stateFmtd = formatState(this.hass!, this.entity!);
     } else {
-      icon = this._config!.icon || 'hass:roller-shade';
+      icon = this.config!.icon || 'hass:roller-shade';
       iconAnimation = 'none';
       iconColor = 'var(--sq-unavailable-rgb)';
-      name = this._config?.name || 'Unknown';
+      name = this.config?.name || 'Unknown';
       stateFmtd = 'Unknown';
     }
 
-    this._iconStyles = {
+    this.iconStyles = {
       color: `rgb(${iconColor})`,
       backgroundColor: `rgba(${iconColor}, var(--sq-icon-alpha))`,
       animation: iconAnimation,
     };
-    this._icon = icon;
-    this._name = name;
-    this._stateFmtd = stateFmtd;
+    this.icon = icon;
+    this.name = name;
+    this.stateFmtd = stateFmtd;
   }
 
-  private _toggleEntity(e: Event): void {
+  private toggleEntity(e: Event): void {
     e.stopPropagation();
-    if (!this.hass || !this._config || !this._stateObj) return;
-    const state = this._stateObj.state;
-    const tilt = this._config.tilt || 100;
+    if (!this.hass || !this.config || !this.stateObj) return;
+    const state = this.stateObj.state;
+    const tilt = this.config.tilt || 100;
     if (['closing', 'opening'].includes(state)) {
       callService(this.hass, 'cover', 'stop_cover', {
-        entity_id: this._entity,
+        entity_id: this.entity,
       });
       return;
     }
     if (tilt >= 1 && tilt <= 100) {
-      if (this._stateObj.attributes.current_position !== tilt) {
+      if (this.stateObj.attributes.current_position !== tilt) {
         callService(this.hass, 'cover', 'set_cover_position', {
-          entity_id: this._entity,
+          entity_id: this.entity,
           position: tilt,
         });
       } else {
         callService(this.hass, 'cover', 'set_cover_position', {
-          entity_id: this._entity,
+          entity_id: this.entity,
           position: 0,
         });
       }
     } else {
       callService(this.hass, 'cover', 'toggle', {
-        entity_id: this._entity,
+        entity_id: this.entity,
         position: 0,
       });
     }
   }
 
-  private _showMoreInfo(e: Event): void {
+  private showMoreInfo(e: Event): void {
     e.stopPropagation();
-    moreInfoDialog(this._stateObj, this._config?.callingDialog);
+    moreInfoDialog(this.stateObj, this.config?.callingDialog);
   }
 
-  private _showEntityList(e: Event): void {
+  private showEntityList(e: Event): void {
     e.stopPropagation();
-    if (!this.hass || !this._stateObj) return;
+    if (!this.hass || !this.stateObj) return;
 
-    const group = this._config!.group || this._entity;
+    const group = this.config!.group || this.entity;
     const groupObj = this.hass.states[group];
     if (!groupObj) return;
 
     const entityIds = groupObj.attributes?.entity_id;
     if (entityIds.length === 0) return;
 
-    const friendlyName = this._stateObj.attributes?.friendly_name || 'Unknown';
+    const friendlyName = this.stateObj.attributes?.friendly_name || 'Unknown';
     entityListDialog(friendlyName, 'group', group, 'shade');
   }
 }

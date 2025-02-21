@@ -40,11 +40,11 @@ export class AudioChip extends LitElement implements LovelaceCard {
   }
 
   @property({ attribute: false }) public hass?: HomeAssistant;
-  @state() protected _config?: Config;
+  @state() protected config?: Config;
 
-  private _entity?: string;
-  private _stateObj?: HassEntity;
-  private _iconTemplate?: TemplateResult;
+  private entity?: string;
+  private stateObj?: HassEntity;
+  private iconTemplate?: TemplateResult;
 
   static get styles(): CSSResultGroup[] {
     return [unsafeCSS(chipBaseStyle), unsafeCSS(musicBarsStyle)];
@@ -53,50 +53,48 @@ export class AudioChip extends LitElement implements LovelaceCard {
   public setConfig(config: Config): void {
     if (!config.entity?.startsWith('media_player.')) {
       console.error('Invalid media_player entity provided in the config.');
-      this._entity = undefined;
+      this.entity = undefined;
     } else {
-      this._entity = config.entity;
+      this.entity = config.entity;
     }
-    this._config = config;
+    this.config = config;
   }
 
   protected shouldUpdate(changedProps: PropertyValues): boolean {
-    if (changedProps.has('_config')) return true;
+    if (changedProps.has('config')) return true;
 
     if (changedProps.has('hass')) {
-      const newState = this._entity
-        ? this.hass?.states[this._entity]
-        : undefined;
+      const newState = this.entity ? this.hass?.states[this.entity] : undefined;
 
-      return newState !== this._stateObj;
+      return newState !== this.stateObj;
     }
 
     return false;
   }
 
   protected willUpdate(changedProps: PropertyValues): void {
-    this._updateState();
+    this.updateState();
   }
 
   protected render(): TemplateResult | typeof nothing {
-    if (!this._config || !this._entity) return nothing;
+    if (!this.config || !this.entity) return nothing;
 
     return html`
       <div
         class="container"
-        @click=${this._showDialog}
-        @contextmenu=${this._launchApp}
+        @click=${this.showDialog}
+        @contextmenu=${this.launchApp}
       >
-        ${this._iconTemplate}
+        ${this.iconTemplate}
       </div>
     `;
   }
 
-  private _updateState(): void {
-    this._stateObj = this._entity ? this.hass?.states[this._entity] : undefined;
+  private updateState(): void {
+    this.stateObj = this.entity ? this.hass?.states[this.entity] : undefined;
 
     let iconTemplate;
-    if (this._stateObj?.state === 'playing') {
+    if (this.stateObj?.state === 'playing') {
       iconTemplate = html`
         <div class="bars">
           <div></div>
@@ -113,21 +111,21 @@ export class AudioChip extends LitElement implements LovelaceCard {
       `;
     }
 
-    this._iconTemplate = iconTemplate;
+    this.iconTemplate = iconTemplate;
   }
 
-  private _showDialog(e: Event): void {
+  private showDialog(e: Event): void {
     e.stopPropagation();
     const dialogObj = dialogTable['media_player'];
     if (!dialogObj) return;
 
     const dialogConfig = { ...dialogObj.data };
-    if (this._entity) dialogConfig.content.entityId = this._entity;
+    if (this.entity) dialogConfig.content.entityId = this.entity;
 
     dialogPopup(dialogObj.data);
   }
 
-  private _launchApp(e: Event): void {
+  private launchApp(e: Event): void {
     e.stopPropagation();
     launchApp('sonos');
   }

@@ -19,7 +19,7 @@ export class TitleCard extends LitElement {
         return 1;
     }
 
-    @state() private _config?: Config;
+    @state() private config?: Config;
 
     static get styles(): CSSResultGroup {
         return css`
@@ -48,11 +48,11 @@ export class TitleCard extends LitElement {
     }
 
     public setConfig(config: Config): void {
-        this._config = { ...config };
-        this._config.title = this._config.title || 'Title';
+        this.config = { ...config };
+        this.config.title = this.config.title || 'Title';
     }
 
     protected render(): TemplateResult {
-        return html` <div class="title">${this._config?.title}</div> `;
+        return html` <div class="title">${this.config?.title}</div> `;
     }
 }

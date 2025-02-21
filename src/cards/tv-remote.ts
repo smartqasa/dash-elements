@@ -39,10 +39,10 @@ export class TVRemoteCard extends LitElement implements LovelaceCard {
   }
 
   @property({ attribute: false }) public hass?: HomeAssistant;
-  @state() protected _config?: Config;
-  private _entity?: string;
-  private _stateObj?: HassEntity;
-  private _entities: { [key: string]: string | undefined } = {};
+  @state() protected config?: Config;
+  private entity?: string;
+  private stateObj?: HassEntity;
+  private entities: { [key: string]: string | undefined } = {};
 
   static get styles(): CSSResult {
     return css`
@@ -145,40 +145,38 @@ export class TVRemoteCard extends LitElement implements LovelaceCard {
   public setConfig(config: Config): void {
     if (!config.entity?.startsWith('media_player.')) {
       console.error('Invalid light entity provided in the config.');
-      this._entity = undefined;
+      this.entity = undefined;
     } else {
-      this._entity = config.entity;
+      this.entity = config.entity;
     }
-    this._config = config;
-    this._initializeEntities();
+    this.config = config;
+    this.initializeEntities();
   }
 
   protected shouldUpdate(changedProps: PropertyValues): boolean {
-    if (changedProps.has('_config')) return true;
+    if (changedProps.has('config')) return true;
 
     if (changedProps.has('hass')) {
-      const newState = this._entity
-        ? this.hass?.states[this._entity]
-        : undefined;
+      const newState = this.entity ? this.hass?.states[this.entity] : undefined;
 
-      return newState !== this._stateObj;
+      return newState !== this.stateObj;
     }
 
     return false;
   }
 
   protected willUpdate(changedProps: PropertyValues): void {
-    if (changedProps.has('_config')) {
-      this._initializeEntities();
+    if (changedProps.has('config')) {
+      this.initializeEntities();
     }
   }
 
   protected render(): TemplateResult | typeof nothing {
-    if (!this.hass || !this._config || !this._entity || !this._entities.remote)
+    if (!this.hass || !this.config || !this.entity || !this.entities.remote)
       return nothing;
 
-    this._stateObj = this.hass.states[this._entity];
-    if (!this._stateObj || !this.hass.states[this._entities.remote]) {
+    this.stateObj = this.hass.states[this.entity];
+    if (!this.stateObj || !this.hass.states[this.entities.remote]) {
       return html`
         <ha-card>
           <div class="warning">Entity Unavailable</div>
@@ -189,29 +187,29 @@ export class TVRemoteCard extends LitElement implements LovelaceCard {
     return html`
       <div class="container">
         <div class="name">
-          ${this._config!.name ||
-          this._stateObj!.attributes.friendly_name ||
+          ${this.config!.name ||
+          this.stateObj!.attributes.friendly_name ||
           'TV Remote'}
         </div>
         <div class="sections">
-          <div class="remote-section">${this._renderRemoteSection()}</div>
-          <div class="app-section">${this._renderAppSection()}</div>
+          <div class="remote-section">${this.renderRemoteSection()}</div>
+          <div class="app-section">${this.renderAppSection()}</div>
         </div>
       </div>
     `;
   }
 
-  private _initializeEntities(): void {
-    if (!this.hass || !this._config || !this._entity) return;
+  private initializeEntities(): void {
+    if (!this.hass || !this.config || !this.entity) return;
 
-    this._entities.remote = this._config.remote_entity
-      ? this._config.remote_entity
-      : `remote.${this._entity.split('.')[1]}`;
+    this.entities.remote = this.config.remote_entity
+      ? this.config.remote_entity
+      : `remote.${this.entity.split('.')[1]}`;
 
-    const entityBase = this._entity.split('.')[1].replace(/_roku$/, '');
+    const entityBase = this.entity.split('.')[1].replace(/_roku$/, '');
 
     const findAudioEntity = () => {
-      if (this._config?.audio_entity) return this._config.audio_entity;
+      if (this.config?.audio_entity) return this.config.audio_entity;
       const candidates = [
         `media_player.${entityBase}_arc`,
         `media_player.${entityBase}_beam`,
@@ -229,7 +227,7 @@ export class TVRemoteCard extends LitElement implements LovelaceCard {
     };
 
     const findVideoEntity = () => {
-      if (this._config?.video_entity) return this._config.video_entity;
+      if (this.config?.video_entity) return this.config.video_entity;
       const candidates = [
         `media_player.${entityBase}_frame_tv`,
         `media_player.${entityBase}_frame`,
@@ -241,45 +239,43 @@ export class TVRemoteCard extends LitElement implements LovelaceCard {
       );
     };
 
-    this._entities.audio = findAudioEntity();
-    this._entities.video = findVideoEntity();
+    this.entities.audio = findAudioEntity();
+    this.entities.video = findVideoEntity();
   }
 
-  private _renderRemoteSection(): TemplateResult {
+  private renderRemoteSection(): TemplateResult {
     return html`
+      <div class="row">${this.renderButton('power', 'power', 'mdi:power')}</div>
       <div class="row">
-        ${this._renderButton('power', 'power', 'mdi:power')}
+        ${this.renderButton('command', 'back', 'mdi:restore')}
+        ${this.renderButton('command', 'info', 'mdi:asterisk')}
+        ${this.renderButton('command', 'home', 'mdi:home')}
       </div>
       <div class="row">
-        ${this._renderButton('command', 'back', 'mdi:restore')}
-        ${this._renderButton('command', 'info', 'mdi:asterisk')}
-        ${this._renderButton('command', 'home', 'mdi:home')}
+        ${this.renderButton('command', 'up', 'mdi:chevron-up')}
       </div>
       <div class="row">
-        ${this._renderButton('command', 'up', 'mdi:chevron-up')}
+        ${this.renderButton('command', 'left', 'mdi:chevron-left')}
+        ${this.renderButton('command', 'select', 'mdi:checkbox-blank-circle')}
+        ${this.renderButton('command', 'right', 'mdi:chevron-right')}
       </div>
       <div class="row">
-        ${this._renderButton('command', 'left', 'mdi:chevron-left')}
-        ${this._renderButton('command', 'select', 'mdi:checkbox-blank-circle')}
-        ${this._renderButton('command', 'right', 'mdi:chevron-right')}
+        ${this.renderButton('command', 'down', 'mdi:chevron-down')}
       </div>
       <div class="row">
-        ${this._renderButton('command', 'down', 'mdi:chevron-down')}
+        ${this.renderButton('command', 'reverse', 'mdi:rewind')}
+        ${this.renderButton('command', 'play', 'mdi:play-pause')}
+        ${this.renderButton('command', 'forward', 'mdi:fast-forward')}
       </div>
       <div class="row">
-        ${this._renderButton('command', 'reverse', 'mdi:rewind')}
-        ${this._renderButton('command', 'play', 'mdi:play-pause')}
-        ${this._renderButton('command', 'forward', 'mdi:fast-forward')}
-      </div>
-      <div class="row">
-        ${this._renderButton('volume', 'volume_down', 'mdi:volume-minus')}
-        ${this._renderButton('volume_mute', 'volume_mute', 'mdi:volume-mute')}
-        ${this._renderButton('volume_up', 'volume_up', 'mdi:volume-plus')}
+        ${this.renderButton('volume', 'volume_down', 'mdi:volume-minus')}
+        ${this.renderButton('volume_mute', 'volume_mute', 'mdi:volume-mute')}
+        ${this.renderButton('volume_up', 'volume_up', 'mdi:volume-plus')}
       </div>
     `;
   }
 
-  private _renderButton(
+  private renderButton(
     category: string,
     button: string,
     icon: string
@@ -289,24 +285,24 @@ export class TVRemoteCard extends LitElement implements LovelaceCard {
         class="icon"
         data-category=${category}
         data-button=${button}
-        @click=${this._handleButton}
+        @click=${this.handleButton}
       >
         <ha-icon icon=${icon}></ha-icon>
       </div>
     `;
   }
 
-  private _renderAppSection(): TemplateResult {
-    const activeApp = this._stateObj!.attributes.app_name;
+  private renderAppSection(): TemplateResult {
+    const activeApp = this.stateObj!.attributes.app_name;
     const activeIcon = channelTable[activeApp];
 
-    const availableApps = this._stateObj!.attributes.source_list.filter(
+    const availableApps = this.stateObj!.attributes.source_list.filter(
       (app: string) => app !== activeApp
     );
 
     return html`
       <div class="app-section">
-        <div class="active-app" style="${this._getAppItemStyle(activeIcon)}">
+        <div class="active-app" style="${this.getAppItemStyle(activeIcon)}">
           ${activeIcon
             ? html`<img src="${activeIcon}" alt="${activeApp}" />`
             : html`${activeApp}`}
@@ -317,8 +313,8 @@ export class TVRemoteCard extends LitElement implements LovelaceCard {
             return html`
               <div
                 class="app-item"
-                @click=${() => this._selectApp(app)}
-                style="${this._getAppItemStyle(icon)}"
+                @click=${() => this.selectApp(app)}
+                style="${this.getAppItemStyle(icon)}"
               >
                 ${icon
                   ? html`<img src="${icon}" alt="${app}" />`
@@ -331,7 +327,7 @@ export class TVRemoteCard extends LitElement implements LovelaceCard {
     `;
   }
 
-  private _getAppItemStyle(icon: string | undefined): string {
+  private getAppItemStyle(icon: string | undefined): string {
     return icon
       ? ''
       : `
@@ -344,32 +340,32 @@ export class TVRemoteCard extends LitElement implements LovelaceCard {
             `;
   }
 
-  private _handleButton(e: Event): void {
+  private handleButton(e: Event): void {
     e.stopPropagation();
-    if (!this.hass || !this._entity) return;
+    if (!this.hass || !this.entity) return;
 
     const target = e.currentTarget as HTMLElement;
     const category = target.dataset.category!;
     const button = target.dataset.button!;
 
     if (category === 'power') {
-      this._handlePower();
+      this.handlePower();
     } else if (category === 'volume') {
-      this._handleVolume(button);
+      this.handleVolume(button);
     } else if (category === 'command') {
-      this._handleCommand(button);
+      this.handleCommand(button);
     }
   }
 
-  private _handlePower(): void {
+  private handlePower(): void {
     callService(this.hass, 'remote', 'send_command', {
-      entity_id: this._entities.remote,
+      entity_id: this.entities.remote,
       command: 'power',
     });
   }
 
-  private _handleVolume(button: string): void {
-    const entity = this._entities.audio || undefined;
+  private handleVolume(button: string): void {
+    const entity = this.entities.audio || undefined;
     if (entity) {
       const isMuted = this.hass!.states[entity].attributes.is_volume_muted;
       if (button === 'volume_mute') {
@@ -391,23 +387,23 @@ export class TVRemoteCard extends LitElement implements LovelaceCard {
       }
     } else {
       callService(this.hass, 'remote', 'send_command', {
-        entity_id: this._entities.remote,
+        entity_id: this.entities.remote,
         command: button,
       });
     }
   }
 
-  private _handleCommand(button: string): void {
+  private handleCommand(button: string): void {
     callService(this.hass, 'remote', 'send_command', {
-      entity_id: this._entities.remote,
+      entity_id: this.entities.remote,
       command: button,
     });
   }
 
-  private _selectApp(app: string): void {
-    if (!this.hass || !this._entity) return;
+  private selectApp(app: string): void {
+    if (!this.hass || !this.entity) return;
     callService(this.hass, 'media_player', 'select_source', {
-      entity_id: this._entity,
+      entity_id: this.entity,
       source: app,
     });
   }

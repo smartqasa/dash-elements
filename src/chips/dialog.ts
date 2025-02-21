@@ -42,14 +42,14 @@ export class DialogChip extends LitElement implements LovelaceCard {
   }
 
   @property({ attribute: false }) public hass?: HomeAssistant;
-  @state() protected _config?: Config;
+  @state() protected config?: Config;
 
-  private _dialog?: keyof typeof dialogTable;
-  private _dialogObj?: DialogEntry;
-  private _entity?: string;
-  private _icon: string = 'hass:message-outline';
-  private _label?: string;
-  private _stateObj?: HassEntity;
+  private dialog?: keyof typeof dialogTable;
+  private dialogObj?: DialogEntry;
+  private entity?: string;
+  private icon: string = 'hass:message-outline';
+  private label?: string;
+  private stateObj?: HassEntity;
 
   static get styles(): CSSResultGroup {
     return [unsafeCSS(chipBaseStyle), unsafeCSS(chipTextStyle)];
@@ -58,35 +58,35 @@ export class DialogChip extends LitElement implements LovelaceCard {
   public setConfig(config: Config): void {
     if (!config.dialog) return;
 
-    this._config = config;
-    this._dialog = this._config.dialog;
-    this._dialogObj = dialogTable[this._dialog];
+    this.config = config;
+    this.dialog = this.config.dialog;
+    this.dialogObj = dialogTable[this.dialog];
 
-    this._entity = this._dialogObj?.entity;
-    this._icon = this._dialogObj?.icon || 'hass:help-alert';
-    this._label = this._config.label || '';
+    this.entity = this.dialogObj?.entity;
+    this.icon = this.dialogObj?.icon || 'hass:help-alert';
+    this.label = this.config.label || '';
   }
 
   protected shouldUpdate(changedProps: PropertyValues): boolean {
     return !!(
       (changedProps.has('hass') &&
-        this._entity &&
-        this.hass?.states[this._entity] !== this._stateObj) ||
-      changedProps.has('_config')
+        this.entity &&
+        this.hass?.states[this.entity] !== this.stateObj) ||
+      changedProps.has('config')
     );
   }
 
   protected render(): TemplateResult | typeof nothing {
-    if (!this._config || !this._dialogObj) return nothing;
+    if (!this.config || !this.dialogObj) return nothing;
 
-    this._stateObj = this._entity ? this.hass?.states[this._entity] : undefined;
+    this.stateObj = this.entity ? this.hass?.states[this.entity] : undefined;
 
-    const state = this._stateObj?.state || 'unknown';
+    const state = this.stateObj?.state || 'unknown';
     const display =
-      (this._dialog === 'garages' && state === 'closed') ||
-      (this._dialog === 'locks' && state === 'locked') ||
-      (this._dialog === 'sensors_doors' && state === 'off') ||
-      (this._dialog === 'sensors_windows' && state === 'off')
+      (this.dialog === 'garages' && state === 'closed') ||
+      (this.dialog === 'locks' && state === 'locked') ||
+      (this.dialog === 'sensors_doors' && state === 'off') ||
+      (this.dialog === 'sensors_windows' && state === 'off')
         ? 'none'
         : 'flex';
     const containerStyles = {
@@ -94,8 +94,8 @@ export class DialogChip extends LitElement implements LovelaceCard {
     };
 
     const iconStyles = {
-      color: this._dialogObj.color || 'rgb(var(--sq-orange-rgb))',
-      paddingRight: this._label
+      color: this.dialogObj.color || 'rgb(var(--sq-orange-rgb))',
+      paddingRight: this.label
         ? 'calc(var(--sq-chip-padding) / 2)'
         : 'var(--sq-chip-padding)',
     };
@@ -104,20 +104,20 @@ export class DialogChip extends LitElement implements LovelaceCard {
       <div
         class="container"
         style="${styleMap(containerStyles)}"
-        @click=${this._showDialog}
+        @click=${this.showDialog}
       >
         <div class="icon" style="${styleMap(iconStyles)}">
-          <ha-icon icon=${this._icon}></ha-icon>
+          <ha-icon icon=${this.icon}></ha-icon>
         </div>
-        ${this._label ? html`<div class="text">${this._label}</div>` : nothing}
+        ${this.label ? html`<div class="text">${this.label}</div>` : nothing}
       </div>
     `;
   }
 
-  private _showDialog(e: Event): void {
+  private showDialog(e: Event): void {
     e.stopPropagation();
-    if (!this._dialogObj) return;
+    if (!this.dialogObj) return;
 
-    dialogPopup(this._dialogObj.data);
+    dialogPopup(this.dialogObj.data);
   }
 }

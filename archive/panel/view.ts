@@ -5,7 +5,7 @@ import { HomeAssistant, LovelaceCardConfig } from '../types';
 @customElement('smartqasa-panel-view')
 export class SmartqasaPanelView extends LitElement {
     @property({ attribute: false }) public hass!: HomeAssistant;
-    @state() protected _config?: LovelaceCardConfig;
+    @state() protected config?: LovelaceCardConfig;
 
     static get styles() {
         return css`
@@ -23,11 +23,11 @@ export class SmartqasaPanelView extends LitElement {
     }
 
     public setConfig(config: LovelaceCardConfig): void {
-        this._config = config;
+        this.config = config;
     }
 
     protected render() {
-        if (!this.hass || !this._config) {
+        if (!this.hass || !this.config) {
             return html`<div>Loading...</div>`;
         }
 

@@ -32,24 +32,24 @@ export class ThemeTile extends LitElement implements LovelaceCard {
     return 1;
   }
 
-  @state() protected _config?: Config;
+  @state() protected config?: Config;
 
   static get styles(): CSSResult {
     return unsafeCSS(tileStyle);
   }
 
   public setConfig(config: Config): void {
-    this._config = config;
+    this.config = config;
   }
 
   protected render(): TemplateResult | typeof nothing {
-    if (!this._config) return nothing;
+    if (!this.config) return nothing;
 
-    const icon = this._config.icon || 'hass:compare';
-    const iconColor = this._config.mode
+    const icon = this.config.icon || 'hass:compare';
+    const iconColor = this.config.mode
       ? 'var(--sq-inactive-rgb)'
       : 'var(--sq-unavailable-rgb)';
-    const name = this._config.name || this._config.mode || 'Unknown';
+    const name = this.config.name || this.config.mode || 'Unknown';
 
     const iconStyles = {
       color: `rgb(${iconColor})`,
@@ -70,7 +70,7 @@ export class ThemeTile extends LitElement implements LovelaceCard {
 
   private selectMode(e: Event): void {
     e.stopPropagation();
-    window.browser_mod?.service('set_theme', { dark: this._config!.mode });
+    window.browser_mod?.service('set_theme', { dark: this.config!.mode });
     window.browser_mod?.service('close_popup', {});
   }
 }

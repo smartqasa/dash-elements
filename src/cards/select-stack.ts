@@ -61,7 +61,7 @@ export class GroupStack extends LitElement implements LovelaceCard {
   protected willUpdate(changedProps: PropertyValues) {
     if (!this.config || !this.hass) return;
 
-    if (changedProps.has('_config')) {
+    if (changedProps.has('config')) {
       this.createTiles();
     } else if (changedProps.has('hass') && this.tiles.length > 0) {
       this.tiles.forEach((tile) => {

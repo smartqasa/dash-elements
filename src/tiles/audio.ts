@@ -41,13 +41,13 @@ export class AudioTile extends LitElement implements LovelaceCard {
   }
 
   @property({ attribute: false }) public hass?: HomeAssistant;
-  @state() protected _config?: Config;
+  @state() protected config?: Config;
 
-  private _entity?: string;
-  private _stateObj?: HassEntity;
-  private _iconHtml: TemplateResult = html``;
-  private _name: string = 'Unknown Speaker';
-  private _stateFmtd: string = 'Unknown State';
+  private entity?: string;
+  private stateObj?: HassEntity;
+  private iconHtml: TemplateResult = html``;
+  private name: string = 'Unknown Speaker';
+  private stateFmtd: string = 'Unknown State';
 
   static get styles(): CSSResultGroup[] {
     return [unsafeCSS(tileStyle), unsafeCSS(musicBarsStyle)];
@@ -56,52 +56,50 @@ export class AudioTile extends LitElement implements LovelaceCard {
   public setConfig(config: Config): void {
     if (!config.entity?.startsWith('media_player.')) {
       console.error('Invalid media_player entity provided in the config.');
-      this._entity = undefined;
+      this.entity = undefined;
     } else {
-      this._entity = config.entity;
+      this.entity = config.entity;
     }
-    this._config = config;
+    this.config = config;
   }
 
   protected shouldUpdate(changedProps: PropertyValues): boolean {
-    if (changedProps.has('_config')) return true;
+    if (changedProps.has('config')) return true;
 
     if (changedProps.has('hass')) {
-      const newState = this._entity
-        ? this.hass?.states[this._entity]
-        : undefined;
+      const newState = this.entity ? this.hass?.states[this.entity] : undefined;
 
-      return newState !== this._stateObj;
+      return newState !== this.stateObj;
     }
 
     return false;
   }
 
   protected willUpdate(changedProps: PropertyValues): void {
-    this._updateState();
+    this.updateState();
   }
 
   protected render(): TemplateResult | typeof nothing {
     return html`
-      <div class="container" @click=${this._showDialog}>
-        ${this._iconHtml}
+      <div class="container" @click=${this.showDialog}>
+        ${this.iconHtml}
         <div class="text">
-          <div class="name">${this._name}</div>
-          <div class="state">${this._stateFmtd}</div>
+          <div class="name">${this.name}</div>
+          <div class="state">${this.stateFmtd}</div>
         </div>
       </div>
     `;
   }
 
-  private _updateState(): void {
-    this._stateObj = this._entity ? this.hass?.states[this._entity] : undefined;
+  private updateState(): void {
+    this.stateObj = this.entity ? this.hass?.states[this.entity] : undefined;
 
     let iconHtml, name, stateFmtd;
-    if (this._stateObj) {
-      const state = this._stateObj.state || 'unknown';
+    if (this.stateObj) {
+      const state = this.stateObj.state || 'unknown';
       if (state === 'playing') {
         iconHtml = html`
-          <div class="bars tile" @click=${this._launchApp}>
+          <div class="bars tile" @click=${this.launchApp}>
             <div></div>
             <div></div>
             <div></div>
@@ -110,43 +108,43 @@ export class AudioTile extends LitElement implements LovelaceCard {
         `;
       } else {
         iconHtml = html`
-          <div class="icon" @click=${this._launchApp}>
+          <div class="icon" @click=${this.launchApp}>
             <ha-icon icon="hass:music"></ha-icon>
           </div>
         `;
       }
       name =
-        this._config!.name ||
-        this._stateObj.attributes.friendly_name ||
+        this.config!.name ||
+        this.stateObj.attributes.friendly_name ||
         'Speaker';
-      stateFmtd = formatState(this.hass!, this._entity!);
+      stateFmtd = formatState(this.hass!, this.entity!);
     } else {
       iconHtml = html`
         <div class="icon">
           <ha-icon icon="hass:music"></ha-icon>
         </div>
       `;
-      name = this._config?.name || 'Unknown Speaker';
+      name = this.config?.name || 'Unknown Speaker';
       stateFmtd = 'Unknown State';
     }
 
-    this._iconHtml = iconHtml;
-    this._name = name;
-    this._stateFmtd = stateFmtd;
+    this.iconHtml = iconHtml;
+    this.name = name;
+    this.stateFmtd = stateFmtd;
   }
 
-  private _showDialog(e: Event): void {
+  private showDialog(e: Event): void {
     e.stopPropagation();
     const dialogObj = dialogTable['sonos'];
     if (!dialogObj) return;
 
     const dialogConfig = { ...dialogObj.data };
-    if (this._entity) dialogConfig.content.entityId = this._entity;
+    if (this.entity) dialogConfig.content.entityId = this.entity;
 
     dialogPopup(dialogObj.data);
   }
 
-  private _launchApp(e: Event): void {
+  private launchApp(e: Event): void {
     e.stopPropagation();
     launchApp('com.sonos.acr2');
   }

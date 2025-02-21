@@ -56,27 +56,27 @@ export class PanelCard extends LitElement implements LovelaceCard {
     }
 
     @property({ attribute: false }) public hass?: HomeAssistant;
-    @state() protected _config?: Config;
-    @state() private _isAdminMode = false;
-    @state() private _isPhone: boolean = getDeviceType() === 'phone';
-    @state() private _isTablet: boolean = getDeviceType() === 'tablet';
-    @state() private _isPortrait: boolean =
+    @state() protected config?: Config;
+    @state() private isAdminMode = false;
+    @state() private isPhone: boolean = getDeviceType() === 'phone';
+    @state() private isTablet: boolean = getDeviceType() === 'tablet';
+    @state() private isPortrait: boolean =
         getDeviceOrientation() === 'portrait';
-    @state() private _isLandscape: boolean =
+    @state() private isLandscape: boolean =
         getDeviceOrientation() === 'landscape';
-    @state() private _swiper: Swiper | undefined;
+    @state() private swiper: Swiper | undefined;
 
-    private _boundHandleDeviceChanges = () => this._handleDeviceChanges();
-    private _boundStartResetTimer = () => this._startResetTimer();
+    private boundHandleDeviceChanges = () => this.handleDeviceChanges();
+    private boundStartResetTimer = () => this.startResetTimer();
 
-    private _timeIntervalId: number | undefined;
-    private _resetTimer?: ReturnType<typeof setTimeout>;
-    private _area?: string;
-    private _areaObj?: HassArea;
-    private _headerChips: LovelaceCard[] = [];
-    private _areaChips: LovelaceCard[] = [];
-    private _controlTiles: LovelaceCard[][] = [];
-    private _controlColumns: number[] = [];
+    private timeIntervalId: number | undefined;
+    private resetTimer?: ReturnType<typeof setTimeout>;
+    private area?: string;
+    private areaObj?: HassArea;
+    private headerChips: LovelaceCard[] = [];
+    private areaChips: LovelaceCard[] = [];
+    private controlTiles: LovelaceCard[][] = [];
+    private controlColumns: number[] = [];
 
     static styles: CSSResultGroup = [
         unsafeCSS(swiperStyles),
@@ -84,72 +84,72 @@ export class PanelCard extends LitElement implements LovelaceCard {
     ];
 
     public setConfig(config: Config) {
-        this._config = config;
-        this._area = this._config.area;
+        this.config = config;
+        this.area = this.config.area;
     }
 
     public connectedCallback(): void {
         super.connectedCallback();
 
-        this._syncTime();
+        this.syncTime();
 
-        window.addEventListener('resize', this._boundHandleDeviceChanges);
+        window.addEventListener('resize', this.boundHandleDeviceChanges);
         window.addEventListener(
             'orientationchange',
-            this._boundHandleDeviceChanges
+            this.boundHandleDeviceChanges
         );
-        window.addEventListener('touchstart', this._boundStartResetTimer, {
+        window.addEventListener('touchstart', this.boundStartResetTimer, {
             passive: true,
         });
 
-        this._startResetTimer();
+        this.startResetTimer();
     }
 
     protected willUpdate(changedProps: PropertyValues): void {
-        if (changedProps.has('_config')) {
-            this._loadContent();
+        if (changedProps.has('config')) {
+            this.loadContent();
         }
 
         if (changedProps.has('hass') && this.hass) {
-            this._handleThemeChanges();
+            this.handleThemeChanges();
 
             const isAdminMode =
                 this.hass.states['input_boolean.admin_mode']?.state === 'on';
-            this._isAdminMode =
+            this.isAdminMode =
                 (this.hass.user?.is_admin ?? false) || isAdminMode;
 
             if (
-                this._headerChips.length === 0 &&
+                this.headerChips.length === 0 &&
                 window.smartqasa.chipsConfig.length > 0
             ) {
-                this._headerChips = createElements(
+                this.headerChips = createElements(
                     window.smartqasa.chipsConfig,
                     this.hass
                 );
             }
 
-            this._areaObj = this._area
-                ? this.hass?.areas[this._area]
+            this.areaObj = this.area
+                ? this.hass?.areas[this.area]
                 : undefined;
         }
     }
 
     protected render(): TemplateResult | typeof nothing {
-        if (!this.hass || !this._config || !this._area) return nothing;
+        if (!this.hass || !this.config || !this.area) return nothing;
 
-        const name = this._config?.name ?? this._areaObj?.name ?? 'Area';
-        const picture = this._config.picture ?? `${this._area}.png`;
+        const name = this.config?.name ?? this.areaObj?.name ?? 'Area';
+        const picture = this.config.picture ?? `${this.area}.png`;
 
         // prettier-ignore
         return html`
             <div
                 class="container"
-                ?admin=${this._isAdminMode}
+                ?admin=${this.isAdminMode}
             >
-                ${this._isTablet ? renderHeader(this._headerChips) : nothing}
-                ${renderArea(name, picture, this._areaChips, this._isPhone, this._isLandscape)}
-                ${renderControls(this._controlTiles, this._controlColumns, this._isPhone, this._swiper)}
-                ${this._isPhone && this._isLandscape ? nothing : renderFooter()}
+                ${this.isTablet ? renderHeader(this.headerChips) : nothing}
+                ${renderArea(name, picture, this.areaChips, this.isPhone, this.isLandscape)}
+                ${renderControls(this.controlTiles, this.controlColumns, this.isPhone, this.swiper)}
+                ${this.isPhone && this.isLandscape ? nothing : renderFooter()}
             </div>
         `;
     }
@@ -157,51 +157,51 @@ export class PanelCard extends LitElement implements LovelaceCard {
     protected updated(changedProps: PropertyValues): void {
         if (changedProps.has('hass') && this.hass) {
             if (
-                this._isTablet &&
-                this._controlTiles.length > 1 &&
-                !this._swiper
+                this.isTablet &&
+                this.controlTiles.length > 1 &&
+                !this.swiper
             ) {
-                this._initializeSwiper();
+                this.initializeSwiper();
             }
 
-            this._updateContent();
+            this.updateContent();
         }
     }
 
     public disconnectedCallback(): void {
         super.disconnectedCallback();
 
-        window.removeEventListener('resize', this._boundHandleDeviceChanges);
+        window.removeEventListener('resize', this.boundHandleDeviceChanges);
         window.removeEventListener(
             'orientationchange',
-            this._boundHandleDeviceChanges
+            this.boundHandleDeviceChanges
         );
-        window.removeEventListener('touchstart', this._boundStartResetTimer);
+        window.removeEventListener('touchstart', this.boundStartResetTimer);
 
-        if (this._timeIntervalId !== undefined) {
-            clearInterval(this._timeIntervalId);
+        if (this.timeIntervalId !== undefined) {
+            clearInterval(this.timeIntervalId);
         }
 
-        if (this._resetTimer) {
-            clearTimeout(this._resetTimer);
+        if (this.resetTimer) {
+            clearTimeout(this.resetTimer);
         }
     }
 
-    private _handleDeviceChanges(): void {
+    private handleDeviceChanges(): void {
         const type = getDeviceType();
-        this._isPhone = type === 'phone';
-        this._isTablet = type === 'tablet';
+        this.isPhone = type === 'phone';
+        this.isTablet = type === 'tablet';
 
         const orientation = getDeviceOrientation();
-        this._isPortrait = orientation === 'portrait';
-        this._isLandscape = orientation === 'landscape';
+        this.isPortrait = orientation === 'portrait';
+        this.isLandscape = orientation === 'landscape';
 
-        if (this._isTablet && this._controlTiles.length > 1) {
-            this._initializeSwiper();
+        if (this.isTablet && this.controlTiles.length > 1) {
+            this.initializeSwiper();
         }
     }
 
-    private _handleThemeChanges(): void {
+    private handleThemeChanges(): void {
         if (this.hass?.themes?.darkMode) {
             this.style.backgroundImage = `url(${darkModeImage})`;
         } else {
@@ -209,7 +209,7 @@ export class PanelCard extends LitElement implements LovelaceCard {
         }
     }
 
-    private _syncTime(): void {
+    private syncTime(): void {
         const syncTime = () => {
             const now = new Date();
             const millisecondsUntilNextSecond = 1000 - now.getMilliseconds();
@@ -222,7 +222,7 @@ export class PanelCard extends LitElement implements LovelaceCard {
         syncTime();
     }
 
-    private _initializeSwiper() {
+    private initializeSwiper() {
         const swiperContainer = this.shadowRoot?.querySelector('.swiper');
         if (!swiperContainer) {
             console.error('Swiper container not found');
@@ -239,67 +239,67 @@ export class PanelCard extends LitElement implements LovelaceCard {
             },
         };
 
-        this._swiper = new Swiper(swiperContainer as HTMLElement, swiperParams);
+        this.swiper = new Swiper(swiperContainer as HTMLElement, swiperParams);
     }
 
-    private _startResetTimer(): void {
-        if (this._resetTimer) {
-            clearTimeout(this._resetTimer);
+    private startResetTimer(): void {
+        if (this.resetTimer) {
+            clearTimeout(this.resetTimer);
         }
 
-        this._resetTimer = setTimeout(
+        this.resetTimer = setTimeout(
             () => {
-                this._resetToFirstPage();
+                this.resetToFirstPage();
             },
             5 * 60 * 1000
         ); // 5 minutes
     }
 
-    private _resetToFirstPage(): void {
-        if (this._swiper && this._swiper.activeIndex !== 0) {
-            this._swiper.slideTo(0);
+    private resetToFirstPage(): void {
+        if (this.swiper && this.swiper.activeIndex !== 0) {
+            this.swiper.slideTo(0);
         }
 
-        this._startResetTimer();
+        this.startResetTimer();
     }
 
-    private _loadContent(): void {
-        if (!this.hass || !this._config) return;
+    private loadContent(): void {
+        if (!this.hass || !this.config) return;
 
         const headerChipsConfig =
-            (this._config.header_chips?.length ?? 0) > 0
-                ? this._config.header_chips
+            (this.config.header_chips?.length ?? 0) > 0
+                ? this.config.header_chips
                 : window.smartqasa.chipsConfig;
-        this._headerChips = createElements(headerChipsConfig, this.hass);
+        this.headerChips = createElements(headerChipsConfig, this.hass);
 
-        this._areaObj = this._area ? this.hass.areas[this._area] : undefined;
-        this._areaChips = createElements(
-            this._config.area_chips || [],
+        this.areaObj = this.area ? this.hass.areas[this.area] : undefined;
+        this.areaChips = createElements(
+            this.config.area_chips || [],
             this.hass
         );
 
         const { controlTiles, controlColumns } = loadControlTiles(
-            this._config.tiles || [],
+            this.config.tiles || [],
             this.hass,
-            this._isTablet
+            this.isTablet
         );
-        this._controlTiles = controlTiles;
-        this._controlColumns = controlColumns;
+        this.controlTiles = controlTiles;
+        this.controlColumns = controlColumns;
     }
 
-    protected _updateContent(): void {
+    protected updateContent(): void {
         const updateHassForCards = (cards: LovelaceCard[]) => {
             cards.forEach((card) => {
                 if (card.hass !== this.hass) card.hass = this.hass;
             });
         };
 
-        if (this._headerChips.length > 0) updateHassForCards(this._headerChips);
+        if (this.headerChips.length > 0) updateHassForCards(this.headerChips);
 
-        if (this._areaChips.length > 0) updateHassForCards(this._areaChips);
+        if (this.areaChips.length > 0) updateHassForCards(this.areaChips);
 
-        if (this._controlTiles.length > 0) {
-            this._controlTiles.forEach((page) => {
+        if (this.controlTiles.length > 0) {
+            this.controlTiles.forEach((page) => {
                 updateHassForCards(page);
             });
         }

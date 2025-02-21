@@ -41,88 +41,88 @@ export class ActionTile extends LitElement implements LovelaceCard {
   }
 
   @property({ attribute: false }) public hass?: HomeAssistant;
-  @state() protected _config?: Config;
-  @state() private _running: boolean = false;
+  @state() protected config?: Config;
+  @state() private running: boolean = false;
 
-  private _actions: ActionConfig[] = [];
-  private _icon: string = 'hass:alert-rhombus';
-  private _iconStyles: Record<string, string> = {};
-  private _name: string = 'Unknown Action';
+  private actions: ActionConfig[] = [];
+  private icon: string = 'hass:alert-rhombus';
+  private iconStyles: Record<string, string> = {};
+  private name: string = 'Unknown Action';
 
   static get styles(): CSSResult {
     return unsafeCSS(tileStyle);
   }
 
   public setConfig(config: Config): void {
-    this._config = config;
-    this._actions = config.actions || [];
+    this.config = config;
+    this.actions = config.actions || [];
   }
 
   protected shouldUpdate(changedProps: PropertyValues): boolean {
-    return !!(changedProps.has('_config') || changedProps.has('_running'));
+    return !!(changedProps.has('config') || changedProps.has('running'));
   }
 
   protected willUpdate(changedProps: PropertyValues): void {
     super.willUpdate(changedProps);
-    this._updateState();
+    this.updateState();
   }
 
   protected render(): TemplateResult | typeof nothing {
-    if (!this._config) return nothing;
+    if (!this.config) return nothing;
 
     return html`
-      <div class="container" @click=${this._runActions}>
-        <div class="icon" style="${styleMap(this._iconStyles)}">
-          <ha-icon icon=${this._icon}></ha-icon>
+      <div class="container" @click=${this.runActions}>
+        <div class="icon" style="${styleMap(this.iconStyles)}">
+          <ha-icon icon=${this.icon}></ha-icon>
         </div>
         <div class="text">
-          <div class="name">${this._name}</div>
+          <div class="name">${this.name}</div>
         </div>
       </div>
     `;
   }
 
-  private _updateState(): void {
+  private updateState(): void {
     let iconAnimation, iconColor;
 
-    if (this._config) {
-      if (this._running) {
-        this._icon = 'hass:rotate-right';
+    if (this.config) {
+      if (this.running) {
+        this.icon = 'hass:rotate-right';
         iconAnimation = 'spin 1.0s linear infinite';
         iconColor = 'var(--sq-blue-rgb)';
       } else {
-        this._icon = this._config.icon || 'hass:help-rhombus';
+        this.icon = this.config.icon || 'hass:help-rhombus';
         iconAnimation = 'none';
         iconColor = 'var(--sq-inactive-rgb)';
       }
-      this._name = this._config.name || 'Action Tile';
+      this.name = this.config.name || 'Action Tile';
     } else {
-      this._icon = 'hass:alert-rhombus';
+      this.icon = 'hass:alert-rhombus';
       iconAnimation = 'none';
       iconColor = 'var(--sq-unavailable-rgb)';
-      this._name = 'Unknown';
+      this.name = 'Unknown';
     }
 
-    this._iconStyles = {
+    this.iconStyles = {
       color: `rgb(${iconColor})`,
       backgroundColor: `rgba(${iconColor}, var(--sq-icon-alpha, 0.2))`,
       animation: iconAnimation,
     };
   }
 
-  private async _runActions(e: Event): Promise<void> {
+  private async runActions(e: Event): Promise<void> {
     e.stopPropagation();
-    if (!this.hass || !this._config?.actions) return;
+    if (!this.hass || !this.config?.actions) return;
 
-    this._running = true;
+    this.running = true;
 
-    for (const action of this._config.actions) {
+    for (const action of this.config.actions) {
       const [domain, service] = action.action.split('.');
       await callService(this.hass, domain, service, action.data || {});
     }
 
     setTimeout(() => {
-      this._running = false;
+      this.running = false;
     }, 1000);
   }
 }

@@ -18,12 +18,12 @@ export class PopupDialog extends LitElement {
   @property({ type: Number }) public timeout = 0;
   @property({ type: Object }) public card?: LovelaceCardConfig;
 
-  @state() private _cardElement: LovelaceCard | undefined;
-  @state() private _progressBarAnimation: string = '';
+  @state() private cardElement: LovelaceCard | undefined;
+  @state() private progressBarAnimation: string = '';
 
-  @query('.progress-bar > div') private _progressBar!: HTMLElement;
+  @query('.progress-bar > div') private progressBar!: HTMLElement;
 
-  private _timeoutId: number | undefined;
+  private timeoutId: number | undefined;
 
   static styles = css`
     :host {
@@ -88,25 +88,25 @@ export class PopupDialog extends LitElement {
   `;
 
   protected firstUpdated() {
-    this._cardElement = this.card ? createElement(this.card) : undefined;
-    console.log('First', this.card, this._cardElement);
-    if (this._cardElement) this._cardElement.hass = this.hass;
+    this.cardElement = this.card ? createElement(this.card) : undefined;
+    console.log('First', this.card, this.cardElement);
+    if (this.cardElement) this.cardElement.hass = this.hass;
   }
 
   protected updated(changedProps: PropertyValues) {
     if (changedProps.has('timeout')) {
-      this._handleTimeout();
+      this.handleTimeout();
     }
 
-    if (changedProps.has('hass') && this._cardElement) {
-      this._cardElement.hass = this.hass;
+    if (changedProps.has('hass') && this.cardElement) {
+      this.cardElement.hass = this.hass;
     }
   }
 
   disconnectedCallback() {
     super.disconnectedCallback();
-    if (this._timeoutId) {
-      clearTimeout(this._timeoutId);
+    if (this.timeoutId) {
+      clearTimeout(this.timeoutId);
     }
   }
 
@@ -116,32 +116,30 @@ export class PopupDialog extends LitElement {
         ${this.timeout > 0
           ? html`<div class="progress-bar">
               <div
-                style="--progress-animation: ${this._progressBarAnimation}"
+                style="--progress-animation: ${this.progressBarAnimation}"
               ></div>
             </div>`
           : ''}
         <button class="close-btn" @click=${this.closePopup}>X</button>
         <div class="title">${this.title}</div>
         <div class="content">
-          ${this._cardElement
-            ? html`${this._cardElement}`
-            : html`<slot></slot>`}
+          ${this.cardElement ? html`${this.cardElement}` : html`<slot></slot>`}
         </div>
       </div>
     `;
   }
 
-  private _handleTimeout() {
-    if (this._timeoutId) {
-      clearTimeout(this._timeoutId);
+  private handleTimeout() {
+    if (this.timeoutId) {
+      clearTimeout(this.timeoutId);
     }
 
     if (this.timeout > 0) {
-      this._timeoutId = window.setTimeout(
+      this.timeoutId = window.setTimeout(
         () => this.closePopup(),
         this.timeout * 1000
       );
-      this._progressBarAnimation = `progress ${this.timeout}s linear forwards`;
+      this.progressBarAnimation = `progress ${this.timeout}s linear forwards`;
     }
   }
 

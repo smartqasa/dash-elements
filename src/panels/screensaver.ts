@@ -33,14 +33,14 @@ export class ScreenSaver extends LitElement implements LovelaceCard {
   }
 
   @property({ attribute: false }) public hass?: HomeAssistant;
-  @state() protected _config?: Config;
-  @state() private _time: string = 'Loading...';
-  @state() private _date: string = 'Loading...';
+  @state() protected config?: Config;
+  @state() private time: string = 'Loading...';
+  @state() private date: string = 'Loading...';
 
-  private _moveTimerId: number | undefined;
-  private _timeIntervalId: number | undefined;
-  private _deviceRefreshState: string | undefined;
-  private _deviceRebootState: string | undefined;
+  private moveTimerId: number | undefined;
+  private timeIntervalId: number | undefined;
+  private deviceRefreshState: string | undefined;
+  private deviceRebootState: string | undefined;
 
   static get styles(): CSSResultGroup {
     return css`
@@ -128,31 +128,31 @@ export class ScreenSaver extends LitElement implements LovelaceCard {
 
   public setConfig(config: Config): void {
     if (!config) throw new Error('Invalid configuration provided');
-    this._config = config;
+    this.config = config;
   }
 
   protected render(): TemplateResult | typeof nothing {
-    if (!this._config) return nothing;
+    if (!this.config) return nothing;
 
     return html`
       <div class="container">
         <div class="element">
-          ${this._config?.display === 'logo'
+          ${this.config?.display === 'logo'
             ? html`
                 <div class="logo">
                   <img
                     src=${logoImage}
                     alt="Logo"
-                    @error=${() => this._handleImageError()}
+                    @error=${() => this.handleImageError()}
                   />
-                  ${this._config.name
-                    ? html` <div class="name">${this._config.name}</div> `
+                  ${this.config.name
+                    ? html` <div class="name">${this.config.name}</div> `
                     : ''}
                 </div>
               `
             : html`
-                <div class="time">${this._time}</div>
-                <div class="date">${this._date}</div>
+                <div class="time">${this.time}</div>
+                <div class="date">${this.date}</div>
               `}
         </div>
       </div>
@@ -162,51 +162,48 @@ export class ScreenSaver extends LitElement implements LovelaceCard {
   protected firstUpdated(changedProps: PropertyValues): void {
     super.firstUpdated(changedProps);
 
-    this._updateElement();
-    this._startClock();
-    this._cycleElement();
+    this.updateElement();
+    this.startClock();
+    this.cycleElement();
   }
 
   protected updated(changedProps: PropertyValues): void {
     super.updated(changedProps);
 
     if (changedProps.has('hass') && this.hass) {
-      this._deviceRefreshState = deviceRefresh(
+      this.deviceRefreshState = deviceRefresh(
         this.hass,
-        this._deviceRefreshState
+        this.deviceRefreshState
       );
 
-      this._deviceRebootState = deviceReboot(
-        this.hass,
-        this._deviceRebootState
-      );
+      this.deviceRebootState = deviceReboot(this.hass, this.deviceRebootState);
     }
   }
 
   public disconnectedCallback(): void {
     super.disconnectedCallback();
-    if (this._timeIntervalId !== undefined) {
-      window.clearInterval(this._timeIntervalId);
+    if (this.timeIntervalId !== undefined) {
+      window.clearInterval(this.timeIntervalId);
     }
-    if (this._moveTimerId !== undefined) {
-      window.clearTimeout(this._moveTimerId);
+    if (this.moveTimerId !== undefined) {
+      window.clearTimeout(this.moveTimerId);
     }
   }
 
-  private _startClock(): void {
-    this._timeIntervalId = window.setInterval(() => {
-      this._updateElement();
+  private startClock(): void {
+    this.timeIntervalId = window.setInterval(() => {
+      this.updateElement();
     }, 1000);
   }
 
-  private _cycleElement(): void {
+  private cycleElement(): void {
     const element = this.shadowRoot?.querySelector('.element') as HTMLElement;
     if (!element) {
       console.error('Element not found in shadow DOM.');
       return;
     }
 
-    const moveTimer = (this._config?.move_timer ?? 30) * 1000;
+    const moveTimer = (this.config?.move_timer ?? 30) * 1000;
 
     if (element) {
       element.style.animation = 'fade-in 1.5s forwards';
@@ -216,22 +213,22 @@ export class ScreenSaver extends LitElement implements LovelaceCard {
         setTimeout(() => {
           element.style.animation = 'fade-out 1s forwards';
           setTimeout(() => {
-            this._moveElement();
+            this.moveElement();
             element.style.animation = 'fade-in 1s forwards';
-            this._cycleElement();
+            this.cycleElement();
           }, 1500);
         }, moveTimer);
       }, 1500);
     }
   }
 
-  private _updateElement(): void {
+  private updateElement(): void {
     const now = new Date();
-    this._time = formattedTime(now);
-    this._date = formattedDate(now);
+    this.time = formattedTime(now);
+    this.date = formattedDate(now);
   }
 
-  private _moveElement(): void {
+  private moveElement(): void {
     const container = this.shadowRoot?.querySelector(
       '.container'
     ) as HTMLElement;
@@ -249,7 +246,7 @@ export class ScreenSaver extends LitElement implements LovelaceCard {
     }
   }
 
-  private _handleImageError(): void {
+  private handleImageError(): void {
     console.error('Failed to load image.');
   }
 }

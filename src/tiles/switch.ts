@@ -42,107 +42,103 @@ export class SwitchTile extends LitElement implements LovelaceCard {
   }
 
   @property({ attribute: false }) public hass?: HomeAssistant;
-  @state() protected _config?: Config;
-  private _entity?: string;
-  private _stateObj?: HassEntity;
-  private _icon: string = 'hass:toggle-switch-variant';
-  private _iconStyles: Record<string, string> = {};
-  private _name: string = 'Unknown Fan';
-  private _stateFmtd: string = 'Unknown State';
+  @state() protected config?: Config;
+  private entity?: string;
+  private stateObj?: HassEntity;
+  private icon: string = 'hass:toggle-switch-variant';
+  private iconStyles: Record<string, string> = {};
+  private name: string = 'Unknown Fan';
+  private stateFmtd: string = 'Unknown State';
 
   static get styles(): CSSResult {
     return unsafeCSS(tileStyle);
   }
 
   public setConfig(config: Config): void {
-    this._entity = ['fan', 'input_boolean', 'light', 'switch'].includes(
+    this.entity = ['fan', 'input_boolean', 'light', 'switch'].includes(
       config.entity?.split('.')[0]
     )
       ? config.entity
       : undefined;
-    this._config = config;
+    this.config = config;
   }
 
   protected shouldUpdate(changedProps: PropertyValues): boolean {
-    if (changedProps.has('_config')) return true;
+    if (changedProps.has('config')) return true;
 
     if (changedProps.has('hass')) {
-      const newState = this._entity
-        ? this.hass?.states[this._entity]
-        : undefined;
+      const newState = this.entity ? this.hass?.states[this.entity] : undefined;
 
-      return newState !== this._stateObj;
+      return newState !== this.stateObj;
     }
 
     return false;
   }
 
   protected willUpdate(changedProps: PropertyValues): void {
-    this._updateState();
+    this.updateState();
   }
 
   protected render(): TemplateResult | typeof nothing {
     return html`
-      <div class="container" @click=${this._toggleEntity}>
+      <div class="container" @click=${this.toggleEntity}>
         <div
           class="icon"
-          @click=${this._showMoreInfo}
-          style="${styleMap(this._iconStyles)}"
+          @click=${this.showMoreInfo}
+          style="${styleMap(this.iconStyles)}"
         >
-          <ha-icon icon=${this._icon}></ha-icon>
+          <ha-icon icon=${this.icon}></ha-icon>
         </div>
         <div class="text">
-          <div class="name">${this._name}</div>
-          <div class="state">${this._stateFmtd}</div>
+          <div class="name">${this.name}</div>
+          <div class="state">${this.stateFmtd}</div>
         </div>
       </div>
     `;
   }
 
-  private _updateState(): void {
-    this._stateObj = this._entity ? this.hass?.states[this._entity] : undefined;
+  private updateState(): void {
+    this.stateObj = this.entity ? this.hass?.states[this.entity] : undefined;
 
     let icon, iconColor, name, stateFmtd;
-    if (this._stateObj) {
+    if (this.stateObj) {
       icon =
-        this._config!.icon ||
-        this._stateObj.attributes.icon ||
+        this.config!.icon ||
+        this.stateObj.attributes.icon ||
         'hass:toggle-switch-variant';
-      const state = this._stateObj.state;
+      const state = this.stateObj.state;
       iconColor =
         state === 'on'
-          ? `var(--sq-switch${this._config!.category ? `-${this._config!.category}` : ''}-on-rgb)`
+          ? `var(--sq-switch${this.config!.category ? `-${this.config!.category}` : ''}-on-rgb)`
           : 'var(--sq-inactive-rgb)';
       name =
-        this._config!.name ||
-        this._stateObj.attributes.friendly_name ||
-        'Switch';
-      stateFmtd = this.hass!.formatEntityState(this._stateObj);
+        this.config!.name || this.stateObj.attributes.friendly_name || 'Switch';
+      stateFmtd = this.hass!.formatEntityState(this.stateObj);
     } else {
-      icon = this._config!.icon || 'hass:toggle-switch-variant';
+      icon = this.config!.icon || 'hass:toggle-switch-variant';
       iconColor = 'var(--sq-unavailable-rgb)';
-      name = this._config?.name || 'Unknown Switch';
+      name = this.config?.name || 'Unknown Switch';
       stateFmtd = 'Unknown State';
     }
 
-    this._iconStyles = {
+    this.iconStyles = {
       color: `rgb(${iconColor})`,
       backgroundColor: `rgba(${iconColor}, var(--sq-icon-alpha))`,
     };
-    this._icon = icon;
-    this._name = name;
-    this._stateFmtd = stateFmtd;
+    this.icon = icon;
+    this.name = name;
+    this.stateFmtd = stateFmtd;
   }
 
-  private _toggleEntity(e: Event): void {
+  private toggleEntity(e: Event): void {
     e.stopPropagation();
     callService(this.hass, 'homeassistant', 'toggle', {
-      entity_id: this._entity,
+      entity_id: this.entity,
     });
   }
 
-  private _showMoreInfo(e: Event): void {
+  private showMoreInfo(e: Event): void {
     e.stopPropagation();
-    moreInfoDialog(this._stateObj, this._config?.callingDialog);
+    moreInfoDialog(this.stateObj, this.config?.callingDialog);
   }
 }

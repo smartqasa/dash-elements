@@ -55,30 +55,30 @@ export class PanelCard extends LitElement implements LovelaceCard {
     }
 
     @property({ attribute: false }) public hass?: HomeAssistant;
-    @state() protected _config?: Config;
-    @state() private _isAdminMode = false;
-    @state() private _isPhone: boolean = getDeviceType() === 'phone';
-    @state() private _isTablet: boolean = getDeviceType() === 'tablet';
-    @state() private _isPortrait: boolean =
+    @state() protected config?: Config;
+    @state() private isAdminMode = false;
+    @state() private isPhone: boolean = getDeviceType() === 'phone';
+    @state() private isTablet: boolean = getDeviceType() === 'tablet';
+    @state() private isPortrait: boolean =
         getDeviceOrientation() === 'portrait';
-    @state() private _isLandscape: boolean =
+    @state() private isLandscape: boolean =
         getDeviceOrientation() === 'landscape';
-    @state() private _swiper: Swiper | undefined;
+    @state() private swiper: Swiper | undefined;
 
-    private _boundHandleDeviceChanges = () => this._handleDeviceChanges();
-    private _boundStartResetTimer = () => this._startResetTimer();
-    private _viewModeChangedHandler = () => this.requestUpdate();
+    private boundHandleDeviceChanges = () => this.handleDeviceChanges();
+    private boundStartResetTimer = () => this.startResetTimer();
+    private viewModeChangedHandler = () => this.requestUpdate();
 
-    private _timeIntervalId: number | undefined;
-    private _resetTimer?: ReturnType<typeof setTimeout>;
-    private _area?: string;
-    private _areaObj?: HassArea;
-    private _headerChips: LovelaceCard[] = [];
-    private _areaChips: LovelaceCard[] = [];
-    private _controlTiles: LovelaceCard[][] = [];
-    private _controlColumns: number[] = [];
-    private _entertainCards: LovelaceCard[] = [];
-    @state() private _entertainTab: number = 0;
+    private timeIntervalId: number | undefined;
+    private resetTimer?: ReturnType<typeof setTimeout>;
+    private area?: string;
+    private areaObj?: HassArea;
+    private headerChips: LovelaceCard[] = [];
+    private areaChips: LovelaceCard[] = [];
+    private controlTiles: LovelaceCard[][] = [];
+    private controlColumns: number[] = [];
+    private entertainCards: LovelaceCard[] = [];
+    @state() private entertainTab: number = 0;
 
     static styles: CSSResultGroup = [
         unsafeCSS(swiperStyles),
@@ -87,57 +87,57 @@ export class PanelCard extends LitElement implements LovelaceCard {
     ];
 
     public setConfig(config: Config) {
-        this._config = { ...config };
-        this._area = this._config.area;
+        this.config = { ...config };
+        this.area = this.config.area;
     }
 
     public connectedCallback(): void {
         super.connectedCallback();
 
-        this._syncTime();
+        this.syncTime();
 
         window.smartqasa.viewMode = 'control';
 
-        window.addEventListener('resize', this._boundHandleDeviceChanges);
+        window.addEventListener('resize', this.boundHandleDeviceChanges);
         window.addEventListener(
             'orientationchange',
-            this._boundHandleDeviceChanges
+            this.boundHandleDeviceChanges
         );
-        window.addEventListener('touchstart', this._boundStartResetTimer, {
+        window.addEventListener('touchstart', this.boundStartResetTimer, {
             passive: true,
         });
         window.addEventListener(
             'viewModeChanged',
-            this._viewModeChangedHandler
+            this.viewModeChangedHandler
         );
 
-        this._startResetTimer();
+        this.startResetTimer();
     }
 
     protected willUpdate(changedProps: PropertyValues): void {
         if (this.hass) {
             const isAdminMode =
                 this.hass.states['input_boolean.admin_mode']?.state === 'on';
-            this._isAdminMode =
+            this.isAdminMode =
                 (this.hass.user?.is_admin ?? false) || isAdminMode;
         }
 
         if (
             this.hass &&
-            this._headerChips.length === 0 &&
+            this.headerChips.length === 0 &&
             window.smartqasa.chipsConfig.length > 0
         ) {
-            this._headerChips = createElements(
+            this.headerChips = createElements(
                 window.smartqasa.chipsConfig,
                 this.hass
             );
         }
 
-        if (changedProps.has('_config') && this._config) this._loadContent();
+        if (changedProps.has('config') && this.config) this.loadContent();
 
         if (changedProps.has('hass') && this.hass) {
-            this._areaObj = this._area
-                ? this.hass?.areas[this._area]
+            this.areaObj = this.area
+                ? this.hass?.areas[this.area]
                 : undefined;
 
             const updateHassForCards = (cards: LovelaceCard[]) => {
@@ -146,74 +146,74 @@ export class PanelCard extends LitElement implements LovelaceCard {
                 });
             };
 
-            if (this._isTablet && this._headerChips.length > 0)
-                updateHassForCards(this._headerChips);
+            if (this.isTablet && this.headerChips.length > 0)
+                updateHassForCards(this.headerChips);
 
-            if (this._areaChips.length > 0) updateHassForCards(this._areaChips);
+            if (this.areaChips.length > 0) updateHassForCards(this.areaChips);
 
-            if (this._controlTiles.length > 0)
-                this._controlTiles.forEach((page) => {
+            if (this.controlTiles.length > 0)
+                this.controlTiles.forEach((page) => {
                     updateHassForCards(page);
                 });
-            //if (this._entertainCards.length > 0) updateHassForCards(this._entertainCards);
+            //if (this.entertainCards.length > 0) updateHassForCards(this.entertainCards);
         }
     }
 
     protected firstUpdated(): void {
-        this._loadContent();
+        this.loadContent();
     }
 
     protected updated(): void {
-        if (this._isTablet && this._controlTiles.length > 1 && !this._swiper) {
-            this._initializeSwiper();
+        if (this.isTablet && this.controlTiles.length > 1 && !this.swiper) {
+            this.initializeSwiper();
         }
     }
 
     public disconnectedCallback(): void {
         super.disconnectedCallback();
 
-        window.removeEventListener('resize', this._boundHandleDeviceChanges);
+        window.removeEventListener('resize', this.boundHandleDeviceChanges);
         window.removeEventListener(
             'orientationchange',
-            this._boundHandleDeviceChanges
+            this.boundHandleDeviceChanges
         );
-        window.removeEventListener('touchstart', this._boundStartResetTimer);
+        window.removeEventListener('touchstart', this.boundStartResetTimer);
         window.removeEventListener(
             'viewModeChanged',
-            this._viewModeChangedHandler
+            this.viewModeChangedHandler
         );
 
-        if (this._timeIntervalId !== undefined) {
-            clearInterval(this._timeIntervalId);
+        if (this.timeIntervalId !== undefined) {
+            clearInterval(this.timeIntervalId);
         }
 
-        if (this._resetTimer) {
-            clearTimeout(this._resetTimer);
+        if (this.resetTimer) {
+            clearTimeout(this.resetTimer);
         }
     }
 
     protected render(): TemplateResult | typeof nothing {
-        if (!this.hass || !this._config || !this._area) return nothing;
+        if (!this.hass || !this.config || !this.area) return nothing;
 
         const viewMode = window.smartqasa.viewMode;
-        const name = this._config?.name ?? this._areaObj?.name ?? 'Area';
+        const name = this.config?.name ?? this.areaObj?.name ?? 'Area';
         let content;
         switch (viewMode) {
             case 'control':
-                const picture = this._config.picture ?? `${this._area}.png`;
+                const picture = this.config.picture ?? `${this.area}.png`;
                 content = html`
                     ${renderArea(
                         name,
                         picture,
-                        this._areaChips,
-                        this._isPhone,
-                        this._isLandscape
+                        this.areaChips,
+                        this.isPhone,
+                        this.isLandscape
                     )}
                     ${renderControls(
-                        this._controlTiles,
-                        this._controlColumns,
-                        this._isPhone,
-                        this._swiper
+                        this.controlTiles,
+                        this.controlColumns,
+                        this.isPhone,
+                        this.swiper
                     )}
                 `;
                 break;
@@ -225,7 +225,7 @@ export class PanelCard extends LitElement implements LovelaceCard {
                             <div
                                 class="entertain-button"
                                 @click=${() => {
-                                    this._entertainTab = 0;
+                                    this.entertainTab = 0;
                                 }}
                             >
                                 <ha-icon icon="hass:music"></ha-icon>
@@ -234,7 +234,7 @@ export class PanelCard extends LitElement implements LovelaceCard {
                             <div
                                 class="entertain-button"
                                 @click=${() => {
-                                    this._entertainTab = 1;
+                                    this.entertainTab = 1;
                                 }}
                             >
                                 <ha-icon
@@ -245,7 +245,7 @@ export class PanelCard extends LitElement implements LovelaceCard {
                             <div
                                 class="entertain-button"
                                 @click=${() => {
-                                    this._entertainTab = 2;
+                                    this.entertainTab = 2;
                                 }}
                             >
                                 <ha-icon icon="hass:exit-to-app"></ha-icon>
@@ -253,7 +253,7 @@ export class PanelCard extends LitElement implements LovelaceCard {
                             </div>
                         </div>
                         <div class="entertain-cards">
-                            ${this._entertainCards[this._entertainTab]}
+                            ${this.entertainCards[this.entertainTab]}
                         </div>
                     </div>
                 `;
@@ -267,32 +267,32 @@ export class PanelCard extends LitElement implements LovelaceCard {
         return html`
             <div
                 class="container"
-                ?admin=${this._isAdminMode}
+                ?admin=${this.isAdminMode}
                 ?control=${viewMode === "control"}
                 ?entertain=${viewMode === "entertain"}
             >
-                ${this._isTablet ? renderHeader(this._headerChips) : nothing}
+                ${this.isTablet ? renderHeader(this.headerChips) : nothing}
                 ${content}
-                ${this._isPhone && this._isLandscape ? nothing : renderFooter()}
+                ${this.isPhone && this.isLandscape ? nothing : renderFooter()}
             </div>
         `;
     }
 
-    private _handleDeviceChanges(): void {
+    private handleDeviceChanges(): void {
         const type = getDeviceType();
-        this._isPhone = type === 'phone';
-        this._isTablet = type === 'tablet';
+        this.isPhone = type === 'phone';
+        this.isTablet = type === 'tablet';
 
         const orientation = getDeviceOrientation();
-        this._isPortrait = orientation === 'portrait';
-        this._isLandscape = orientation === 'landscape';
+        this.isPortrait = orientation === 'portrait';
+        this.isLandscape = orientation === 'landscape';
 
-        if (this._isTablet && this._controlTiles.length > 1) {
-            this._initializeSwiper();
+        if (this.isTablet && this.controlTiles.length > 1) {
+            this.initializeSwiper();
         }
     }
 
-    private _syncTime(): void {
+    private syncTime(): void {
         const syncTime = () => {
             const now = new Date();
             const millisecondsUntilNextSecond = 1000 - now.getMilliseconds();
@@ -305,7 +305,7 @@ export class PanelCard extends LitElement implements LovelaceCard {
         syncTime();
     }
 
-    private _initializeSwiper() {
+    private initializeSwiper() {
         const swiperContainer = this.shadowRoot?.querySelector('.swiper');
         if (!swiperContainer) {
             console.error('Swiper container not found');
@@ -322,57 +322,57 @@ export class PanelCard extends LitElement implements LovelaceCard {
             },
         };
 
-        this._swiper = new Swiper(swiperContainer as HTMLElement, swiperParams);
+        this.swiper = new Swiper(swiperContainer as HTMLElement, swiperParams);
     }
 
-    private _startResetTimer(): void {
-        if (this._resetTimer) {
-            clearTimeout(this._resetTimer);
+    private startResetTimer(): void {
+        if (this.resetTimer) {
+            clearTimeout(this.resetTimer);
         }
 
-        this._resetTimer = setTimeout(
+        this.resetTimer = setTimeout(
             () => {
-                this._resetToFirstPage();
+                this.resetToFirstPage();
             },
             5 * 60 * 1000
         ); // 5 minutes
     }
 
-    private _resetToFirstPage(): void {
+    private resetToFirstPage(): void {
         window.smartqasa.viewMode = 'control';
-        if (this._swiper && this._swiper.activeIndex !== 0) {
-            this._swiper.slideTo(0);
+        if (this.swiper && this.swiper.activeIndex !== 0) {
+            this.swiper.slideTo(0);
         }
 
-        this._startResetTimer();
+        this.startResetTimer();
     }
 
-    private _loadContent(): void {
-        if (!this.hass || !this._config) return;
+    private loadContent(): void {
+        if (!this.hass || !this.config) return;
 
         const headerChipsConfig = window.smartqasa.chipsConfig;
         if (headerChipsConfig)
-            this._headerChips = createElements(
+            this.headerChips = createElements(
                 window.smartqasa.chipsConfig,
                 this.hass
             );
 
-        this._areaObj = this._area ? this.hass.areas[this._area] : undefined;
-        this._areaChips = createElements(this._config.chips || [], this.hass);
+        this.areaObj = this.area ? this.hass.areas[this.area] : undefined;
+        this.areaChips = createElements(this.config.chips || [], this.hass);
 
         const { controlTiles, controlColumns } = loadControlTiles(
-            this._config.tiles || [],
+            this.config.tiles || [],
             this.hass,
-            this._isTablet
+            this.isTablet
         );
-        this._controlTiles = controlTiles;
-        this._controlColumns = controlColumns;
+        this.controlTiles = controlTiles;
+        this.controlColumns = controlColumns;
 
         /*
-        this._entertainCards = loadEntertainCards(
-            this._config.audio_player || "",
-            this._config.video_player || "",
-            this._config.video_sound || "",
+        this.entertainCards = loadEntertainCards(
+            this.config.audio_player || "",
+            this.config.video_player || "",
+            this.config.video_sound || "",
             this.hass
         ) as LovelaceCard[];
         */

@@ -37,7 +37,7 @@ window.customCards.push({
 @customElement('smartqasa-panel-footer')
 class PanelFooter extends LitElement implements ActionHandlers {
     @property({ attribute: false }) public hass?: HomeAssistant;
-    @state() private _config?: Config;
+    @state() private config?: Config;
 
     static styles: CSSResultGroup = css`
         :host {
@@ -75,7 +75,7 @@ class PanelFooter extends LitElement implements ActionHandlers {
     `;
 
     setConfig(config: Config): void {
-        this._config = { ...config };
+        this.config = { ...config };
     }
 
     protected render(): TemplateResult {
@@ -135,7 +135,7 @@ class PanelFooter extends LitElement implements ActionHandlers {
     }
 
     handleEntertain(): void {
-        entertainDialog(this._config, this.hass);
+        entertainDialog(this.config, this.hass);
     }
 
     async handleMenu(): Promise<void> {

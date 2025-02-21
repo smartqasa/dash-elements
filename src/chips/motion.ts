@@ -42,15 +42,15 @@ export class MotionChip extends LitElement implements LovelaceCard {
   }
 
   @property({ attribute: false }) public hass?: HomeAssistant;
-  @state() protected _config?: Config;
-  @state() private _automationObj?: HassEntity;
-  @state() private _sensorObj?: HassEntity;
+  @state() protected config?: Config;
+  @state() private automationObj?: HassEntity;
+  @state() private sensorObj?: HassEntity;
 
-  private _automation?: string;
-  private _sensor?: string;
-  private _icon: string = 'hass:motion-sensor';
-  private _iconStyles: Record<string, string> = {};
-  private _name: string = '';
+  private automation?: string;
+  private sensor?: string;
+  private icon: string = 'hass:motion-sensor';
+  private iconStyles: Record<string, string> = {};
+  private name: string = '';
 
   static get styles(): CSSResultGroup {
     return [unsafeCSS(chipBaseStyle), unsafeCSS(chipTextStyle)];
@@ -59,34 +59,34 @@ export class MotionChip extends LitElement implements LovelaceCard {
   public setConfig(config: Config): void {
     if (!config.automation?.startsWith('automation.')) {
       console.error('A valid automation entity must be provided.');
-      this._config = undefined;
+      this.config = undefined;
       return;
     }
     if (config.sensor && !config.sensor.startsWith('binary_sensor.')) {
       console.error('A valid binary sensor entity must be provided.');
-      this._config = undefined;
+      this.config = undefined;
       return;
     }
 
-    this._config = config;
-    this._automation = config.automation;
-    this._sensor = config.sensor;
+    this.config = config;
+    this.automation = config.automation;
+    this.sensor = config.sensor;
   }
 
   protected shouldUpdate(changedProps: PropertyValues): boolean {
-    if (changedProps.has('_config')) return true;
+    if (changedProps.has('config')) return true;
 
     if (changedProps.has('hass')) {
-      const newAutomationState = this._automation
-        ? this.hass?.states[this._automation]
+      const newAutomationState = this.automation
+        ? this.hass?.states[this.automation]
         : undefined;
-      const newSensorState = this._sensor
-        ? this.hass?.states[this._sensor]
+      const newSensorState = this.sensor
+        ? this.hass?.states[this.sensor]
         : undefined;
 
       return (
-        newAutomationState !== this._automationObj ||
-        newSensorState !== this._sensorObj
+        newAutomationState !== this.automationObj ||
+        newSensorState !== this.sensorObj
       );
     }
 
@@ -94,52 +94,50 @@ export class MotionChip extends LitElement implements LovelaceCard {
   }
 
   protected willUpdate(changedProps: PropertyValues): void {
-    this._updateState();
+    this.updateState();
   }
 
   protected render(): TemplateResult | typeof nothing {
-    if (!this._config || !this.hass) return nothing;
+    if (!this.config || !this.hass) return nothing;
 
     return html`
-      <div class="container" @click=${this._toggleEntity}>
-        <div class="icon" style="${styleMap(this._iconStyles)}">
-          <ha-icon icon=${this._icon}></ha-icon>
+      <div class="container" @click=${this.toggleEntity}>
+        <div class="icon" style="${styleMap(this.iconStyles)}">
+          <ha-icon icon=${this.icon}></ha-icon>
         </div>
-        ${this._name ? html`<div class="text">${this._name}</div>` : null}
+        ${this.name ? html`<div class="text">${this.name}</div>` : null}
       </div>
     `;
   }
 
-  private _updateState(): void {
-    this._automationObj = this._automation
-      ? this.hass?.states[this._automation]
+  private updateState(): void {
+    this.automationObj = this.automation
+      ? this.hass?.states[this.automation]
       : undefined;
-    this._sensorObj = this._sensor
-      ? this.hass?.states[this._sensor]
-      : undefined;
+    this.sensorObj = this.sensor ? this.hass?.states[this.sensor] : undefined;
 
-    const { icon, iconColor } = this._getIconAndColor();
-    this._icon = icon;
-    this._name = this._config?.name || '';
+    const { icon, iconColor } = this.getIconAndColor();
+    this.icon = icon;
+    this.name = this.config?.name || '';
 
-    this._iconStyles = {
+    this.iconStyles = {
       color: `rgb(${iconColor})`,
-      paddingRight: this._name
+      paddingRight: this.name
         ? 'calc(var(--sq-chip-padding) / 2)'
         : 'var(--sq-chip-padding)',
     };
   }
 
-  private _getIconAndColor(): { icon: string; iconColor: string } {
+  private getIconAndColor(): { icon: string; iconColor: string } {
     let icon = 'hass:motion-sensor-off';
     let iconColor = 'var(--sq-unavailable-rgb)';
 
-    if (this._automationObj) {
-      switch (this._automationObj.state) {
+    if (this.automationObj) {
+      switch (this.automationObj.state) {
         case 'on':
           icon = 'hass:motion-sensor';
           iconColor =
-            this._sensorObj?.state === 'on'
+            this.sensorObj?.state === 'on'
               ? 'var(--sq-blue-rgb)'
               : 'var(--sq-primary-font-rgb)';
           break;
@@ -149,16 +147,16 @@ export class MotionChip extends LitElement implements LovelaceCard {
           break;
       }
     } else {
-      icon = this._config?.icon || 'hass:motion-sensor-off';
+      icon = this.config?.icon || 'hass:motion-sensor-off';
     }
 
     return { icon, iconColor };
   }
 
-  private _toggleEntity(e: Event): void {
+  private toggleEntity(e: Event): void {
     e.stopPropagation();
     callService(this.hass, 'automation', 'toggle', {
-      entity_id: this._automation,
+      entity_id: this.automation,
     });
   }
 }

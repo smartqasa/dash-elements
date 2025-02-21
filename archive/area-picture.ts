@@ -28,9 +28,9 @@ window.customCards.push({
 @customElement('smartqasa-area-picture')
 export class AreaPicture extends LitElement {
     @property({ attribute: false }) public hass?: HomeAssistant;
-    @state() private _config?: Config;
-    private _area?: string;
-    private _areaObj?: HassArea;
+    @state() private config?: Config;
+    private area?: string;
+    private areaObj?: HassArea;
 
     static get styles(): CSSResultGroup {
         return css`
@@ -51,24 +51,24 @@ export class AreaPicture extends LitElement {
     }
 
     public setConfig(config: Config): void {
-        this._config = { ...config };
-        this._area = this._config?.area;
+        this.config = { ...config };
+        this.area = this.config?.area;
     }
 
     protected shouldUpdate(changedProps: PropertyValues): boolean {
         return !!(
             (changedProps.has('hass') &&
-                this._area &&
-                this.hass?.areas[this._area] !== this._areaObj) ||
-            (changedProps.has('_config') && this._config)
+                this.area &&
+                this.hass?.areas[this.area] !== this.areaObj) ||
+            (changedProps.has('config') && this.config)
         );
     }
 
     protected render(): TemplateResult {
         const height = deviceType === 'phone' ? '15vh' : '20vh';
-        const picture = this._config?.picture
-            ? `/local/smartqasa/images/${this._config.picture}`
-            : (this._areaObj?.picture ?? defaultImage);
+        const picture = this.config?.picture
+            ? `/local/smartqasa/images/${this.config.picture}`
+            : (this.areaObj?.picture ?? defaultImage);
 
         return html`
             <ha-card

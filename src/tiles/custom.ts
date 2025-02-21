@@ -42,15 +42,15 @@ export class DialogTile extends LitElement implements LovelaceCard {
   }
 
   @property({ attribute: false }) public hass?: HomeAssistant;
-  @state() protected _config?: Config;
-  @state() private _dialogObj?: DialogObj;
-  @state() private _stateObj?: HassEntity;
+  @state() protected config?: Config;
+  @state() private dialogObj?: DialogObj;
+  @state() private stateObj?: HassEntity;
 
-  private _entity?: string;
-  private _icon: string = 'mdi:help-circle';
-  private _iconStyles: Record<string, string> = {};
-  private _name: string = 'Unknown Dialog';
-  private _stateFmtd: string = 'Unknown State';
+  private entity?: string;
+  private icon: string = 'mdi:help-circle';
+  private iconStyles: Record<string, string> = {};
+  private name: string = 'Unknown Dialog';
+  private stateFmtd: string = 'Unknown State';
 
   static get styles(): CSSResult {
     return unsafeCSS(tileStyle);
@@ -64,66 +64,66 @@ export class DialogTile extends LitElement implements LovelaceCard {
 
     try {
       const path = `/local/smartqasa/custom/dialogs/${config.dialog_file}`;
-      this._dialogObj = (await loadYamlAsJson(path)) as DialogObj;
-      this._entity = this._dialogObj.entity;
+      this.dialogObj = (await loadYamlAsJson(path)) as DialogObj;
+      this.entity = this.dialogObj.entity;
     } catch (error) {
       console.error('Failed to load YAML:', error);
     } finally {
-      if (this._dialogObj) {
-        this._icon = config.icon || this._dialogObj.icon || 'mdi:help-circle';
-        this._name = config.name || this._dialogObj.name || 'Unknown';
+      if (this.dialogObj) {
+        this.icon = config.icon || this.dialogObj.icon || 'mdi:help-circle';
+        this.name = config.name || this.dialogObj.name || 'Unknown';
       }
     }
 
-    this._config = config;
+    this.config = config;
   }
 
   protected shouldUpdate(changedProps: PropertyValues): boolean {
-    if (changedProps.has('_config')) return true;
+    if (changedProps.has('config')) return true;
 
-    if (changedProps.has('hass') && this._entity) {
-      const newState = this.hass?.states[this._entity];
-      return newState !== this._stateObj;
+    if (changedProps.has('hass') && this.entity) {
+      const newState = this.hass?.states[this.entity];
+      return newState !== this.stateObj;
     }
 
     return false;
   }
 
   protected willUpdate(changedProps: PropertyValues): void {
-    this._updateState();
+    this.updateState();
   }
 
   protected render(): TemplateResult {
     return html`
-      <div class="container" @click=${this._showDialog}>
-        <div class="icon" style="${styleMap(this._iconStyles)}">
-          <ha-icon icon=${this._icon}></ha-icon>
+      <div class="container" @click=${this.showDialog}>
+        <div class="icon" style="${styleMap(this.iconStyles)}">
+          <ha-icon icon=${this.icon}></ha-icon>
         </div>
         <div class="text">
-          <div class="name">${this._name}</div>
-          ${this._stateFmtd
-            ? html`<div class="state">${this._stateFmtd}</div>`
+          <div class="name">${this.name}</div>
+          ${this.stateFmtd
+            ? html`<div class="state">${this.stateFmtd}</div>`
             : nothing}
         </div>
       </div>
     `;
   }
 
-  private _updateState(): void {
+  private updateState(): void {
     let iconColor, stateFmtd;
 
-    if (this._entity) {
-      this._stateObj = this.hass?.states[this._entity];
+    if (this.entity) {
+      this.stateObj = this.hass?.states[this.entity];
 
-      if (this._stateObj) {
-        const state = this._stateObj.state || 'unknown';
+      if (this.stateObj) {
+        const state = this.stateObj.state || 'unknown';
         iconColor =
           state === 'on'
-            ? (this._config?.dialog?.active_color ??
-              this._config?.active_color ??
+            ? (this.config?.dialog?.active_color ??
+              this.config?.active_color ??
               'var(--sq-orange-rgb)')
             : 'var(--sq-inactive-rgb)';
-        stateFmtd = formatState(this.hass!, this._entity);
+        stateFmtd = formatState(this.hass!, this.entity);
       } else {
         iconColor = 'var(--sq-unavailable-rgb)';
         stateFmtd = 'Unknown State';
@@ -133,16 +133,16 @@ export class DialogTile extends LitElement implements LovelaceCard {
       stateFmtd = '';
     }
 
-    this._iconStyles = {
+    this.iconStyles = {
       color: `rgb(${iconColor})`,
       backgroundColor: `rgba(${iconColor}, var(--sq-icon-alpha))`,
     };
-    this._stateFmtd = stateFmtd;
+    this.stateFmtd = stateFmtd;
   }
 
-  private _showDialog(e: Event): void {
+  private showDialog(e: Event): void {
     e.stopPropagation();
-    const dialogObj = this._dialogObj;
+    const dialogObj = this.dialogObj;
     if (dialogObj?.data) window.browser_mod?.service('popup', dialogObj.data);
   }
 }

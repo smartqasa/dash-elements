@@ -41,13 +41,13 @@ export class HeaterTile extends LitElement implements LovelaceCard {
   }
 
   @property({ attribute: false }) public hass?: HomeAssistant;
-  @state() protected _config?: Config;
-  @state() private _stateObj?: HassEntity;
-  private _entity?: string;
-  private _icon: string = 'hass:water-boiler-alert';
-  private _iconStyles: Record<string, string> = {};
-  private _name: string = 'Unknown Heater';
-  private _stateFmtd: string = 'Unknown State';
+  @state() protected config?: Config;
+  @state() private stateObj?: HassEntity;
+  private entity?: string;
+  private icon: string = 'hass:water-boiler-alert';
+  private iconStyles: Record<string, string> = {};
+  private name: string = 'Unknown Heater';
+  private stateFmtd: string = 'Unknown State';
 
   static get styles(): CSSResult {
     return unsafeCSS(tileStyle);
@@ -56,76 +56,74 @@ export class HeaterTile extends LitElement implements LovelaceCard {
   public setConfig(config: Config): void {
     if (!config.entity?.startsWith('water_heater.')) {
       console.error('Invalid water_heater entity provided in the config.');
-      this._entity = undefined;
+      this.entity = undefined;
     } else {
-      this._entity = config.entity;
+      this.entity = config.entity;
     }
-    this._config = config;
+    this.config = config;
   }
 
   protected shouldUpdate(changedProps: PropertyValues): boolean {
-    if (changedProps.has('_config')) return true;
+    if (changedProps.has('config')) return true;
 
     if (changedProps.has('hass')) {
-      const newState = this._entity
-        ? this.hass?.states[this._entity]
-        : undefined;
+      const newState = this.entity ? this.hass?.states[this.entity] : undefined;
 
-      return newState !== this._stateObj;
+      return newState !== this.stateObj;
     }
 
     return false;
   }
 
   protected willUpdate(changedProps: PropertyValues): void {
-    this._updateState();
+    this.updateState();
   }
 
   protected render(): TemplateResult | typeof nothing {
     return html`
-      <div class="container" @click=${this._showMoreInfo}>
-        <div class="icon" style="${styleMap(this._iconStyles)}">
-          <ha-icon icon=${this._icon}></ha-icon>
+      <div class="container" @click=${this.showMoreInfo}>
+        <div class="icon" style="${styleMap(this.iconStyles)}">
+          <ha-icon icon=${this.icon}></ha-icon>
         </div>
         <div class="text">
-          <div class="name">${this._name}</div>
-          <div class="state">${this._stateFmtd}</div>
+          <div class="name">${this.name}</div>
+          <div class="state">${this.stateFmtd}</div>
         </div>
       </div>
     `;
   }
 
-  private _updateState(): void {
-    this._stateObj = this._entity ? this.hass?.states[this._entity] : undefined;
+  private updateState(): void {
+    this.stateObj = this.entity ? this.hass?.states[this.entity] : undefined;
 
     let icon, iconColor, name, stateFmtd;
-    if (this._stateObj) {
-      const state = this._stateObj.state || 'unknown';
-      icon = this._config!.icon || 'hass:water-boiler';
+    if (this.stateObj) {
+      const state = this.stateObj.state || 'unknown';
+      icon = this.config!.icon || 'hass:water-boiler';
       iconColor = heaterColors[state] || heaterColors.idle;
       name =
-        this._config!.name ||
-        this._stateObj.attributes.friendly_name ||
+        this.config!.name ||
+        this.stateObj.attributes.friendly_name ||
         'Water Heater';
-      stateFmtd = formatState(this.hass!, this._entity!);
+      stateFmtd = formatState(this.hass!, this.entity!);
     } else {
-      icon = this._config!.icon || 'hass:water-boiler-alert';
+      icon = this.config!.icon || 'hass:water-boiler-alert';
       iconColor = 'var(--sq-unavailable-rgb, 255, 0, 255)';
-      name = this._config!.name || 'Unknown Heater';
+      name = this.config!.name || 'Unknown Heater';
       stateFmtd = 'Unknown State';
     }
 
-    this._iconStyles = {
+    this.iconStyles = {
       color: `rgb(${iconColor})`,
       backgroundColor: `rgba(${iconColor}, var(--sq-icon-alpha))`,
     };
-    this._icon = icon;
-    this._name = name;
-    this._stateFmtd = stateFmtd;
+    this.icon = icon;
+    this.name = name;
+    this.stateFmtd = stateFmtd;
   }
 
-  private _showMoreInfo(e: Event): void {
+  private showMoreInfo(e: Event): void {
     e.stopPropagation();
-    moreInfoDialog(this._stateObj, this._config?.callingDialog);
+    moreInfoDialog(this.stateObj, this.config?.callingDialog);
   }
 }

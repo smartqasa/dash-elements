@@ -29,12 +29,12 @@ export class WeatherCard extends LitElement implements LovelaceCard {
   }
 
   @property({ attribute: false }) public hass?: HomeAssistant;
-  @state() protected _config?: Config;
-  private _entity?: string;
+  @state() protected config?: Config;
+  private entity?: string;
 
-  private _hourlyForecastCard?: LovelaceCard;
-  private _dailyForecastCard?: LovelaceCard;
-  private _radarMapCard?: LovelaceCard;
+  private hourlyForecastCard?: LovelaceCard;
+  private dailyForecastCard?: LovelaceCard;
+  private radarMapCard?: LovelaceCard;
 
   static get styles() {
     return css`
@@ -56,21 +56,21 @@ export class WeatherCard extends LitElement implements LovelaceCard {
 
   public setConfig(config: Config): void {
     if (config.entity && config.entity.startsWith('weather.')) {
-      this._entity = config.entity;
+      this.entity = config.entity;
     } else {
-      this._entity = 'weather.forecast_home';
+      this.entity = 'weather.forecast_home';
     }
-    this._config = config;
+    this.config = config;
   }
 
   protected willUpdate(changedProps: PropertyValues): void {
-    if (!this._entity) return;
+    if (!this.entity) return;
 
     if (changedProps.has('hass') && this.hass) {
       [
-        this._hourlyForecastCard,
-        this._dailyForecastCard,
-        this._radarMapCard,
+        this.hourlyForecastCard,
+        this.dailyForecastCard,
+        this.radarMapCard,
       ].forEach((card) => {
         if (card && card.hass !== this.hass) card.hass = this.hass;
       });
@@ -89,19 +89,19 @@ export class WeatherCard extends LitElement implements LovelaceCard {
     return html`
       <div class="container">
         <div class="left-column">
-          ${renderCard(this._hourlyForecastCard)}
-          ${renderCard(this._dailyForecastCard)}
+          ${renderCard(this.hourlyForecastCard)}
+          ${renderCard(this.dailyForecastCard)}
         </div>
-        ${renderCard(this._radarMapCard)}
+        ${renderCard(this.radarMapCard)}
       </div>
     `;
   }
 
   protected firstUpdated(): void {
-    this._hourlyForecastCard = createElement(
+    this.hourlyForecastCard = createElement(
       {
         type: 'weather-forecast',
-        entity: this._entity,
+        entity: this.entity,
         forecast_type: 'hourly',
         name: 'Forecast',
         show_current: true,
@@ -111,10 +111,10 @@ export class WeatherCard extends LitElement implements LovelaceCard {
       this.hass
     );
 
-    this._dailyForecastCard = createElement(
+    this.dailyForecastCard = createElement(
       {
         type: 'weather-forecast',
-        entity: this._entity,
+        entity: this.entity,
         forecast_type: 'daily',
         show_current: false,
         show_forecast: true,
@@ -122,7 +122,7 @@ export class WeatherCard extends LitElement implements LovelaceCard {
       this.hass
     );
 
-    this._radarMapCard = createElement(
+    this.radarMapCard = createElement(
       {
         type: 'custom:weather-radar-card',
         frame_count: 10,

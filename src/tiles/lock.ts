@@ -41,17 +41,17 @@ export class LockTile extends LitElement implements LovelaceCard {
   }
 
   @property({ attribute: false }) public hass?: HomeAssistant;
-  @state() protected _config?: Config;
-  @state() private _stateObj?: HassEntity;
-  @state() private _running: boolean = false;
+  @state() protected config?: Config;
+  @state() private stateObj?: HassEntity;
+  @state() private running: boolean = false;
 
-  private _entity?: string;
-  private _icon: string = 'hass:lock-alert';
-  private _iconStyles: Record<string, string> = {};
-  private _name: string = 'Unknown Lock';
-  private _stateFmtd: string = 'Unknown State';
+  private entity?: string;
+  private icon: string = 'hass:lock-alert';
+  private iconStyles: Record<string, string> = {};
+  private name: string = 'Unknown Lock';
+  private stateFmtd: string = 'Unknown State';
 
-  private readonly _stateMap: Record<
+  private readonly stateMap: Record<
     string,
     { stateIcon: string; stateAnimation: string; stateColor: string }
   > = {
@@ -94,100 +94,97 @@ export class LockTile extends LitElement implements LovelaceCard {
   public setConfig(config: Config): void {
     if (!config.entity?.startsWith('lock.')) {
       console.error('Invalid lock entity provided in the config.');
-      this._entity = undefined;
+      this.entity = undefined;
     } else {
-      this._entity = config.entity;
+      this.entity = config.entity;
     }
-    this._config = config;
+    this.config = config;
   }
 
   protected shouldUpdate(changedProps: PropertyValues): boolean {
-    if (changedProps.has('_config') || changedProps.has('_running'))
-      return true;
+    if (changedProps.has('config') || changedProps.has('running')) return true;
 
     if (changedProps.has('hass')) {
-      const newState = this._entity
-        ? this.hass?.states[this._entity]
-        : undefined;
+      const newState = this.entity ? this.hass?.states[this.entity] : undefined;
 
-      return newState !== this._stateObj;
+      return newState !== this.stateObj;
     }
 
     return false;
   }
 
   protected willUpdate(changedProps: PropertyValues): void {
-    this._updateState();
+    this.updateState();
   }
 
   protected render(): TemplateResult | typeof nothing {
     return html`
-      <div class="container" @click=${this._toggleEntity}>
+      <div class="container" @click=${this.toggleEntity}>
         <div
           class="icon"
-          @click=${this._showMoreInfo}
-          style=${styleMap(this._iconStyles)}
+          @click=${this.showMoreInfo}
+          style=${styleMap(this.iconStyles)}
         >
-          <ha-icon icon=${this._icon}></ha-icon>
+          <ha-icon icon=${this.icon}></ha-icon>
         </div>
         <div class="text">
-          <div class="name">${this._name}</div>
-          <div class="state">${this._stateFmtd}</div>
+          <div class="name">${this.name}</div>
+          <div class="state">${this.stateFmtd}</div>
         </div>
       </div>
     `;
   }
 
-  private _updateState(): void {
-    this._stateObj = this._entity ? this.hass?.states[this._entity] : undefined;
+  private updateState(): void {
+    this.stateObj = this.entity ? this.hass?.states[this.entity] : undefined;
 
     let icon, iconAnimation, iconColor, name, stateFmtd;
-    if (this._stateObj) {
-      const state = this._stateObj.state || 'unknown';
+    if (this.stateObj) {
+      const state = this.stateObj.state || 'unknown';
       const { stateIcon, stateAnimation, stateColor } =
-        this._stateMap[state] || this._stateMap.default;
-      icon = this._config!.icon || stateIcon || 'hass:lock-variant';
+        this.stateMap[state] || this.stateMap.default;
+      icon = this.config!.icon || stateIcon || 'hass:lock-variant';
       iconAnimation = stateAnimation;
       iconColor = stateColor;
       name =
-        this._config?.name || this._stateObj.attributes.friendly_name || 'Lock';
-      stateFmtd = formatState(this.hass!, this._entity!);
+        this.config?.name || this.stateObj.attributes.friendly_name || 'Lock';
+      stateFmtd = formatState(this.hass!, this.entity!);
     } else {
-      icon = this._config!.icon || 'hass:lock-alert-variant';
+      icon = this.config!.icon || 'hass:lock-alert-variant';
       iconAnimation = 'none';
       iconColor = 'var(--sq-unavailable-rgb)';
-      name = this._config!.name || 'Unknown Lock';
+      name = this.config!.name || 'Unknown Lock';
       stateFmtd = 'Unknown State';
     }
 
-    this._iconStyles = {
+    this.iconStyles = {
       color: `rgb(${iconColor})`,
       backgroundColor: `rgba(${iconColor}, var(--sq-icon-alpha))`,
       animation: iconAnimation,
     };
-    this._icon = icon;
-    this._name = name;
-    this._stateFmtd = stateFmtd;
+    this.icon = icon;
+    this.name = name;
+    this.stateFmtd = stateFmtd;
   }
 
-  private _toggleEntity(e: Event): void {
+  private toggleEntity(e: Event): void {
     e.stopPropagation();
-    if (!this._stateObj) return;
+    if (!this.stateObj) return;
 
-    const state = this._stateObj.state;
-    this._running = true;
-    this._stateObj.state = state == 'locked' ? 'unlocking' : 'locking';
+    const state = this.stateObj.state;
+    this.running = true;
+    this.stateObj.state = state == 'locked' ? 'unlocking' : 'locking';
     callService(this.hass, 'lock', state == 'locked' ? 'unlock' : 'lock', {
-      entity_id: this._entity,
+      entity_id: this.entity,
     });
 
     setTimeout(() => {
-      this._running = false;
+      this.running = false;
     }, 500);
   }
 
-  private _showMoreInfo(e: Event): void {
+  private showMoreInfo(e: Event): void {
     e.stopPropagation();
-    moreInfoDialog(this._stateObj, this._config?.callingDialog);
+    moreInfoDialog(this.stateObj, this.config?.callingDialog);
   }
 }

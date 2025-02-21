@@ -33,77 +33,73 @@ export class PoolLightSequencerTile extends LitElement implements LovelaceCard {
   }
 
   @property({ attribute: false }) public hass?: HomeAssistant;
-  @state() protected _config?: Config;
-  @state() private _running: boolean = false;
+  @state() protected config?: Config;
+  @state() private running: boolean = false;
 
-  private _sequenceObj?: any;
-  private _stateObj?: HassEntity;
-  private _entity?: string;
-  private _icon: string = 'hass:lightbulb';
-  private _iconStyles: Record<string, string> = {};
-  private _name: string = 'Unknown Light';
+  private sequenceObj?: any;
+  private stateObj?: HassEntity;
+  private entity?: string;
+  private icon: string = 'hass:lightbulb';
+  private iconStyles: Record<string, string> = {};
+  private name: string = 'Unknown Light';
 
   static get styles(): CSSResult {
     return unsafeCSS(tileStyle);
   }
 
   public setConfig(config: Config): void {
-    this._sequenceObj = config.sequence
+    this.sequenceObj = config.sequence
       ? sequenceTable[config.sequence]
       : undefined;
-    this._entity = ['light', 'switch'].includes(config.entity?.split('.')[0])
+    this.entity = ['light', 'switch'].includes(config.entity?.split('.')[0])
       ? config.entity
       : undefined;
-    this._config = config;
+    this.config = config;
   }
 
   protected shouldUpdate(changedProps: PropertyValues): boolean {
-    if (changedProps.has('_config')) return true;
+    if (changedProps.has('config')) return true;
 
     if (changedProps.has('hass')) {
-      const newState = this._entity
-        ? this.hass?.states[this._entity]
-        : undefined;
+      const newState = this.entity ? this.hass?.states[this.entity] : undefined;
 
-      return newState !== this._stateObj;
+      return newState !== this.stateObj;
     }
 
     return false;
   }
 
   protected willUpdate(): void {
-    this._updateState();
+    this.updateState();
   }
 
   protected render(): TemplateResult | typeof nothing {
     return html`
-      <div class="container" @click=${this._runRoutine}>
-        <div class="icon" style="${styleMap(this._iconStyles)}">
-          <ha-icon icon=${this._icon}></ha-icon>
+      <div class="container" @click=${this.runRoutine}>
+        <div class="icon" style="${styleMap(this.iconStyles)}">
+          <ha-icon icon=${this.icon}></ha-icon>
         </div>
-        <div class="this._name">${this._name}</div>
+        <div class="this.name">${this.name}</div>
       </div>
     `;
   }
 
-  private _updateState(): void {
-    this._stateObj = this._entity ? this.hass?.states[this._entity] : undefined;
+  private updateState(): void {
+    this.stateObj = this.entity ? this.hass?.states[this.entity] : undefined;
 
     let icon, iconAnimation, iconColor, name;
-    if (this._config && this._sequenceObj && this._stateObj) {
-      if (this._running) {
+    if (this.config && this.sequenceObj && this.stateObj) {
+      if (this.running) {
         icon = 'hass:rotate-right';
         iconAnimation = 'spin 1.0s linear infinite';
         iconColor = 'var(--sq-blue-rgb-blue)';
       } else {
         icon =
-          this._config.icon ||
-          this._stateObj.attributes.icon ||
-          'hass:lightbulb';
+          this.config.icon || this.stateObj.attributes.icon || 'hass:lightbulb';
         iconAnimation = 'none';
-        iconColor = this._sequenceObj.iconRGB || 'var(--sq-inactive-rgb)';
+        iconColor = this.sequenceObj.iconRGB || 'var(--sq-inactive-rgb)';
       }
-      name = this._sequenceObj.name || 'Light';
+      name = this.sequenceObj.name || 'Light';
     } else {
       icon = 'hass:alert-rhombus';
       iconAnimation = 'none';
@@ -111,33 +107,33 @@ export class PoolLightSequencerTile extends LitElement implements LovelaceCard {
       name = 'Unknown';
     }
 
-    this._iconStyles = {
+    this.iconStyles = {
       color: `rgb(${iconColor})`,
       backgroundColor: `rgba(${iconColor}, var(--sq-icon-alpha))`,
       animation: iconAnimation,
     };
-    this._icon = icon;
-    this._name = name;
+    this.icon = icon;
+    this.name = name;
   }
 
-  private async _runRoutine(e: Event): Promise<void> {
+  private async runRoutine(e: Event): Promise<void> {
     e.stopPropagation();
-    if (!this.hass || !this._stateObj) return;
+    if (!this.hass || !this.stateObj) return;
 
-    this._running = true;
+    this.running = true;
 
     await callService(
       this.hass,
       'script',
       'system_color_light_sequence_selector',
       {
-        entity: this._entity,
-        count: this._sequenceObj.count,
+        entity: this.entity,
+        count: this.sequenceObj.count,
       }
     );
 
     setTimeout(() => {
-      this._running = false;
+      this.running = false;
     }, 2000);
   }
 }

@@ -25,10 +25,10 @@ export class WebpageTile extends LitElement implements LovelaceCard {
     return 1;
   }
 
-  @state() protected _config?: Config;
-  private _url: string = 'http://www.smartqasa.com';
-  private _icon: string = 'hass:web';
-  private _name: string = 'Web Page';
+  @state() protected config?: Config;
+  private url: string = 'http://www.smartqasa.com';
+  private icon: string = 'hass:web';
+  private name: string = 'Web Page';
 
   static get styles(): CSSResult {
     return unsafeCSS(tileStyle);
@@ -39,38 +39,38 @@ export class WebpageTile extends LitElement implements LovelaceCard {
 
     try {
       const testUrl = new URL(config.url);
-      this._url = testUrl.href;
+      this.url = testUrl.href;
     } catch {
       console.error('Invalid URL provided:', config.url);
       throw new Error('Invalid URL. Please specify a valid URL.');
     }
 
-    if (config.icon) this._icon = config.icon;
-    if (config.name) this._name = config.name;
-    this._config = config;
+    if (config.icon) this.icon = config.icon;
+    if (config.name) this.name = config.name;
+    this.config = config;
   }
 
   protected render(): TemplateResult {
     return html`
-      <div class="container" @click=${this._showDialog}>
+      <div class="container" @click=${this.showDialog}>
         <div class="icon">
-          <ha-icon icon=${this._icon}></ha-icon>
+          <ha-icon icon=${this.icon}></ha-icon>
         </div>
         <div class="text">
-          <div class="name">${this._name}</div>
+          <div class="name">${this.name}</div>
         </div>
       </div>
     `;
   }
 
-  private _showDialog(e: Event): void {
+  private showDialog(e: Event): void {
     e.stopPropagation();
-    if (!this._url) return;
+    if (!this.url) return;
 
     try {
-      const validatedUrl = new URL(this._url);
+      const validatedUrl = new URL(this.url);
       const dialogConfig: any = {
-        title: this._name,
+        title: this.name,
         timeout: 120000,
         size: 'fullscreen',
         content: {
@@ -81,7 +81,7 @@ export class WebpageTile extends LitElement implements LovelaceCard {
 
       dialogPopup(dialogConfig);
     } catch {
-      console.error('Failed to launch URL:', this._url);
+      console.error('Failed to launch URL:', this.url);
       alert('Unable to launch the web page. The URL is invalid.');
     }
   }

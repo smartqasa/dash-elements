@@ -23,8 +23,8 @@ export class VerticalStack extends LitElement implements LovelaceCard {
   }
 
   @property({ attribute: false }) public hass?: HomeAssistant;
-  @state() protected _config?: Config;
-  @state() private _cards: LovelaceCard[] = [];
+  @state() protected config?: Config;
+  @state() private cards: LovelaceCard[] = [];
 
   static get styles() {
     return css`
@@ -49,43 +49,43 @@ export class VerticalStack extends LitElement implements LovelaceCard {
       return;
     }
 
-    this._config = config;
+    this.config = config;
   }
 
   protected willUpdate(changedProps: PropertyValues) {
-    if (!this._config || !this.hass) return;
+    if (!this.config || !this.hass) return;
 
-    if (changedProps.has('_config')) {
-      this._createCards();
-    } else if (changedProps.has('hass') && this._cards.length > 0) {
-      this._cards.forEach((card) => {
+    if (changedProps.has('config')) {
+      this.createCards();
+    } else if (changedProps.has('hass') && this.cards.length > 0) {
+      this.cards.forEach((card) => {
         if (card.hass !== this.hass) card.hass = this.hass;
       });
     }
   }
 
   protected render() {
-    if (!this._config || !this.hass || this._cards.length === 0) return nothing;
+    if (!this.config || !this.hass || this.cards.length === 0) return nothing;
 
     return html`
       <div class="container">
-        ${this._cards.map((card) => html`<div class="card">${card}</div>`)}
+        ${this.cards.map((card) => html`<div class="card">${card}</div>`)}
       </div>
     `;
   }
 
-  private async _createCards(): Promise<void> {
-    if (!this._config || !this.hass) return;
+  private async createCards(): Promise<void> {
+    if (!this.config || !this.hass) return;
 
-    if (this._config.cards.length > 0) {
+    if (this.config.cards.length > 0) {
       try {
-        this._cards = await createElements(this._config.cards, this.hass);
+        this.cards = await createElements(this.config.cards, this.hass);
       } catch (error) {
-        this._cards = [];
+        this.cards = [];
         console.error('Error creating cards:', error);
       }
     } else {
-      this._cards = [];
+      this.cards = [];
       console.warn('No cards defined in configuration');
     }
   }

@@ -40,10 +40,10 @@ export class WeatherChip extends LitElement implements LovelaceCard {
   }
 
   @property({ attribute: false }) public hass?: HomeAssistant;
-  @state() protected _config?: Config;
-  private _entity?: string;
-  private _stateObj?: HassEntity;
-  private _app?: string;
+  @state() protected config?: Config;
+  private entity?: string;
+  private stateObj?: HassEntity;
+  private app?: string;
 
   static get styles(): CSSResultGroup {
     return [unsafeCSS(chipBaseStyle), unsafeCSS(chipTextStyle)];
@@ -60,20 +60,18 @@ export class WeatherChip extends LitElement implements LovelaceCard {
       return;
     }
 
-    this._entity = config.entity;
-    this._app = config.app || undefined;
-    this._config = config;
+    this.entity = config.entity;
+    this.app = config.app || undefined;
+    this.config = config;
   }
 
   protected shouldUpdate(changedProps: PropertyValues): boolean {
-    if (changedProps.has('_config')) return true;
+    if (changedProps.has('config')) return true;
 
     if (changedProps.has('hass')) {
-      const newState = this._entity
-        ? this.hass?.states[this._entity]
-        : undefined;
+      const newState = this.entity ? this.hass?.states[this.entity] : undefined;
 
-      return newState !== this._stateObj;
+      return newState !== this.stateObj;
     }
 
     return false;
@@ -82,11 +80,11 @@ export class WeatherChip extends LitElement implements LovelaceCard {
   protected render(): TemplateResult {
     let iconColor, temperature;
 
-    this._stateObj = this._entity ? this.hass?.states[this._entity] : undefined;
+    this.stateObj = this.entity ? this.hass?.states[this.entity] : undefined;
 
-    if (this._stateObj) {
+    if (this.stateObj) {
       iconColor = 'var(--sq-primary-text-rgb)';
-      temperature = this._stateObj?.attributes?.temperature || '??';
+      temperature = this.stateObj?.attributes?.temperature || '??';
     } else {
       iconColor = 'var(--sq-unavailable-rgb)';
       temperature = '??';
@@ -95,13 +93,13 @@ export class WeatherChip extends LitElement implements LovelaceCard {
     return html`
       <div
         class="container"
-        @click=${this._showDialog}
-        @contextmenu=${this._launchApp}
+        @click=${this.showDialog}
+        @contextmenu=${this.launchApp}
       >
         <div class="icon" style="color: rgb(${iconColor});">
           <ha-state-icon
             .hass=${this.hass}
-            .stateObj=${this._stateObj}
+            .stateObj=${this.stateObj}
           ></ha-state-icon>
         </div>
         <div class="text">${temperature}°</div>
@@ -109,15 +107,15 @@ export class WeatherChip extends LitElement implements LovelaceCard {
     `;
   }
 
-  private _showDialog(e: Event): void {
+  private showDialog(e: Event): void {
     e.stopPropagation();
     const dialogObj = dialogTable.weather;
     if (dialogObj?.data) window.browser_mod?.service('popup', dialogObj.data);
   }
 
-  private _launchApp(e: Event): void {
+  private launchApp(e: Event): void {
     e.stopPropagation();
-    if (!this._app) return;
-    launchApp(this._app);
+    if (!this.app) return;
+    launchApp(this.app);
   }
 }

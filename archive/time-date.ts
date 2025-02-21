@@ -12,8 +12,8 @@ import { HomeAssistant } from '../src/types';
 @customElement('smartqasa-time-date')
 export class TimeDate extends LitElement {
     @property({ attribute: false }) public hass?: HomeAssistant;
-    @state() private _time: string = 'Loading...';
-    @state() private _date: string = 'Loading...';
+    @state() private time: string = 'Loading...';
+    @state() private date: string = 'Loading...';
 
     static get styles(): CSSResultGroup {
         return css`
@@ -49,23 +49,23 @@ export class TimeDate extends LitElement {
     protected updated(changedProps: PropertyValues) {
         super.updated(changedProps);
         if (changedProps.has('hass') && this.hass) {
-            this._time =
+            this.time =
                 this.hass.states['sensor.current_time']?.state || 'Loading...';
-            this._date =
+            this.date =
                 this.hass.states['sensor.current_date']?.state || 'Loading...';
         }
     }
 
     protected render(): TemplateResult {
         return html`
-            <div class="container" @click="${this._handleTap}">
-                <div class="time">${this._time}</div>
-                <div class="date">${this._date}</div>
+            <div class="container" @click="${this.handleTap}">
+                <div class="time">${this.time}</div>
+                <div class="date">${this.date}</div>
             </div>
         `;
     }
 
-    private _handleTap(): void {
+    private handleTap(): void {
         if (
             typeof window.fully !== 'undefined' &&
             window.fully.startApplication

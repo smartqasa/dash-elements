@@ -29,12 +29,12 @@ export class SonosPanelCard extends LitElement implements LovelaceCard {
     }
 
     @property({ attribute: false }) public hass?: HomeAssistant;
-    @state() protected _config?: Config;
-    private _entity?: string;
+    @state() protected config?: Config;
+    private entity?: string;
 
-    private _speakersCard?: LovelaceCard;
-    private _playerCard?: LovelaceCard;
-    private _mediaCard?: LovelaceCard;
+    private speakersCard?: LovelaceCard;
+    private playerCard?: LovelaceCard;
+    private mediaCard?: LovelaceCard;
 
     static get styles() {
         return css`
@@ -47,18 +47,18 @@ export class SonosPanelCard extends LitElement implements LovelaceCard {
     }
 
     public setConfig(config: Config): void {
-        this._config = { ...config };
+        this.config = { ...config };
 
-        if (this._config.entity) {
-            this._entity = this._config.entity.startsWith('media_player.')
-                ? this._config.entity
+        if (this.config.entity) {
+            this.entity = this.config.entity.startsWith('media_player.')
+                ? this.config.entity
                 : 'undefined';
         }
     }
 
     protected willUpdate(changedProps: PropertyValues): void {
         if (changedProps.has('hass') && this.hass) {
-            [this._speakersCard, this._playerCard, this._mediaCard].forEach(
+            [this.speakersCard, this.playerCard, this.mediaCard].forEach(
                 (card) => {
                     if (card) card.hass = this.hass;
                 }
@@ -77,17 +77,17 @@ export class SonosPanelCard extends LitElement implements LovelaceCard {
 
         return html`
             <div class="container">
-                ${renderCard(this._speakersCard)}
-                ${renderCard(this._playerCard)} ${renderCard(this._mediaCard)}
+                ${renderCard(this.speakersCard)}
+                ${renderCard(this.playerCard)} ${renderCard(this.mediaCard)}
             </div>
         `;
     }
 
     protected firstUpdated(): void {
-        this._speakersCard = createElement(
+        this.speakersCard = createElement(
             {
                 type: 'custom:sonos-card',
-                entityId: this._entity,
+                entityId: this.entity,
                 heightPercentage: '100',
                 widthPercentage: '100',
                 showVolumeUpAndDownButtons: true,
@@ -96,10 +96,10 @@ export class SonosPanelCard extends LitElement implements LovelaceCard {
             this.hass
         );
 
-        this._playerCard = createElement(
+        this.playerCard = createElement(
             {
                 type: 'custom:sonos-card',
-                entityId: this._entity,
+                entityId: this.entity,
                 heightPercentage: '100',
                 widthPercentage: '100',
                 showVolumeUpAndDownButtons: true,
@@ -108,7 +108,7 @@ export class SonosPanelCard extends LitElement implements LovelaceCard {
             this.hass
         );
 
-        this._mediaCard = createElement(
+        this.mediaCard = createElement(
             {
                 type: 'custom:sonos-card',
                 heightPercentage: '100',

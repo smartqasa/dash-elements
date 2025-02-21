@@ -34,64 +34,64 @@ export class DialogTile extends LitElement implements LovelaceCard {
     return 1;
   }
 
-  @state() private _config?: Config;
-  @state() private _dialogObj?: any;
+  @state() private config?: Config;
+  @state() private dialogObj?: any;
 
-  private _icon: string = 'hass:help-rhombus';
-  private _iconStyles: Record<string, string> = {};
-  private _name: string = 'Unknown Dialog';
+  private icon: string = 'hass:help-rhombus';
+  private iconStyles: Record<string, string> = {};
+  private name: string = 'Unknown Dialog';
 
   static get styles(): CSSResult {
     return unsafeCSS(tileStyle);
   }
 
   public setConfig(config: Config): void {
-    this._config = config;
-    this._dialogObj = dialogTable[config.dialog];
+    this.config = config;
+    this.dialogObj = dialogTable[config.dialog];
   }
 
   protected willUpdate(changedProps: PropertyValues): void {
     super.willUpdate(changedProps);
-    this._updateState();
+    this.updateState();
   }
 
   protected render(): TemplateResult {
     return html`
-      <div class="container" @click=${this._showDialog}>
-        <div class="icon" style="${styleMap(this._iconStyles)}">
-          <ha-icon icon=${this._icon}></ha-icon>
+      <div class="container" @click=${this.showDialog}>
+        <div class="icon" style="${styleMap(this.iconStyles)}">
+          <ha-icon icon=${this.icon}></ha-icon>
         </div>
         <div class="text">
-          <div class="name">${this._name}</div>
+          <div class="name">${this.name}</div>
         </div>
       </div>
     `;
   }
 
-  private _updateState(): void {
+  private updateState(): void {
     let icon, iconColor, name;
 
-    if (this._config && this._dialogObj) {
-      icon = this._config.icon || this._dialogObj.icon;
+    if (this.config && this.dialogObj) {
+      icon = this.config.icon || this.dialogObj.icon;
       iconColor = 'var(--sq-inactive-rgb)';
-      name = this._config.name || this._dialogObj.name;
+      name = this.config.name || this.dialogObj.name;
     } else {
-      icon = this._config?.icon || 'hass:help-rhombus';
+      icon = this.config?.icon || 'hass:help-rhombus';
       iconColor = 'var(--sq-unavailable-rgb, 255, 0, 255)';
-      name = this._config?.name || 'Unknown';
+      name = this.config?.name || 'Unknown';
     }
 
-    this._iconStyles = {
+    this.iconStyles = {
       color: `rgb(${iconColor})`,
       backgroundColor: `rgba(${iconColor}, var(--sq-icon-alpha))`,
     };
-    this._icon = icon;
-    this._name = name;
+    this.icon = icon;
+    this.name = name;
   }
 
-  private _showDialog(e: Event) {
+  private showDialog(e: Event) {
     e.stopPropagation();
-    if (!this._dialogObj) return;
-    dialogPopup(this._dialogObj.data, this._config?.callingDialog || undefined);
+    if (!this.dialogObj) return;
+    dialogPopup(this.dialogObj.data, this.config?.callingDialog || undefined);
   }
 }

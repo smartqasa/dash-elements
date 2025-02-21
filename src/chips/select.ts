@@ -41,9 +41,9 @@ export class SelectChip extends LitElement implements LovelaceCard {
   }
 
   @property({ attribute: false }) public hass?: HomeAssistant;
-  @state() protected _config?: Config;
-  private _entity?: string;
-  private _stateObj?: HassEntity;
+  @state() protected config?: Config;
+  private entity?: string;
+  private stateObj?: HassEntity;
 
   static styles: CSSResult = unsafeCSS(chipBaseStyle);
 
@@ -54,44 +54,42 @@ export class SelectChip extends LitElement implements LovelaceCard {
       );
     }
 
-    this._config = config;
-    this._entity = config.entity;
+    this.config = config;
+    this.entity = config.entity;
   }
 
   protected shouldUpdate(changedProps: PropertyValues): boolean {
-    if (changedProps.has('_config')) return true;
+    if (changedProps.has('config')) return true;
 
     if (changedProps.has('hass')) {
-      const newState = this._entity
-        ? this.hass?.states[this._entity]
-        : undefined;
+      const newState = this.entity ? this.hass?.states[this.entity] : undefined;
 
-      return newState !== this._stateObj;
+      return newState !== this.stateObj;
     }
 
     return false;
   }
 
   protected render(): TemplateResult | typeof nothing {
-    if (!this._entity) return nothing;
+    if (!this.entity) return nothing;
 
     let icon;
 
-    this._stateObj = this._entity ? this.hass?.states[this._entity] : undefined;
+    this.stateObj = this.entity ? this.hass?.states[this.entity] : undefined;
 
-    const state = this._stateObj?.state || 'unknown';
-    if (this._entity === 'input_select.location_phase') {
+    const state = this.stateObj?.state || 'unknown';
+    if (this.entity === 'input_select.location_phase') {
       icon = phaseIcons[state] || phaseIcons.default;
-    } else if (this._entity === 'input_select.location_mode') {
+    } else if (this.entity === 'input_select.location_mode') {
       icon = modeIcons[state] || modeIcons.default;
     } else {
       icon =
-        this._config?.icon ||
-        this._stateObj?.attributes?.icon ||
+        this.config?.icon ||
+        this.stateObj?.attributes?.icon ||
         'hass:form-dropdown';
     }
     return html`
-      <div class="container" @click=${this._showOptions}>
+      <div class="container" @click=${this.showOptions}>
         <div class="icon">
           <ha-icon icon=${icon}></ha-icon>
         </div>
@@ -99,8 +97,8 @@ export class SelectChip extends LitElement implements LovelaceCard {
     `;
   }
 
-  private _showOptions(e: Event): void {
+  private showOptions(e: Event): void {
     e.stopPropagation();
-    selectOptionDialog(this._config, this._stateObj);
+    selectOptionDialog(this.config, this.stateObj);
   }
 }

@@ -50,18 +50,18 @@ class ProgressIndicator extends LitElement {
 
     connectedCallback() {
         super.connectedCallback();
-        this._startAnimation();
+        this.startAnimation();
     }
 
     disconnectedCallback() {
         super.disconnectedCallback();
-        clearInterval(this._intervalId);
+        clearInterval(this.intervalId);
     }
 
-    private _intervalId?: NodeJS.Timeout;
+    private intervalId?: NodeJS.Timeout;
 
-    private _startAnimation() {
-        this._intervalId = setInterval(() => {
+    private startAnimation() {
+        this.intervalId = setInterval(() => {
             this.activeIndex = (this.activeIndex + 1) % 3;
         }, 500); // Change the active dot every 500ms
     }

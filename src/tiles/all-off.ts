@@ -41,69 +41,69 @@ export class AllOffTile extends LitElement implements LovelaceCard {
   }
 
   @property({ attribute: false }) public hass?: HomeAssistant;
-  @state() protected _config?: Config;
-  @state() private _running: boolean = false;
+  @state() protected config?: Config;
+  @state() private running: boolean = false;
 
-  private _area?: string;
-  private _areaObj?: HassArea;
-  private _icon: string = 'hass:alert-rhombus';
-  private _iconStyles: Record<string, string> = {};
-  private _name: string = 'Unknown Area';
+  private area?: string;
+  private areaObj?: HassArea;
+  private icon: string = 'hass:alert-rhombus';
+  private iconStyles: Record<string, string> = {};
+  private name: string = 'Unknown Area';
 
   static get styles(): CSSResult {
     return unsafeCSS(tileStyle);
   }
 
   public setConfig(config: Config): void {
-    this._config = config;
-    this._area = config.area;
+    this.config = config;
+    this.area = config.area;
   }
 
   protected shouldUpdate(changedProps: PropertyValues): boolean {
     return !!(
       changedProps.has('running') ||
       (changedProps.has('hass') &&
-        this._area &&
-        this.hass?.areas[this._area] !== this._areaObj) ||
-      changedProps.has('_config')
+        this.area &&
+        this.hass?.areas[this.area] !== this.areaObj) ||
+      changedProps.has('config')
     );
   }
 
   protected willUpdate(changedProps: PropertyValues): void {
     super.willUpdate(changedProps);
-    this._updateState();
+    this.updateState();
   }
 
   protected render(): TemplateResult | typeof nothing {
-    if (!this._config || !this._area) return nothing;
+    if (!this.config || !this.area) return nothing;
 
     return html`
-      <div class="container" @click=${this._runRoutine}>
-        <div class="icon" style="${styleMap(this._iconStyles)}">
-          <ha-icon icon=${this._icon}></ha-icon>
+      <div class="container" @click=${this.runRoutine}>
+        <div class="icon" style="${styleMap(this.iconStyles)}">
+          <ha-icon icon=${this.icon}></ha-icon>
         </div>
         <div class="text">
-          <div class="name">${this._name}</div>
+          <div class="name">${this.name}</div>
         </div>
       </div>
     `;
   }
 
-  private _updateState(): void {
-    this._areaObj = this._area ? this.hass?.areas[this._area] : undefined;
+  private updateState(): void {
+    this.areaObj = this.area ? this.hass?.areas[this.area] : undefined;
 
     let icon, iconAnimation, iconColor, name;
-    if (this._config && this._areaObj) {
-      if (this._running) {
+    if (this.config && this.areaObj) {
+      if (this.running) {
         icon = 'hass:rotate-right';
         iconAnimation = 'spin 1.0s linear infinite';
         iconColor = 'var(--sq-blue-rgb)';
       } else {
-        icon = this._config.icon || 'hass:power';
+        icon = this.config.icon || 'hass:power';
         iconAnimation = 'none';
         iconColor = 'var(--sq-inactive-rgb)';
       }
-      name = this._config.name || this._areaObj.name || 'All Off';
+      name = this.config.name || this.areaObj.name || 'All Off';
     } else {
       icon = 'hass:alert-rhombus';
       iconAnimation = 'none';
@@ -111,31 +111,31 @@ export class AllOffTile extends LitElement implements LovelaceCard {
       name = 'Unknown Area';
     }
 
-    this._iconStyles = {
+    this.iconStyles = {
       color: `rgb(${iconColor})`,
       backgroundColor: `rgba(${iconColor}, var(--sq-icon-alpha, 0.2))`,
       animation: iconAnimation,
     };
-    this._icon = icon;
-    this._name = name;
+    this.icon = icon;
+    this.name = name;
   }
 
-  private async _runRoutine(e: Event): Promise<void> {
+  private async runRoutine(e: Event): Promise<void> {
     e.stopPropagation();
-    if (!this.hass || !this._areaObj) return;
+    if (!this.hass || !this.areaObj) return;
 
-    this._running = true;
+    this.running = true;
 
     await callService(this.hass, 'light', 'turn_off', {
-      area_id: this._area,
+      area_id: this.area,
       transition: 2,
     });
     await callService(this.hass, 'fan', 'turn_off', {
-      area_id: this._area,
+      area_id: this.area,
     });
 
     setTimeout(() => {
-      this._running = false;
+      this.running = false;
     }, 1000);
   }
 }

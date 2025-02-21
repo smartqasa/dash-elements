@@ -43,14 +43,14 @@ export class OptionTile extends LitElement implements LovelaceCard {
   }
 
   @property({ attribute: false }) public hass?: HomeAssistant;
-  @state() protected _config?: Config;
-  @state() private _stateObj?: HassEntity;
-  @state() private _running: boolean = false;
+  @state() protected config?: Config;
+  @state() private stateObj?: HassEntity;
+  @state() private running: boolean = false;
 
-  private _entity?: string;
-  private _icon: string = 'hass:form-dropdown';
-  private _iconStyles: Record<string, string> = {};
-  private _name: string = 'Unknown Lock';
+  private entity?: string;
+  private icon: string = 'hass:form-dropdown';
+  private iconStyles: Record<string, string> = {};
+  private name: string = 'Unknown Lock';
 
   static get styles(): CSSResult {
     return unsafeCSS(tileStyle);
@@ -59,100 +59,97 @@ export class OptionTile extends LitElement implements LovelaceCard {
   public setConfig(config: Config): void {
     if (!config.entity?.startsWith('input_select.')) {
       console.error('Invalid input_select entity provided in the config.');
-      this._entity = undefined;
+      this.entity = undefined;
     } else {
-      this._entity = config.entity;
+      this.entity = config.entity;
     }
-    this._config = config;
+    this.config = config;
   }
 
   protected shouldUpdate(changedProps: PropertyValues): boolean {
-    if (changedProps.has('_config') || changedProps.has('_running'))
-      return true;
+    if (changedProps.has('config') || changedProps.has('running')) return true;
 
     if (changedProps.has('hass')) {
-      const newState = this._entity
-        ? this.hass?.states[this._entity]
-        : undefined;
+      const newState = this.entity ? this.hass?.states[this.entity] : undefined;
 
-      return newState !== this._stateObj;
+      return newState !== this.stateObj;
     }
 
     return false;
   }
 
   protected willUpdate(changedProps: PropertyValues): void {
-    this._updateState();
+    this.updateState();
   }
 
   protected render(): TemplateResult | typeof nothing {
     return html`
-      <div class="container" @click=${this._selectOption}>
-        <div class="icon" style="${styleMap(this._iconStyles)}">
-          <ha-icon icon=${this._icon}></ha-icon>
+      <div class="container" @click=${this.selectOption}>
+        <div class="icon" style="${styleMap(this.iconStyles)}">
+          <ha-icon icon=${this.icon}></ha-icon>
         </div>
         <div class="text">
-          <div class="name">${this._name}</div>
+          <div class="name">${this.name}</div>
         </div>
       </div>
     `;
   }
 
-  private _updateState(): void {
-    this._stateObj = this._entity ? this.hass?.states[this._entity] : undefined;
+  private updateState(): void {
+    this.stateObj = this.entity ? this.hass?.states[this.entity] : undefined;
 
     let icon, iconAnimation, iconColor, name;
-    if (this._stateObj) {
-      if (this._running) {
+    if (this.stateObj) {
+      if (this.running) {
         icon = 'hass:rotate-right';
         iconAnimation = 'spin 1.0s linear infinite';
         iconColor = 'var(--sq-blue-rgb)';
       } else {
-        if (this._entity === 'input_select.location_phase') {
-          icon = phaseIcons[this._config!.option] || phaseIcons.default;
-        } else if (this._entity === 'input_select.location_mode') {
-          icon = modeIcons[this._config!.option] || modeIcons.default;
+        if (this.entity === 'input_select.location_phase') {
+          icon = phaseIcons[this.config!.option] || phaseIcons.default;
+        } else if (this.entity === 'input_select.location_mode') {
+          icon = modeIcons[this.config!.option] || modeIcons.default;
         } else {
           icon =
-            this._config!.icon ||
-            this._stateObj.attributes.icon ||
+            this.config!.icon ||
+            this.stateObj.attributes.icon ||
             'hass:form-dropdown';
         }
         iconAnimation = 'none';
         iconColor =
-          this._stateObj.state === this._config!.option
+          this.stateObj.state === this.config!.option
             ? 'var(--sq-blue-rgb)'
             : 'var(--sq-inactive-rgb)';
       }
-      name = this._config!.option || 'Unknown';
+      name = this.config!.option || 'Unknown';
     } else {
-      icon = this._config?.icon || 'hass:form-dropdown';
+      icon = this.config?.icon || 'hass:form-dropdown';
       iconAnimation = 'none';
       iconColor = 'var(--sq-unavailable-rgb)';
-      name = this._config?.option || 'Unknown';
+      name = this.config?.option || 'Unknown';
     }
 
-    this._iconStyles = {
+    this.iconStyles = {
       color: `rgb(${iconColor})`,
       backgroundColor: `rgba(${iconColor}, var(--sq-icon-alpha))`,
       animation: iconAnimation,
     };
-    this._icon = icon;
-    this._name = name;
+    this.icon = icon;
+    this.name = name;
   }
 
-  private async _selectOption(e: Event): Promise<void> {
+  private async selectOption(e: Event): Promise<void> {
     e.stopPropagation();
-    if (!this.hass || !this._config || !this._stateObj) return;
+    if (!this.hass || !this.config || !this.stateObj) return;
 
-    this._running = true;
+    this.running = true;
     this.requestUpdate();
     await callService(this.hass, 'input_select', 'select_option', {
-      entity_id: this._entity,
-      option: this._config.option,
+      entity_id: this.entity,
+      option: this.config.option,
     });
 
-    const trigger = this._config.trigger;
+    const trigger = this.config.trigger;
     if (trigger && trigger.startsWith('input_button.')) {
       await callService(this.hass, 'input_button', 'press', {
         entity_id: trigger,
@@ -160,17 +157,17 @@ export class OptionTile extends LitElement implements LovelaceCard {
     }
 
     setTimeout(() => {
-      this._running = false;
-      const menuTab = this._config?.menu_tab;
+      this.running = false;
+      const menuTab = this.config?.menu_tab;
       if (menuTab !== undefined && menuTab >= 0 && menuTab <= 3) {
-        this._showMenu();
+        this.showMenu();
       } else {
         window.browser_mod?.service('close_popup', {});
       }
     }, 1000);
   }
 
-  private async _showMenu(): Promise<void> {
+  private async showMenu(): Promise<void> {
     try {
       const dialogConfig = await menuConfig();
       window.browser_mod?.service('popup', dialogConfig);

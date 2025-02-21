@@ -41,13 +41,13 @@ export class SelectTile extends LitElement implements LovelaceCard {
   }
 
   @property({ attribute: false }) public hass?: HomeAssistant;
-  @state() protected _config?: Config;
-  private _entity?: string;
-  private _stateObj?: HassEntity;
-  private _icon: string = 'hass:form-dropdown';
-  private _iconStyles: Record<string, string> = {};
-  private _name: string = 'Unknown Select';
-  private _stateFmtd: string = 'Unknown State';
+  @state() protected config?: Config;
+  private entity?: string;
+  private stateObj?: HassEntity;
+  private icon: string = 'hass:form-dropdown';
+  private iconStyles: Record<string, string> = {};
+  private name: string = 'Unknown Select';
+  private stateFmtd: string = 'Unknown State';
 
   static get styles(): CSSResult {
     return unsafeCSS(tileStyle);
@@ -56,78 +56,76 @@ export class SelectTile extends LitElement implements LovelaceCard {
   public setConfig(config: Config): void {
     if (!config.entity?.startsWith('input_select.')) {
       console.error('Invalid input_select entity provided in the config.');
-      this._entity = undefined;
+      this.entity = undefined;
     } else {
-      this._entity = config.entity;
+      this.entity = config.entity;
     }
-    this._config = config;
+    this.config = config;
   }
 
   protected shouldUpdate(changedProps: PropertyValues): boolean {
-    if (changedProps.has('_config')) return true;
+    if (changedProps.has('config')) return true;
 
     if (changedProps.has('hass')) {
-      const newState = this._entity
-        ? this.hass?.states[this._entity]
-        : undefined;
+      const newState = this.entity ? this.hass?.states[this.entity] : undefined;
 
-      return newState !== this._stateObj;
+      return newState !== this.stateObj;
     }
 
     return false;
   }
 
   protected willUpdate(changedProps: PropertyValues): void {
-    this._updateState();
+    this.updateState();
   }
 
   protected render(): TemplateResult | typeof nothing {
     return html`
-      <div class="container" @click=${this._showOptions}>
-        <div class="icon" style="${styleMap(this._iconStyles)}">
-          <ha-icon icon=${this._icon}></ha-icon>
+      <div class="container" @click=${this.showOptions}>
+        <div class="icon" style="${styleMap(this.iconStyles)}">
+          <ha-icon icon=${this.icon}></ha-icon>
         </div>
         <div class="text">
-          <div class="name">${this._name}</div>
-          <div class="state">${this._stateFmtd}</div>
+          <div class="name">${this.name}</div>
+          <div class="state">${this.stateFmtd}</div>
         </div>
       </div>
     `;
   }
 
-  private _updateState(): void {
-    this._stateObj = this._entity ? this.hass?.states[this._entity] : undefined;
+  private updateState(): void {
+    this.stateObj = this.entity ? this.hass?.states[this.entity] : undefined;
 
     let icon, iconColor, name, stateFmtd;
-    if (this._config && this.hass && this._stateObj) {
+    if (this.config && this.hass && this.stateObj) {
       icon =
-        this._config.icon ||
-        this._stateObj.attributes?.icon ||
+        this.config.icon ||
+        this.stateObj.attributes?.icon ||
         'hass:form-dropdown';
       iconColor = 'var(--sq-inactive-rgb)';
       name =
-        this._config.name ||
-        this._stateObj.attributes?.friendly_name ||
+        this.config.name ||
+        this.stateObj.attributes?.friendly_name ||
         'Select List';
-      stateFmtd = this.hass.formatEntityState(this._stateObj) || 'Unknown';
+      stateFmtd = this.hass.formatEntityState(this.stateObj) || 'Unknown';
     } else {
-      icon = this._config?.icon || 'hass:form-dropdown';
+      icon = this.config?.icon || 'hass:form-dropdown';
       iconColor = 'var(--sq-unavailable-rgb)';
-      name = this._config?.name || 'Unknown';
+      name = this.config?.name || 'Unknown';
       stateFmtd = 'Unknown';
     }
 
-    this._iconStyles = {
+    this.iconStyles = {
       color: `rgb(${iconColor})`,
       backgroundColor: `rgba(${iconColor}, var(--sq-icon-alpha))`,
     };
-    this._icon = icon;
-    this._name = name;
-    this._stateFmtd = stateFmtd;
+    this.icon = icon;
+    this.name = name;
+    this.stateFmtd = stateFmtd;
   }
 
-  private _showOptions(e: Event): void {
+  private showOptions(e: Event): void {
     e.stopPropagation();
-    selectOptionDialog(this._config, this._stateObj);
+    selectOptionDialog(this.config, this.stateObj);
   }
 }

@@ -58,26 +58,26 @@ window.customCards.push({
 @customElement('smartqasa-panel-card')
 export class PanelCard extends LitElement {
     @property({ attribute: false }) public hass?: HomeAssistant;
-    @state() private _config?: Config;
-    @state() private _adminMode = false;
-    @state() private _displayMode: 'control' | 'entertain' = 'control';
-    @state() private _deviceOrientation: string = getDeviceOrientation();
-    @state() private _isPhone: boolean = getDeviceType() === 'phone';
-    @state() private _isTablet: boolean = getDeviceType() === 'tablet';
-    @state() private _isPortrait: boolean =
-        this._deviceOrientation === 'portrait';
-    @state() private _isLandscape: boolean =
-        this._deviceOrientation === 'landscape';
-    @state() private _areaPicture: string = defaultImage;
-    private _timeIntervalId: number | undefined;
-    private _swiper?: Swiper;
-    private _resetTimer?: ReturnType<typeof setTimeout>;
-    private _area?: string;
-    private _areaObj?: HassArea;
-    private _headerChips: LovelaceCard[] = [];
-    private _areaChips: LovelaceCard[] = [];
-    private _bodyTiles: LovelaceCard[][] = [];
-    private _bodyColumns: number[] = [];
+    @state() private config?: Config;
+    @state() private adminMode = false;
+    @state() private displayMode: 'control' | 'entertain' = 'control';
+    @state() private deviceOrientation: string = getDeviceOrientation();
+    @state() private isPhone: boolean = getDeviceType() === 'phone';
+    @state() private isTablet: boolean = getDeviceType() === 'tablet';
+    @state() private isPortrait: boolean =
+        this.deviceOrientation === 'portrait';
+    @state() private isLandscape: boolean =
+        this.deviceOrientation === 'landscape';
+    @state() private areaPicture: string = defaultImage;
+    private timeIntervalId: number | undefined;
+    private swiper?: Swiper;
+    private resetTimer?: ReturnType<typeof setTimeout>;
+    private area?: string;
+    private areaObj?: HassArea;
+    private headerChips: LovelaceCard[] = [];
+    private areaChips: LovelaceCard[] = [];
+    private bodyTiles: LovelaceCard[][] = [];
+    private bodyColumns: number[] = [];
 
     static styles: CSSResultGroup = [
         unsafeCSS(swiperStyles),
@@ -85,62 +85,62 @@ export class PanelCard extends LitElement {
     ];
 
     public async setConfig(config: Config) {
-        this._config = { ...config };
-        this._area = this._config.area;
-        this._areaPicture = await this._getAreaPicture();
+        this.config = { ...config };
+        this.area = this.config.area;
+        this.areaPicture = await this.getAreaPicture();
     }
 
     protected async firstUpdated() {
-        await this._loadContent();
+        await this.loadContent();
 
-        if (this._isTablet) {
-            this._initializeSwiper();
-            this._startResetTimer();
+        if (this.isTablet) {
+            this.initializeSwiper();
+            this.startResetTimer();
         }
 
         ['orientationchange', 'resize'].forEach((event) =>
-            window.addEventListener(event, this._handleDeviceChanges.bind(this))
+            window.addEventListener(event, this.handleDeviceChanges.bind(this))
         );
 
-        this._syncTime();
+        this.syncTime();
     }
 
     protected updated(changedProps: PropertyValues) {
         if (this.hass) {
             const adminMode =
                 this.hass.states['input_boolean.admin_mode']?.state === 'on';
-            this._adminMode = (this.hass.user?.is_admin ?? false) || adminMode;
+            this.adminMode = (this.hass.user?.is_admin ?? false) || adminMode;
         }
 
-        if (this._isTablet) {
-            if (this._swiper) {
-                this._swiper.update();
+        if (this.isTablet) {
+            if (this.swiper) {
+                this.swiper.update();
             } else {
-                this._initializeSwiper();
+                this.initializeSwiper();
             }
         }
 
-        if (changedProps.has('_config') && this._config) {
-            this._loadContent();
+        if (changedProps.has('config') && this.config) {
+            this.loadContent();
         } else if (changedProps.has('hass') && this.hass) {
-            this._areaObj = this._area
-                ? this.hass.areas[this._area]
+            this.areaObj = this.area
+                ? this.hass.areas[this.area]
                 : undefined;
 
-            if (this._isTablet && this._headerChips.length) {
-                this._headerChips.forEach((chip) => {
+            if (this.isTablet && this.headerChips.length) {
+                this.headerChips.forEach((chip) => {
                     chip.hass = this.hass;
                 });
             }
 
-            if (this._areaChips.length) {
-                this._areaChips.forEach((chip) => {
+            if (this.areaChips.length) {
+                this.areaChips.forEach((chip) => {
                     chip.hass = this.hass;
                 });
             }
 
-            if (this._bodyTiles.length) {
-                this._bodyTiles.forEach((page) => {
+            if (this.bodyTiles.length) {
+                this.bodyTiles.forEach((page) => {
                     page.forEach((tile) => {
                         tile.hass = this.hass;
                     });
@@ -152,32 +152,32 @@ export class PanelCard extends LitElement {
     disconnectedCallback() {
         super.disconnectedCallback();
 
-        if (this._timeIntervalId !== undefined) {
-            clearInterval(this._timeIntervalId);
+        if (this.timeIntervalId !== undefined) {
+            clearInterval(this.timeIntervalId);
         }
 
-        if (this._resetTimer) {
-            clearTimeout(this._resetTimer);
+        if (this.resetTimer) {
+            clearTimeout(this.resetTimer);
         }
 
         ['orientationchange', 'resize'].forEach((event) =>
             window.removeEventListener(
                 event,
-                this._handleDeviceChanges.bind(this)
+                this.handleDeviceChanges.bind(this)
             )
         );
     }
 
     protected render(): TemplateResult {
-        const displayMode = this._displayMode;
+        const displayMode = this.displayMode;
 
         let content;
         // prettier-ignore
         switch (displayMode) {
             case "control":
                 content = html`
-                    ${this._renderArea()}
-                    ${this._renderBody()}
+                    ${this.renderArea()}
+                    ${this.renderBody()}
                 `;
                 break;
             case "entertain":
@@ -192,36 +192,36 @@ export class PanelCard extends LitElement {
         return html`
             <div
                 class="container"
-                ?admin=${this._adminMode}
+                ?admin=${this.adminMode}
                 ?control=${displayMode === "control"}
                 ?entertain=${displayMode === "entertain"}
             >
-                ${this._isTablet ? this._renderHeader() : nothing}
+                ${this.isTablet ? this.renderHeader() : nothing}
                 ${content}
-                ${this._isPhone && this._isLandscape ? nothing : this._renderFooter()}
+                ${this.isPhone && this.isLandscape ? nothing : this.renderFooter()}
             </div>
         `;
     }
 
-    private _handleDeviceChanges() {
+    private handleDeviceChanges() {
         const type = getDeviceType();
-        this._isPhone = type === 'phone';
-        this._isTablet = type === 'tablet';
+        this.isPhone = type === 'phone';
+        this.isTablet = type === 'tablet';
 
         const orientation = getDeviceOrientation();
-        this._isPortrait = orientation === 'portrait';
-        this._isLandscape = orientation === 'landscape';
+        this.isPortrait = orientation === 'portrait';
+        this.isLandscape = orientation === 'landscape';
     }
 
-    private _renderHeader() {
+    private renderHeader() {
         return html`
             <div class="header-container">
-                <div class="header-time-date" @click="${this._launchClock}">
+                <div class="header-time-date" @click="${this.launchClock}">
                     <div class="time">${formattedTime()}</div>
                     <div class="date">${formattedDate()}</div>
                 </div>
                 <div class="header-chips">
-                    ${this._headerChips.map(
+                    ${this.headerChips.map(
                         (chip) => html`<div class="chip">${chip}</div>`
                     )}
                 </div>
@@ -229,48 +229,48 @@ export class PanelCard extends LitElement {
         `;
     }
 
-    private _renderArea() {
-        const name = this._config?.name ?? this._areaObj?.name ?? 'Area';
+    private renderArea() {
+        const name = this.config?.name ?? this.areaObj?.name ?? 'Area';
 
         return html`
             <div
                 class="area-container"
-                ?phone-portrait=${this._isPhone && this._isPortrait}
-                ?phone-landscape=${this._isPhone && this._isLandscape}
+                ?phone-portrait=${this.isPhone && this.isPortrait}
+                ?phone-landscape=${this.isPhone && this.isLandscape}
             >
-                <div class="area-name ${this._isPhone ? 'overlay' : ''}">
+                <div class="area-name ${this.isPhone ? 'overlay' : ''}">
                     ${name}
                 </div>
                 <img
                     class="area-picture"
-                    ?tablet-portrait=${this._isTablet && this._isPortrait}
-                    ?phone-portrait=${this._isPhone && this._isPortrait}
-                    ?phone-landscape=${this._isPhone && this._isLandscape}
-                    src="${this._areaPicture}"
+                    ?tablet-portrait=${this.isTablet && this.isPortrait}
+                    ?phone-portrait=${this.isPhone && this.isPortrait}
+                    ?phone-landscape=${this.isPhone && this.isLandscape}
+                    src="${this.areaPicture}"
                     alt="Area picture..."
                 />
-                ${this._areaChips.length > 0
+                ${this.areaChips.length > 0
                     ? html`
                           <div class="area-chips">
-                              ${this._areaChips.map(
+                              ${this.areaChips.map(
                                   (chip) =>
                                       html`<div class="chip">${chip}</div>`
                               )}
                           </div>
                       `
                     : nothing}
-                ${this._isPhone && this._isLandscape
+                ${this.isPhone && this.isLandscape
                     ? html`<div class="footer-container">
-                          ${this._renderFooter()}
+                          ${this.renderFooter()}
                       </div>`
                     : nothing}
             </div>
         `;
     }
 
-    private async _getAreaPicture(): Promise<string> {
-        if (this._config?.picture) {
-            const configPictureFile = `/local/smartqasa/pictures/${this._config.picture}`;
+    private async getAreaPicture(): Promise<string> {
+        if (this.config?.picture) {
+            const configPictureFile = `/local/smartqasa/pictures/${this.config.picture}`;
             try {
                 const response = await fetch(configPictureFile, {
                     method: 'HEAD',
@@ -285,14 +285,14 @@ export class PanelCard extends LitElement {
                 }
             } catch (error) {
                 console.error(
-                    `Failed to check picture from config: ${this._config.picture}`,
+                    `Failed to check picture from config: ${this.config.picture}`,
                     error
                 );
                 return defaultImage;
             }
         }
 
-        const areaFileName = `/local/smartqasa/pictures/${this._area}.png`;
+        const areaFileName = `/local/smartqasa/pictures/${this.area}.png`;
         try {
             const response = await fetch(areaFileName, { method: 'HEAD' });
             if (response.ok) {
@@ -300,20 +300,20 @@ export class PanelCard extends LitElement {
             }
         } catch (error) {}
 
-        if (this._areaObj?.picture) {
-            return this._areaObj.picture;
+        if (this.areaObj?.picture) {
+            return this.areaObj.picture;
         }
 
         return defaultImage;
     }
 
-    private _renderBody() {
-        if (!this._config || !this._bodyTiles.length) return nothing;
+    private renderBody() {
+        if (!this.config || !this.bodyTiles.length) return nothing;
 
-        if (this._isPhone) {
+        if (this.isPhone) {
             return html`
                 <div class="body-tiles" phone>
-                    ${this._bodyTiles
+                    ${this.bodyTiles
                         .flat()
                         .map((tile) => html`<div class="tile">${tile}</div>`)}
                 </div>
@@ -323,9 +323,9 @@ export class PanelCard extends LitElement {
         return html`
             <div class="swiper">
                 <div class="swiper-wrapper">
-                    ${this._bodyTiles.map((page, index) => {
+                    ${this.bodyTiles.map((page, index) => {
                         const gridStyle = {
-                            gridTemplateColumns: `repeat(${this._bodyColumns[index]}, var(--sq-tile-width, 19.5rem))`,
+                            gridTemplateColumns: `repeat(${this.bodyColumns[index]}, var(--sq-tile-width, 19.5rem))`,
                         };
 
                         return html`
@@ -345,17 +345,17 @@ export class PanelCard extends LitElement {
                         `;
                     })}
                 </div>
-                ${this._bodyTiles.length > 1
+                ${this.bodyTiles.length > 1
                     ? html`
                           <div
                               class="swiper-button-prev"
                               @click=${(e: Event) =>
-                                  this._handleSwiperNavigation(e, 'prev')}
+                                  this.handleSwiperNavigation(e, 'prev')}
                           ></div>
                           <div
                               class="swiper-button-next"
                               @click=${(e: Event) =>
-                                  this._handleSwiperNavigation(e, 'next')}
+                                  this.handleSwiperNavigation(e, 'next')}
                           ></div>
                       `
                     : nothing}
@@ -363,26 +363,26 @@ export class PanelCard extends LitElement {
         `;
     }
 
-    private _renderFooter() {
+    private renderFooter() {
         return html`
             <div class="footer-container">
-                ${this._renderFooterButton('hass:home', 'Home', '_handleHome')}
-                ${this._renderFooterButton(
+                ${this.renderFooterButton('hass:home', 'Home', '_handleHome')}
+                ${this.renderFooterButton(
                     'hass:view-dashboard',
                     'Areas',
                     '_handleAreas'
                 )}
-                ${this._renderFooterButton(
+                ${this.renderFooterButton(
                     'hass:music',
                     'Entertainment',
                     '_handleEntertain'
                 )}
-                ${this._renderFooterButton('hass:menu', 'Menu', '_handleMenu')}
+                ${this.renderFooterButton('hass:menu', 'Menu', '_handleMenu')}
             </div>
         `;
     }
 
-    private _renderFooterButton(
+    private renderFooterButton(
         icon: string,
         name: string,
         methodName: keyof ActionHandlers
@@ -391,7 +391,7 @@ export class PanelCard extends LitElement {
             <div
                 class="footer-button"
                 @click="${(e: Event) =>
-                    this._handleFooterAction(e, methodName)}"
+                    this.handleFooterAction(e, methodName)}"
             >
                 <ha-icon .icon=${icon}></ha-icon>
                 <span>${name}</span>
@@ -399,7 +399,7 @@ export class PanelCard extends LitElement {
         `;
     }
 
-    private _syncTime() {
+    private syncTime() {
         const syncTime = () => {
             const now = new Date();
             const millisecondsUntilNextSecond = 1000 - now.getMilliseconds();
@@ -412,8 +412,8 @@ export class PanelCard extends LitElement {
         syncTime();
     }
 
-    private _initializeSwiper() {
-        if (this._bodyTiles.length <= 1) {
+    private initializeSwiper() {
+        if (this.bodyTiles.length <= 1) {
             return;
         }
 
@@ -430,49 +430,49 @@ export class PanelCard extends LitElement {
             },
         };
 
-        this._swiper = new Swiper(swiperContainer as HTMLElement, swiperParams);
+        this.swiper = new Swiper(swiperContainer as HTMLElement, swiperParams);
 
-        if (this._swiper) {
+        if (this.swiper) {
             Swiper.use([Navigation]);
         }
     }
 
-    private _startResetTimer() {
-        if (this._resetTimer) {
-            clearTimeout(this._resetTimer);
+    private startResetTimer() {
+        if (this.resetTimer) {
+            clearTimeout(this.resetTimer);
         }
 
-        this._resetTimer = setTimeout(
+        this.resetTimer = setTimeout(
             () => {
-                this._resetToFirstPage();
+                this.resetToFirstPage();
             },
             5 * 60 * 1000
         ); // 5 minutes
     }
 
-    private _resetToFirstPage() {
-        if (this._swiper && this._swiper.activeIndex !== 0) {
-            this._swiper.slideTo(0);
+    private resetToFirstPage() {
+        if (this.swiper && this.swiper.activeIndex !== 0) {
+            this.swiper.slideTo(0);
         }
 
-        this._startResetTimer();
+        this.startResetTimer();
     }
 
-    private async _loadContent() {
-        this._areaObj = this._area ? this.hass?.areas[this._area] : undefined;
+    private async loadContent() {
+        this.areaObj = this.area ? this.hass?.areas[this.area] : undefined;
 
-        this._headerChips = await this._loadHeaderChips();
+        this.headerChips = await this.loadHeaderChips();
 
-        if (this._config?.chips) {
-            this._areaChips = await this._loadAreaChips(this._config.chips);
+        if (this.config?.chips) {
+            this.areaChips = await this.loadAreaChips(this.config.chips);
         }
 
-        if (this._config?.tiles) {
-            this._bodyTiles = await this._loadBodyTiles(this._config.tiles);
+        if (this.config?.tiles) {
+            this.bodyTiles = await this.loadBodyTiles(this.config.tiles);
         }
     }
 
-    private async _loadHeaderChips(): Promise<LovelaceCard[]> {
+    private async loadHeaderChips(): Promise<LovelaceCard[]> {
         let chipsConfig: LovelaceCardConfig[] = [];
         try {
             const yamlFilePath = '/local/smartqasa/config/chips.yaml';
@@ -491,7 +491,7 @@ export class PanelCard extends LitElement {
         });
     }
 
-    private async _loadAreaChips(
+    private async loadAreaChips(
         chipsConfig: LovelaceCardConfig[]
     ): Promise<LovelaceCard[]> {
         return chipsConfig.map((config) => {
@@ -501,11 +501,11 @@ export class PanelCard extends LitElement {
         });
     }
 
-    private async _loadBodyTiles(
+    private async loadBodyTiles(
         tilesConfig: LovelaceCardConfig[]
     ): Promise<LovelaceCard[][]> {
         const pages: LovelaceCard[][] = [];
-        this._bodyColumns = [];
+        this.bodyColumns = [];
         let currentPage: LovelaceCard[] = [];
         let firstTile = true;
 
@@ -517,7 +517,7 @@ export class PanelCard extends LitElement {
                     config.columns <= 4
                         ? config.columns
                         : 3;
-                this._bodyColumns.push(columns);
+                this.bodyColumns.push(columns);
             }
 
             if (config.type === 'page') {
@@ -531,10 +531,10 @@ export class PanelCard extends LitElement {
                         config.columns <= 4
                             ? config.columns
                             : 3;
-                    this._bodyColumns.push(columns);
+                    this.bodyColumns.push(columns);
                 }
             } else if (config.type === 'blank') {
-                if (this._isTablet) {
+                if (this.isTablet) {
                     const blankTile = document.createElement('div');
                     blankTile.classList.add('blank-tile');
                     currentPage.push(blankTile as unknown as LovelaceCard);
@@ -559,7 +559,7 @@ export class PanelCard extends LitElement {
         return pages;
     }
 
-    private _launchClock(e: Event) {
+    private launchClock(e: Event) {
         e.stopPropagation();
         if (
             typeof window.fully !== 'undefined' &&
@@ -571,20 +571,20 @@ export class PanelCard extends LitElement {
         }
     }
 
-    private _handleSwiperNavigation(e: Event, direction: 'prev' | 'next') {
+    private handleSwiperNavigation(e: Event, direction: 'prev' | 'next') {
         e.stopPropagation();
-        if (this._swiper) {
+        if (this.swiper) {
             if (direction === 'prev') {
-                this._swiper.slidePrev();
+                this.swiper.slidePrev();
             } else {
-                this._swiper.slideNext();
+                this.swiper.slideNext();
             }
 
-            this._startResetTimer();
+            this.startResetTimer();
         }
     }
 
-    private _handleFooterAction(e: Event, methodName: keyof ActionHandlers) {
+    private handleFooterAction(e: Event, methodName: keyof ActionHandlers) {
         e.stopPropagation();
         if (typeof this[methodName] === 'function') {
             this[methodName]();
@@ -593,9 +593,9 @@ export class PanelCard extends LitElement {
         }
     }
 
-    private _handleHome() {
-        if (this._displayMode !== 'control') {
-            this._displayMode = 'control';
+    private handleHome() {
+        if (this.displayMode !== 'control') {
+            this.displayMode = 'control';
             return;
         }
 
@@ -613,16 +613,16 @@ export class PanelCard extends LitElement {
         }
     }
 
-    private _handleAreas() {
-        this._displayMode = 'control';
+    private handleAreas() {
+        this.displayMode = 'control';
         areasDialog(this.hass);
     }
 
-    private _handleEntertain() {
-        this._displayMode = 'entertain';
+    private handleEntertain() {
+        this.displayMode = 'entertain';
     }
 
-    private async _handleMenu(): Promise<void> {
+    private async handleMenu(): Promise<void> {
         window.smartqasa.menuTab = 0;
         try {
             const dialogConfig = await menuConfig();

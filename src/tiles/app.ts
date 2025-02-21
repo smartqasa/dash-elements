@@ -25,9 +25,9 @@ export class AppTile extends LitElement implements LovelaceCard {
     return 1;
   }
 
-  @state() protected _config?: Config;
-  private _app?: string;
-  private _appObj?: any;
+  @state() protected config?: Config;
+  private app?: string;
+  private appObj?: any;
 
   static get styles(): CSSResult {
     return unsafeCSS(tileStyle);
@@ -35,23 +35,23 @@ export class AppTile extends LitElement implements LovelaceCard {
 
   public setConfig(config: Config): void {
     if (!config.app) throw new Error('A valid app must be specified.');
-    this._config = config;
-    this._app = config.app;
-    this._appObj = appTable[config.app] || undefined;
+    this.config = config;
+    this.app = config.app;
+    this.appObj = appTable[config.app] || undefined;
   }
 
   protected render(): TemplateResult {
     let iconStyle: string, iconTemplate: any, name: string;
-    if (this._appObj) {
-      if (this._config?.icon) {
+    if (this.appObj) {
+      if (this.config?.icon) {
         iconStyle =
           'color: rgb(var(--sq-inactive-rgb)); background-color: rgba(var(--sq-inactive-rgb), var(--sq-icon-alpha));';
-        iconTemplate = html`<ha-icon icon=${this._config.icon}></ha-icon>`;
-      } else if (this._appObj?.app_icon) {
+        iconTemplate = html`<ha-icon icon=${this.config.icon}></ha-icon>`;
+      } else if (this.appObj?.app_icon) {
         iconStyle =
           'height: calc(var(--sq-icon-size) + var(--sq-icon-padding) * 2); width: calc(var(--sq-icon-size) + var(--sq-icon-padding) * 2); padding: 0;';
         iconTemplate = html`<img
-          src="${this._appObj.app_icon}"
+          src="${this.appObj.app_icon}"
           alt="App Icon"
           style="border-radius: 50%;"
         />`;
@@ -65,10 +65,10 @@ export class AppTile extends LitElement implements LovelaceCard {
         'color: rgb(var(--sq-unavailable-rgb)); background-color: rgba(var(--sq-unavailable-rgb), var(--sq-icon-alpha));';
       iconTemplate = html`<ha-icon icon="hass:alert-rhombus"></ha-icon>`;
     }
-    name = this._config?.name || this._appObj?.name || this._config?.app;
+    name = this.config?.name || this.appObj?.name || this.config?.app;
 
     return html`
-      <div class="container" @click=${this._launchApp}>
+      <div class="container" @click=${this.launchApp}>
         <div class="icon" style=${iconStyle}>${iconTemplate}</div>
         <div class="text">
           <div class="name">${name}</div>
@@ -77,9 +77,9 @@ export class AppTile extends LitElement implements LovelaceCard {
     `;
   }
 
-  private _launchApp(e: Event): void {
+  private launchApp(e: Event): void {
     e.stopPropagation();
-    if (!this._config?.app) return;
-    launchApp(this._config.app);
+    if (!this.config?.app) return;
+    launchApp(this.config.app);
   }
 }

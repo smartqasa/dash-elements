@@ -22,7 +22,7 @@ export function shouldComponentUpdate(
 
     const hasHassChanged =
         changedProps.has('hass') && entity && hass?.states[entity] !== stateObj;
-    const hasConfigChanged = changedProps.has('_config');
+    const hasConfigChanged = changedProps.has('config');
 
     return !!(hasHassChanged || hasConfigChanged);
 }

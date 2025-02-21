@@ -29,9 +29,9 @@ export class AdminChip extends LitElement implements LovelaceCard {
   }
 
   @property({ attribute: false }) public hass?: HomeAssistant;
-  @state() private _stateObj?: HassEntity;
+  @state() private stateObj?: HassEntity;
 
-  private _entity = 'input_boolean.admin_mode';
+  private entity = 'input_boolean.admin_mode';
 
   static get styles(): CSSResult {
     return unsafeCSS(chipBaseStyle);
@@ -40,7 +40,7 @@ export class AdminChip extends LitElement implements LovelaceCard {
   public setConfig(): void {}
 
   protected render(): TemplateResult | typeof nothing {
-    if (!this._entity || this._stateObj?.state !== 'on') return nothing;
+    if (!this.entity || this.stateObj?.state !== 'on') return nothing;
 
     const icon = 'hass:tools';
     const iconStyles = {
@@ -49,7 +49,7 @@ export class AdminChip extends LitElement implements LovelaceCard {
     };
 
     return html`
-      <div class="container" @click=${this._toggleEntity}>
+      <div class="container" @click=${this.toggleEntity}>
         <div class="icon" style="${styleMap(iconStyles)}">
           <ha-icon icon=${icon}></ha-icon>
         </div>
@@ -60,14 +60,14 @@ export class AdminChip extends LitElement implements LovelaceCard {
   protected updated(changedProps: PropertyValues): void {
     super.updated(changedProps);
     if (this.hass && changedProps.has('hass')) {
-      this._stateObj = this.hass.states[this._entity];
+      this.stateObj = this.hass.states[this.entity];
     }
   }
 
-  private _toggleEntity(e: Event): void {
+  private toggleEntity(e: Event): void {
     e.stopPropagation();
     callService(this.hass, 'input_boolean', 'turn_off', {
-      entity_id: this._entity,
+      entity_id: this.entity,
     });
   }
 }

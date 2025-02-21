@@ -37,36 +37,36 @@ export class NavigateChip extends LitElement implements LovelaceCard {
   }
 
   @property({ attribute: false }) public hass?: HomeAssistant;
-  @state() private _areaPrev?: string;
-  @state() private _areaNext?: string;
-  @state() private _areaObjPrev?: HassArea;
-  @state() private _areaObjNext?: HassArea;
+  @state() private areaPrev?: string;
+  @state() private areaNext?: string;
+  @state() private areaObjPrev?: HassArea;
+  @state() private areaObjNext?: HassArea;
 
   static styles: CSSResult = unsafeCSS(chipDoubleStyle);
 
   public setConfig(config: Config): void {
-    this._areaPrev = config.area_prev || undefined;
-    this._areaNext = config.area_next || undefined;
+    this.areaPrev = config.area_prev || undefined;
+    this.areaNext = config.area_next || undefined;
   }
 
   protected shouldUpdate(changedProps: PropertyValues): boolean {
     return !!(
       changedProps.has('hass') &&
-      this._areaPrev &&
-      this._areaNext &&
-      (this.hass?.areas[this._areaPrev] !== this._areaObjPrev ||
-        this.hass?.areas[this._areaNext] !== this._areaObjNext)
+      this.areaPrev &&
+      this.areaNext &&
+      (this.hass?.areas[this.areaPrev] !== this.areaObjPrev ||
+        this.hass?.areas[this.areaNext] !== this.areaObjNext)
     );
   }
 
   protected render(): TemplateResult | typeof nothing {
-    if (!this._areaPrev || !this._areaNext) return nothing;
+    if (!this.areaPrev || !this.areaNext) return nothing;
 
-    this._areaObjPrev = this._areaPrev
-      ? this.hass?.areas[this._areaPrev]
+    this.areaObjPrev = this.areaPrev
+      ? this.hass?.areas[this.areaPrev]
       : undefined;
-    this._areaObjNext = this._areaNext
-      ? this.hass?.areas[this._areaNext]
+    this.areaObjNext = this.areaNext
+      ? this.hass?.areas[this.areaNext]
       : undefined;
 
     const iconPrev = 'hass:menu-left';
@@ -74,29 +74,29 @@ export class NavigateChip extends LitElement implements LovelaceCard {
 
     return html`
       <div class="container">
-        <div class="icon1" @click=${this._navigatePrev}>
+        <div class="icon1" @click=${this.navigatePrev}>
           <ha-icon icon=${iconPrev}></ha-icon>
         </div>
-        <div class="icon2" @click=${this._navigateNext}>
+        <div class="icon2" @click=${this.navigateNext}>
           <ha-icon icon=${iconNext}></ha-icon>
         </div>
       </div>
     `;
   }
 
-  private _navigatePrev(e: Event): void {
+  private navigatePrev(e: Event): void {
     e.stopPropagation();
-    if (this._areaPrev && this._areaObjPrev) {
-      navigateToArea(this._areaPrev);
+    if (this.areaPrev && this.areaObjPrev) {
+      navigateToArea(this.areaPrev);
     } else {
       console.error('Previous area is not found.');
     }
   }
 
-  private _navigateNext(e: Event): void {
+  private navigateNext(e: Event): void {
     e.stopPropagation();
-    if (this._areaNext && this._areaObjNext) {
-      navigateToArea(this._areaNext);
+    if (this.areaNext && this.areaObjNext) {
+      navigateToArea(this.areaNext);
     } else {
       console.error('Next area is not found.');
     }
