@@ -191,7 +191,7 @@ export class MainCard extends LitElement implements LovelaceCard {
 
     this.areaPicture = this.config.picture ?? `${this.area}.png`;
 
-    this.areaChips = createElements(this.config.areachips || [], this.hass);
+    this.areaChips = createElements(this.config.area_chips || [], this.hass);
 
     const { controlTiles, controlColumns } = loadControlTiles(
       this.config.tiles ?? [],
