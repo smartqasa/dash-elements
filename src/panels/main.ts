@@ -26,7 +26,7 @@ import { renderFooter } from './footer';
 import { navigateToArea } from '../utilities/navigate-to-area';
 import { deviceRefresh, deviceReboot } from '../utilities/device-actions';
 
-import panelStyles from '../css/panel.css';
+import panelStyles from '../css/main.css';
 
 interface Config extends LovelaceCardConfig {
   area: string;
@@ -41,16 +41,16 @@ interface Config extends LovelaceCardConfig {
 }
 
 window.customCards.push({
-  type: 'smartqasa-panel-card',
-  name: 'SmartQasa Panel Card',
+  type: 'smartqasa-main-card',
+  name: 'SmartQasa Main Card',
   preview: true,
-  description: 'A SmartQasa card for rendering a panel.',
+  description: 'A SmartQasa card for rendering the main panel.',
 });
 
-@customElement('smartqasa-panel-card')
-export class PanelCard extends LitElement implements LovelaceCard {
+@customElement('smartqasa-main-card')
+export class MainCard extends LitElement implements LovelaceCard {
   public getCardSize(): number | Promise<number> {
-    return 100;
+    return 1;
   }
 
   @property({ attribute: false }) public hass?: HomeAssistant;
