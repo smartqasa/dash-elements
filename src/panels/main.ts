@@ -44,110 +44,103 @@ export class MainCard extends LitElement implements LovelaceCard {
   }
 
   @property({ attribute: false }) public hass?: HomeAssistant;
-  @state() protected _config?: Config;
+  @state() protected config?: Config;
 
-  @state() private _isAdminMode = false;
-  @state() private _isPhone: boolean = getDeviceType() === 'phone';
-  @state() private _isTablet: boolean = getDeviceType() === 'tablet';
-  @state() private _isPortrait: boolean = getDeviceOrientation() === 'portrait';
-  @state() private _isLandscape: boolean =
+  @state() private isAdminMode = false;
+  @state() private isPhone: boolean = getDeviceType() === 'phone';
+  @state() private isTablet: boolean = getDeviceType() === 'tablet';
+  @state() private isPortrait: boolean = getDeviceOrientation() === 'portrait';
+  @state() private isLandscape: boolean =
     getDeviceOrientation() === 'landscape';
 
-  private _boundHandleDeviceChanges = () => this._handleDeviceChanges();
-  private _boundStartDashboardTimer = () => this._startDashboardTimer();
+  private boundHandleDeviceChanges = () => this.handleDeviceChanges();
+  private boundStartDashboardTimer = () => this.startDashboardTimer();
 
-  private _timeIntervalId: ReturnType<typeof setInterval> | undefined;
-  private _dashboardTimer: ReturnType<typeof setTimeout> | undefined;
-  private _themeStyle: string | undefined;
-  private _themeMode: string | undefined;
-  private _deviceRefreshState: string | undefined;
-  private _deviceRebootState: string | undefined;
-  private _backgroundImage: string | undefined;
-  private _headerChips?: LovelaceCard[];
-  private _area: string | undefined;
-  private _areaObj: HassArea | undefined;
-  private _areaName: string | undefined;
-  private _areaPicture: string | undefined;
-  private _areaChips: LovelaceCard[] = [];
-  private _controlTiles: LovelaceCard[][] = [];
-  private _controlColumns: number[] = [];
+  private timeIntervalId: ReturnType<typeof setInterval> | undefined;
+  private dashboardTimer: ReturnType<typeof setTimeout> | undefined;
+  private themeStyle: string | undefined;
+  private themeMode: string | undefined;
+  private deviceRefreshState: string | undefined;
+  private deviceRebootState: string | undefined;
+  private backgroundImage: string | undefined;
+  private headerChips?: LovelaceCard[];
+  private area: string | undefined;
+  private areaObj: HassArea | undefined;
+  private areaName: string | undefined;
+  private areaPicture: string | undefined;
+  private areaChips: LovelaceCard[] = [];
+  private controlTiles: LovelaceCard[][] = [];
+  private controlColumns: number[] = [];
 
   static get styles(): CSSResult {
     return unsafeCSS(panelStyles);
   }
 
   public setConfig(config: Config) {
-    this._config = config;
-    this._area = this._config.area;
+    this.config = config;
+    this.area = this.config.area;
   }
 
   public connectedCallback(): void {
     super.connectedCallback();
 
-    this._timeIntervalId = setInterval(() => {
+    this.timeIntervalId = setInterval(() => {
       if (document.visibilityState === 'visible') {
         this.requestUpdate();
       }
     }, 1000);
 
-    window.addEventListener('resize', this._boundHandleDeviceChanges);
-    window.addEventListener(
-      'orientationchange',
-      this._boundHandleDeviceChanges
-    );
-    window.addEventListener('touchstart', this._boundStartDashboardTimer, {
+    window.addEventListener('resize', this.boundHandleDeviceChanges);
+    window.addEventListener('orientationchange', this.boundHandleDeviceChanges);
+    window.addEventListener('touchstart', this.boundStartDashboardTimer, {
       passive: true,
     });
 
-    this._startDashboardTimer();
+    this.startDashboardTimer();
   }
 
   protected willUpdate(changedProps: PropertyValues): void {
     super.willUpdate(changedProps);
 
-    if (changedProps.has('_config')) {
-      this._loadContent();
+    if (changedProps.has('config')) {
+      this.loadContent();
     }
 
     if (changedProps.has('hass') && this.hass) {
-      this._handleBackgroundChange();
+      this.handleBackgroundChange();
 
-      this._isAdminMode =
+      this.isAdminMode =
         (this.hass.user?.is_admin ?? false) ||
         this.hass.states['input_boolean.admin_mode']?.state === 'on';
 
-      this._areaObj = this._area ? this.hass?.areas[this._area] : undefined;
+      this.areaObj = this.area ? this.hass?.areas[this.area] : undefined;
     }
   }
 
   protected render(): TemplateResult | typeof nothing {
-    if (!this.hass || !this._config || !this._area) return nothing;
+    if (!this.hass || !this.config || !this.area) return nothing;
 
     const panelStyle = {
       opacity: 1,
-      backgroundImage: this._backgroundImage || 'none',
+      backgroundImage: this.backgroundImage || 'none',
     };
 
     return html`
       <div
         class="panel"
         style=${styleMap(panelStyle)}
-        ?admin=${this._isAdminMode}
+        ?admin=${this.isAdminMode}
       >
-        ${this._isTablet ? renderHeader(this._headerChips ?? []) : nothing}
+        ${this.isTablet ? renderHeader(this.headerChips ?? []) : nothing}
         ${renderArea(
-          this._areaName,
-          this._areaPicture,
-          this._areaChips,
-          this._isPhone,
-          this._isLandscape
+          this.areaName,
+          this.areaPicture,
+          this.areaChips,
+          this.isPhone,
+          this.isLandscape
         )}
-        ${renderControls(
-          this._controlTiles,
-          this._controlColumns,
-          this._isPhone
-        )}
-        ${this._isPhone && this._isLandscape ? nothing : renderFooter()}
+        ${renderControls(this.controlTiles, this.controlColumns, this.isPhone)}
+        ${this.isPhone && this.isLandscape ? nothing : renderFooter()}
       </div>
     `;
   }
@@ -156,64 +149,61 @@ export class MainCard extends LitElement implements LovelaceCard {
     super.updated(changedProps);
 
     if (changedProps.has('hass') && this.hass) {
-      this._deviceRefreshState = deviceRefresh(
+      this.deviceRefreshState = deviceRefresh(
         this.hass,
-        this._deviceRefreshState
+        this.deviceRefreshState
       );
 
-      this._deviceRebootState = deviceReboot(
-        this.hass,
-        this._deviceRebootState
-      );
+      this.deviceRebootState = deviceReboot(this.hass, this.deviceRebootState);
 
-      this._updateContent();
+      this.updateContent();
     }
   }
 
   public disconnectedCallback(): void {
     super.disconnectedCallback();
 
-    if (this._timeIntervalId) {
-      clearInterval(this._timeIntervalId);
-      this._timeIntervalId = undefined;
+    if (this.timeIntervalId) {
+      clearInterval(this.timeIntervalId);
+      this.timeIntervalId = undefined;
     }
 
-    if (this._dashboardTimer) {
-      clearTimeout(this._dashboardTimer);
-      this._dashboardTimer = undefined;
+    if (this.dashboardTimer) {
+      clearTimeout(this.dashboardTimer);
+      this.dashboardTimer = undefined;
     }
 
-    window.removeEventListener('resize', this._boundHandleDeviceChanges);
+    window.removeEventListener('resize', this.boundHandleDeviceChanges);
     window.removeEventListener(
       'orientationchange',
-      this._boundHandleDeviceChanges
+      this.boundHandleDeviceChanges
     );
-    window.removeEventListener('touchstart', this._boundStartDashboardTimer);
+    window.removeEventListener('touchstart', this.boundStartDashboardTimer);
   }
 
-  private _loadContent(): void {
-    if (!this._config || !this.hass) return;
+  private loadContent(): void {
+    if (!this.config || !this.hass) return;
 
-    if (!this._headerChips) this._loadHeaderChips();
+    if (!this.headerChips) this.loadHeaderChips();
 
-    this._areaObj = this._area ? this.hass.areas[this._area] : undefined;
-    this._areaName = this._config.name ?? this._areaObj?.name ?? 'Unknown';
+    this.areaObj = this.area ? this.hass.areas[this.area] : undefined;
+    this.areaName = this.config.name ?? this.areaObj?.name ?? 'Unknown';
 
-    this._areaPicture = this._config.picture ?? `${this._area}.png`;
+    this.areaPicture = this.config.picture ?? `${this.area}.png`;
 
-    this._areaChips = createElements(this._config.area_chips || [], this.hass);
+    this.areaChips = createElements(this.config.areachips || [], this.hass);
 
     const { controlTiles, controlColumns } = loadControlTiles(
-      this._config.tiles ?? [],
+      this.config.tiles ?? [],
       this.hass,
-      this._isTablet
+      this.isTablet
     );
-    this._controlTiles = controlTiles;
-    this._controlColumns = controlColumns;
+    this.controlTiles = controlTiles;
+    this.controlColumns = controlColumns;
   }
 
-  private async _loadHeaderChips(): Promise<void> {
-    if (!this._config || !this.hass) return;
+  private async loadHeaderChips(): Promise<void> {
+    if (!this.config || !this.hass) return;
 
     if (!window.smartqasa.chipsConfig) {
       const yamlFilePath = '/local/smartqasa/custom/chips.yaml';
@@ -221,13 +211,13 @@ export class MainCard extends LitElement implements LovelaceCard {
         await loadYamlAsJson<LovelaceCardConfig[]>(yamlFilePath);
       window.smartqasa.chipsConfig = chipsConfig;
     }
-    const chipsConfig = this._config.header_chips?.length
-      ? this._config.header_chips
+    const chipsConfig = this.config.headerchips?.length
+      ? this.config.headerchips
       : (window.smartqasa.chipsConfig ?? []);
-    this._headerChips = createElements(chipsConfig, this.hass) || [];
+    this.headerChips = createElements(chipsConfig, this.hass) || [];
   }
 
-  protected _updateContent(): void {
+  protected updateContent(): void {
     requestAnimationFrame(() => {
       const updateHassForCards = (cards: LovelaceCard[]) => {
         for (const card of cards) {
@@ -235,23 +225,23 @@ export class MainCard extends LitElement implements LovelaceCard {
         }
       };
 
-      [this._headerChips, this._areaChips, ...this._controlTiles].forEach(
+      [this.headerChips, this.areaChips, ...this.controlTiles].forEach(
         (group) => group?.length && updateHassForCards(group)
       );
     });
   }
 
-  private _handleDeviceChanges(): void {
+  private handleDeviceChanges(): void {
     const type = getDeviceType() ?? 'desktop';
-    this._isPhone = type === 'phone';
-    this._isTablet = type === 'tablet';
+    this.isPhone = type === 'phone';
+    this.isTablet = type === 'tablet';
 
     const orientation = getDeviceOrientation() ?? 'landscape';
-    this._isPortrait = orientation === 'portrait';
-    this._isLandscape = orientation === 'landscape';
+    this.isPortrait = orientation === 'portrait';
+    this.isLandscape = orientation === 'landscape';
   }
 
-  private _handleBackgroundChange(): void {
+  private handleBackgroundChange(): void {
     if (!this.hass) return;
 
     const mode = this.hass.themes.darkMode ? 'dark' : 'light';
@@ -260,7 +250,7 @@ export class MainCard extends LitElement implements LovelaceCard {
         'input_select.dashboard_background'
       ]?.state?.toLowerCase() || 'default';
 
-    if (this._themeMode === mode && this._themeStyle === style) return;
+    if (this.themeMode === mode && this.themeStyle === style) return;
 
     const baseUrl = new URL(location.href).origin;
     const imagePath =
@@ -268,31 +258,31 @@ export class MainCard extends LitElement implements LovelaceCard {
         ? 'local/smartqasa/custom/backgrounds'
         : `local/smartqasa/media/backgrounds/${style}`;
 
-    this._backgroundImage = `url(${baseUrl}/${imagePath}/${mode}.jpg)`;
+    this.backgroundImage = `url(${baseUrl}/${imagePath}/${mode}.jpg)`;
 
-    this._themeMode = mode;
-    this._themeStyle = style;
+    this.themeMode = mode;
+    this.themeStyle = style;
   }
 
-  private _startDashboardTimer(): void {
-    clearTimeout(this._dashboardTimer);
+  private startDashboardTimer(): void {
+    clearTimeout(this.dashboardTimer);
     const delay = 5 * 60 * 1000;
-    this._dashboardTimer = setTimeout(() => this._resetDashboard(), delay);
+    this.dashboardTimer = setTimeout(() => this.resetDashboard(), delay);
   }
 
   /*
-    private _handleRefreshDashboard(): void {
+    private handleRefreshDashboard(): void {
         const state =
             this.hass?.states['input_button.refresh_dashboards']?.state;
 
-        if (this._refreshDashboardState === undefined) {
-            this._refreshDashboardState = state;
+        if (this.refreshDashboardState === undefined) {
+            this.refreshDashboardState = state;
             return;
         }
 
-        if (this._refreshDashboardState === state) return;
+        if (this.refreshDashboardState === state) return;
 
-        this._refreshDashboardState = state;
+        this.refreshDashboardState = state;
 
         if (window.fully) {
             executeFullyAction('restartApp');
@@ -301,24 +291,24 @@ export class MainCard extends LitElement implements LovelaceCard {
         }
     }
 
-    private _handleRebootDevice(): void {
+    private handleRebootDevice(): void {
         if (!window.fully || !this.hass) return;
 
         const state = this.hass.states['input_button.reboot_devices']?.state;
-        if (this._rebootDeviceState === undefined) {
-            this._rebootDeviceState = state;
+        if (this.rebootDeviceState === undefined) {
+            this.rebootDeviceState = state;
             return;
         }
 
-        if (this._rebootDeviceState === state) return;
+        if (this.rebootDeviceState === state) return;
 
-        this._rebootDeviceState = state;
+        this.rebootDeviceState = state;
         executeFullyAction('reboot');
     } 
     */
 
-  private _resetDashboard(): void {
-    this._startDashboardTimer();
+  private resetDashboard(): void {
+    this.startDashboardTimer();
 
     const swiperContainer = this.shadowRoot?.querySelector(
       'swiper-container'

@@ -13,10 +13,10 @@ export class AreasCard extends LitElement implements LovelaceCard {
   }
 
   @property({ attribute: false }) public hass?: HomeAssistant;
-  @state() private _areaTiles: LovelaceCard[] = [];
-  @state() private _gridStyle = {};
+  @state() private areaTiles: LovelaceCard[] = [];
+  @state() private gridStyle = {};
 
-  private _boundHandleDeviceChanges: () => void;
+  private boundHandleDeviceChanges: () => void;
 
   public setConfig(): void {}
 
@@ -41,37 +41,34 @@ export class AreasCard extends LitElement implements LovelaceCard {
 
   constructor() {
     super();
-    this._boundHandleDeviceChanges = this._handleDeviceChanges.bind(this);
+    this.boundHandleDeviceChanges = this.handleDeviceChanges.bind(this);
   }
 
   public connectedCallback(): void {
     super.connectedCallback();
 
-    this._handleDeviceChanges();
+    this.handleDeviceChanges();
 
-    window.addEventListener('resize', this._boundHandleDeviceChanges);
-    window.addEventListener(
-      'orientationchange',
-      this._boundHandleDeviceChanges
-    );
+    window.addEventListener('resize', this.boundHandleDeviceChanges);
+    window.addEventListener('orientationchange', this.boundHandleDeviceChanges);
 
-    this._loadAreaTiles();
+    this.loadAreaTiles();
   }
 
   public disconnectedCallback(): void {
     super.disconnectedCallback();
 
-    window.removeEventListener('resize', this._boundHandleDeviceChanges);
+    window.removeEventListener('resize', this.boundHandleDeviceChanges);
     window.removeEventListener(
       'orientationchange',
-      this._boundHandleDeviceChanges
+      this.boundHandleDeviceChanges
     );
   }
 
   protected willUpdate(changedProps: PropertyValues): void {
     super.willUpdate(changedProps);
     if (changedProps.has('hass') && this.hass) {
-      this._areaTiles.forEach((tile) => {
+      this.areaTiles.forEach((tile) => {
         tile.hass = this.hass;
       });
     }
@@ -79,30 +76,30 @@ export class AreasCard extends LitElement implements LovelaceCard {
 
   protected render(): TemplateResult {
     return html`
-      <div class="container" style=${styleMap(this._gridStyle)}>
-        ${this._areaTiles.map((tile) => html`<div class="tile">${tile}</div>`)}
+      <div class="container" style=${styleMap(this.gridStyle)}>
+        ${this.areaTiles.map((tile) => html`<div class="tile">${tile}</div>`)}
       </div>
     `;
   }
 
-  private _handleDeviceChanges(): void {
+  private handleDeviceChanges(): void {
     const type = getDeviceType();
     const orientation = getDeviceOrientation();
 
     if (type === 'phone') {
-      this._gridStyle = {
+      this.gridStyle = {
         gridTemplateColumns: orientation === 'landscape' ? '1fr 1fr' : '1fr',
       };
     } else {
-      this._gridStyle = {
+      this.gridStyle = {
         gridTemplateColumns: 'repeat(3, var(--sq-tile-width, 19.5rem))',
       };
     }
   }
 
-  private _loadAreaTiles(): void {
+  private loadAreaTiles(): void {
     if (!this.hass || !this.hass.areas) {
-      this._areaTiles = [];
+      this.areaTiles = [];
       return;
     }
 
@@ -111,11 +108,11 @@ export class AreasCard extends LitElement implements LovelaceCard {
     );
 
     if (visibleAreas.length === 0) {
-      this._areaTiles = [];
+      this.areaTiles = [];
       return;
     }
 
-    this._areaTiles = visibleAreas.map((area) => {
+    this.areaTiles = visibleAreas.map((area) => {
       const tile = createElement({
         type: 'custom:smartqasa-area-tile',
         area: area.area_id,
