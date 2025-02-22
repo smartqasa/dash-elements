@@ -29,10 +29,10 @@ interface Config extends LovelaceCardConfig {
   icon?: string;
   color_icon?: boolean;
   name?: string;
-  group?: string;
+  grid?: string[];
   grid_columns?: number;
   grid_style?: 'circle' | 'square';
-  grid_entities?: string[];
+  group?: string;
 }
 
 window.customCards.push({
@@ -179,41 +179,40 @@ export class LightTile extends LitElement implements LovelaceCard {
     e.stopPropagation();
     if (!this.hass || !this.config || !this.stateObj) return;
 
-    if (
-      this.config.grid_columns &&
-      this.config.grid_columns > 0 &&
-      Array.isArray(this.config.grid_entities) &&
-      this.config.grid_entities.length > 0
-    ) {
-      const columns = this.config.grid_columns ?? 2;
-      const style = this.config.grid_style ?? 'circle';
-      const dialogConfig = {
+    if (Array.isArray(this.config.grid) && this.config.grid.length > 0) {
+      dialogPopup({
         title: this.stateObj.attributes.friendly_name || 'Light Group',
         timeout: 120000,
         content: {
           type: 'custom:smartqasa-light-grid-card',
           title: this.stateObj.attributes.friendly_name || 'Light Group',
-          columns: columns,
-          style: style,
+          columns: this.config.grid_columns ?? 3,
+          style: this.config.grid_style ?? 'circle',
           entities: this.config.grid_entities,
         },
-      };
-      dialogPopup(dialogConfig);
-    } else {
-      let group;
-      if (this.config.group) {
-        group = this.config.group;
-        const groupObj = this.hass.states[group];
-        if (!groupObj || groupObj.attributes?.entity_id?.length === 0) return;
-      } else if (this.stateObj.attributes?.entity_id?.length > 0) {
-        group = this.entity;
-      } else {
-        group = `${this.entity}_group`;
-        const groupObj = this.hass.states[group];
-        if (!groupObj || groupObj.attributes?.entity_id?.length === 0) return;
-      }
-      const friendlyName = this.stateObj.attributes?.friendly_name ?? 'Unknown';
-      entityListDialog(friendlyName, 'group', group, 'light');
+      });
+
+      return;
     }
+
+    let group: string | undefined;
+
+    if (this.config.group && this.hass.states[this.config.group]) {
+      group = this.config.group;
+    } else if (this.stateObj.attributes?.entity_id?.length > 0) {
+      group = this.entity;
+    } else {
+      group = `${this.entity}_group`;
+    }
+
+    const groupObj = group ? this.hass.states[group] : undefined;
+    if (!groupObj || !groupObj.attributes?.entity_id?.length) return;
+
+    entityListDialog(
+      this.stateObj.attributes?.friendly_name ?? 'Unknown',
+      'group',
+      group,
+      'light'
+    );
   }
 }
