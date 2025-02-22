@@ -188,7 +188,7 @@ export class LightTile extends LitElement implements LovelaceCard {
           title: this.stateObj.attributes.friendly_name || 'Light Group',
           columns: this.config.grid_columns ?? 3,
           style: this.config.grid_style ?? 'circle',
-          entities: this.config.grid_entities,
+          entities: this.config.grid,
         },
       });
 
