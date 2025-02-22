@@ -160,16 +160,12 @@ export class ScreenSaver extends LitElement implements LovelaceCard {
   }
 
   protected firstUpdated(changedProps: PropertyValues): void {
-    super.firstUpdated(changedProps);
-
     this.updateElement();
     this.startClock();
     this.cycleElement();
   }
 
   protected updated(changedProps: PropertyValues): void {
-    super.updated(changedProps);
-
     if (changedProps.has('hass') && this.hass) {
       this.deviceRefreshState = deviceRefresh(
         this.hass,

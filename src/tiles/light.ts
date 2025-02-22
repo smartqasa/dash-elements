@@ -26,11 +26,10 @@ import tileStyle from '../css/tile.css';
 
 interface Config extends LovelaceCardConfig {
   entity: string;
-  group?: string;
   icon?: string;
   color_icon?: boolean;
   name?: string;
-  grid?: boolean;
+  group?: string;
   grid_columns?: number;
   grid_style?: 'circle' | 'square';
   grid_entities?: string[];
@@ -74,7 +73,7 @@ export class LightTile extends LitElement implements LovelaceCard {
   }
 
   protected shouldUpdate(changedProps: PropertyValues): boolean {
-    if (changedProps.has('config')) return true;
+    if (changedProps.has('_config')) return true;
 
     if (changedProps.has('hass')) {
       const newState = this.entity ? this.hass?.states[this.entity] : undefined;
@@ -180,7 +179,27 @@ export class LightTile extends LitElement implements LovelaceCard {
     e.stopPropagation();
     if (!this.hass || !this.config || !this.stateObj) return;
 
-    if (!this.config.grid) {
+    if (
+      this.config.grid_columns &&
+      this.config.grid_columns > 0 &&
+      Array.isArray(this.config.grid_entities) &&
+      this.config.grid_entities.length > 0
+    ) {
+      const columns = this.config.grid_columns ?? 2;
+      const style = this.config.grid_style ?? 'circle';
+      const dialogConfig = {
+        title: this.stateObj.attributes.friendly_name || 'Light Group',
+        timeout: 120000,
+        content: {
+          type: 'custom:smartqasa-light-grid-card',
+          title: this.stateObj.attributes.friendly_name || 'Light Group',
+          columns: columns,
+          style: style,
+          entities: this.config.grid_entities,
+        },
+      };
+      dialogPopup(dialogConfig);
+    } else {
       let group;
       if (this.config.group) {
         group = this.config.group;
@@ -193,31 +212,8 @@ export class LightTile extends LitElement implements LovelaceCard {
         const groupObj = this.hass.states[group];
         if (!groupObj || groupObj.attributes?.entity_id?.length === 0) return;
       }
-
       const friendlyName = this.stateObj.attributes?.friendly_name ?? 'Unknown';
       entityListDialog(friendlyName, 'group', group, 'light');
     }
-
-    const entities = Array.isArray(this.config.grid_entities)
-      ? this.config.grid_entities
-      : [];
-    if (entities.length === 0) return;
-
-    const columns = this.config.grid_columns ?? 2;
-    const style = this.config.grid_style ?? 'circle';
-
-    const dialogConfig = {
-      title: this.stateObj.attributes.friendly_name || 'Light Group',
-      timeout: 120000,
-      content: {
-        type: 'custom:smartqasa-light-grid-card',
-        title: this.stateObj.attributes.friendly_name || 'Light Group',
-        columns: columns,
-        style: style,
-        entities: entities,
-      },
-    };
-
-    dialogPopup(dialogConfig);
   }
 }
