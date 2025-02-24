@@ -5,7 +5,6 @@ import {
   nothing,
   PropertyValues,
   TemplateResult,
-  unsafeCSS,
 } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import { styleMap } from 'lit/directives/style-map.js';
@@ -73,7 +72,7 @@ export class MainCard extends LitElement implements LovelaceCard {
   private controlColumns: number[] = [];
 
   static get styles(): CSSResult {
-    return unsafeCSS(panelStyles);
+    return panelStyles;
   }
 
   public setConfig(config: Config) {

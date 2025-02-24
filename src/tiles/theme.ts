@@ -1,11 +1,4 @@
-import {
-  CSSResult,
-  html,
-  LitElement,
-  nothing,
-  TemplateResult,
-  unsafeCSS,
-} from 'lit';
+import { CSSResult, html, LitElement, nothing, TemplateResult } from 'lit';
 import { customElement, state } from 'lit/decorators.js';
 import { styleMap } from 'lit/directives/style-map.js';
 
@@ -35,7 +28,7 @@ export class ThemeTile extends LitElement implements LovelaceCard {
   @state() protected config?: Config;
 
   static get styles(): CSSResult {
-    return unsafeCSS(tileStyle);
+    return tileStyle;
   }
 
   public setConfig(config: Config): void {

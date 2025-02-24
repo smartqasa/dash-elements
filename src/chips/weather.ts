@@ -4,7 +4,6 @@ import {
   LitElement,
   PropertyValues,
   TemplateResult,
-  unsafeCSS,
 } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 
@@ -46,7 +45,7 @@ export class WeatherChip extends LitElement implements LovelaceCard {
   private app?: string;
 
   static get styles(): CSSResultGroup {
-    return [unsafeCSS(chipBaseStyle), unsafeCSS(chipTextStyle)];
+    return [chipBaseStyle, chipTextStyle];
   }
 
   public setConfig(config: Config): void {

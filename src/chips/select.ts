@@ -5,7 +5,6 @@ import {
   nothing,
   PropertyValues,
   TemplateResult,
-  unsafeCSS,
 } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 
@@ -45,7 +44,7 @@ export class SelectChip extends LitElement implements LovelaceCard {
   private entity?: string;
   private stateObj?: HassEntity;
 
-  static styles: CSSResult = unsafeCSS(chipBaseStyle);
+  static styles: CSSResult = chipBaseStyle;
 
   public setConfig(config: Config): void {
     if (!config.entity || !config.entity.startsWith('input_select.')) {

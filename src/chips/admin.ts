@@ -5,7 +5,6 @@ import {
   nothing,
   PropertyValues,
   TemplateResult,
-  unsafeCSS,
 } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import { styleMap } from 'lit/directives/style-map.js';
@@ -34,7 +33,7 @@ export class AdminChip extends LitElement implements LovelaceCard {
   private entity = 'input_boolean.admin_mode';
 
   static get styles(): CSSResult {
-    return unsafeCSS(chipBaseStyle);
+    return chipBaseStyle;
   }
 
   public setConfig(): void {}

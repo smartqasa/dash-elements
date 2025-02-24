@@ -5,7 +5,6 @@ import {
   nothing,
   PropertyValues,
   TemplateResult,
-  unsafeCSS,
 } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import { styleMap } from 'lit/directives/style-map.js';
@@ -52,7 +51,7 @@ export class DialogChip extends LitElement implements LovelaceCard {
   private stateObj?: HassEntity;
 
   static get styles(): CSSResultGroup {
-    return [unsafeCSS(chipBaseStyle), unsafeCSS(chipTextStyle)];
+    return [chipBaseStyle, chipTextStyle];
   }
 
   public setConfig(config: Config): void {

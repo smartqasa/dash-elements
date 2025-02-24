@@ -5,7 +5,6 @@ import {
   nothing,
   PropertyValues,
   TemplateResult,
-  unsafeCSS,
 } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 
@@ -47,7 +46,7 @@ export class AudioChip extends LitElement implements LovelaceCard {
   private iconTemplate?: TemplateResult;
 
   static get styles(): CSSResultGroup[] {
-    return [unsafeCSS(chipBaseStyle), unsafeCSS(musicBarsStyle)];
+    return [chipBaseStyle, musicBarsStyle];
   }
 
   public setConfig(config: Config): void {

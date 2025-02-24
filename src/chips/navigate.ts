@@ -5,7 +5,6 @@ import {
   nothing,
   PropertyValues,
   TemplateResult,
-  unsafeCSS,
 } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 
@@ -42,7 +41,7 @@ export class NavigateChip extends LitElement implements LovelaceCard {
   @state() private areaObjPrev?: HassArea;
   @state() private areaObjNext?: HassArea;
 
-  static styles: CSSResult = unsafeCSS(chipDoubleStyle);
+  static styles: CSSResult = chipDoubleStyle;
 
   public setConfig(config: Config): void {
     this.areaPrev = config.area_prev || undefined;

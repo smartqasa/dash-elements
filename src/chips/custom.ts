@@ -5,7 +5,6 @@ import {
   nothing,
   PropertyValues,
   TemplateResult,
-  unsafeCSS,
 } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import { styleMap } from 'lit/directives/style-map.js';
@@ -47,7 +46,7 @@ export class CustomChip extends LitElement implements LovelaceCard {
   private entity?: string;
 
   static get styles(): CSSResultGroup {
-    return [unsafeCSS(chipBaseStyle), unsafeCSS(chipTextStyle)];
+    return [chipBaseStyle, chipTextStyle];
   }
 
   public async setConfig(config: Config): Promise<void> {

@@ -1,11 +1,4 @@
-import {
-  CSSResult,
-  html,
-  LitElement,
-  nothing,
-  TemplateResult,
-  unsafeCSS,
-} from 'lit';
+import { CSSResult, html, LitElement, nothing, TemplateResult } from 'lit';
 import { customElement, state } from 'lit/decorators.js';
 
 import { LovelaceCard, LovelaceCardConfig } from '../types';
@@ -38,7 +31,7 @@ export class WebpageChip extends LitElement implements LovelaceCard {
   private name: string = 'Web Page';
 
   static get styles(): CSSResult {
-    return unsafeCSS(chipBaseStyle);
+    return chipBaseStyle;
   }
 
   public setConfig(config: Config): void {

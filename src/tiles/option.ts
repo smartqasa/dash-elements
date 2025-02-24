@@ -5,7 +5,6 @@ import {
   nothing,
   PropertyValues,
   TemplateResult,
-  unsafeCSS,
 } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import { styleMap } from 'lit/directives/style-map.js';
@@ -53,7 +52,7 @@ export class OptionTile extends LitElement implements LovelaceCard {
   private name: string = 'Unknown Lock';
 
   static get styles(): CSSResult {
-    return unsafeCSS(tileStyle);
+    return tileStyle;
   }
 
   public setConfig(config: Config): void {
