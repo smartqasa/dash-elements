@@ -22,7 +22,7 @@ import { moreInfoDialog } from '../dialogs/more-info-dialog';
 import { entityListDialog } from '../dialogs/entity-list-dialog';
 import { dialogPopup } from '../dialogs/dialog-popup';
 
-import tileStyle from '../css/tile.css';
+import { tileStyle } from '../css/styles';
 
 interface Config extends LovelaceCardConfig {
   entity: string;
@@ -59,7 +59,7 @@ export class LightTile extends LitElement implements LovelaceCard {
   private stateFmtd: string = 'Unknown State';
 
   static get styles(): CSSResult {
-    return unsafeCSS(tileStyle);
+    return tileStyle;
   }
 
   public setConfig(config: Config): void {
