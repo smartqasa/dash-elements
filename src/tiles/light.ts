@@ -22,7 +22,7 @@ import { moreInfoDialog } from '../dialogs/more-info-dialog';
 import { entityListDialog } from '../dialogs/entity-list-dialog';
 import { dialogPopup } from '../dialogs/dialog-popup';
 
-import { tileStyle } from '../css/styles';
+import tileStyle from '../css/tile.css';
 
 interface Config extends LovelaceCardConfig {
   entity: string;

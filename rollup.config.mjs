@@ -32,7 +32,9 @@ export default {
     }),
     image(),
     json(),
-    litcss(),
+    litcss({
+      include: ['**/css/*.css'],
+    }),
     resolve({
       browser: true,
       extensions: ['.js', '.ts'],
