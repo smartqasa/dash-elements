@@ -65,11 +65,11 @@ export class ThermostatTile extends LitElement implements LovelaceCard {
   protected shouldUpdate(changedProps: PropertyValues): boolean {
     if (changedProps.has('config')) return true;
 
-    if (changedProps.has('hass')) {
-      const newState = this.entity ? this.hass?.states[this.entity] : undefined;
-
-      return newState !== this.stateObj;
-    }
+    if (changedProps.has('hass'))
+      return (
+        (this.entity ? this.hass?.states[this.entity] : undefined) !==
+        this.stateObj
+      );
 
     return false;
   }
