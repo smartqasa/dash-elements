@@ -72,7 +72,7 @@ export class LightTile extends LitElement implements LovelaceCard {
   }
 
   protected shouldUpdate(changedProps: PropertyValues): boolean {
-    if (changedProps.has('_config')) return true;
+    if (changedProps.has('config')) return true;
 
     if (changedProps.has('hass'))
       return (
@@ -83,7 +83,7 @@ export class LightTile extends LitElement implements LovelaceCard {
     return false;
   }
 
-  protected willUpdate(changedProps: PropertyValues): void {
+  protected willUpdate(): void {
     this.updateState();
   }
 

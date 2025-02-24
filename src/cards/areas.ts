@@ -66,7 +66,6 @@ export class AreasCard extends LitElement implements LovelaceCard {
   }
 
   protected willUpdate(changedProps: PropertyValues): void {
-    super.willUpdate(changedProps);
     if (changedProps.has('hass') && this.hass) {
       this.areaTiles.forEach((tile) => {
         tile.hass = this.hass;

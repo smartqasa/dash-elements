@@ -49,8 +49,7 @@ export class DialogTile extends LitElement implements LovelaceCard {
     this.dialogObj = dialogTable[config.dialog];
   }
 
-  protected willUpdate(changedProps: PropertyValues): void {
-    super.willUpdate(changedProps);
+  protected willUpdate(): void {
     this.updateState();
   }
 

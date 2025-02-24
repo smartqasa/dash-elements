@@ -71,7 +71,7 @@ export class AudioChip extends LitElement implements LovelaceCard {
     return false;
   }
 
-  protected willUpdate(changedProps: PropertyValues): void {
+  protected willUpdate(): void {
     this.updateState();
   }
 

@@ -63,8 +63,7 @@ export class AreaTile extends LitElement implements LovelaceCard {
     );
   }
 
-  protected willUpdate(changedProps: PropertyValues): void {
-    super.willUpdate(changedProps);
+  protected willUpdate(): void {
     this.updateState();
   }
 

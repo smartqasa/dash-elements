@@ -52,7 +52,7 @@ export class VerticalStack extends LitElement implements LovelaceCard {
     this.config = config;
   }
 
-  protected willUpdate(changedProps: PropertyValues) {
+  protected willUpdate(changedProps: PropertyValues): void {
     if (!this.config || !this.hass) return;
 
     if (changedProps.has('config')) {

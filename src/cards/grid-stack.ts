@@ -56,7 +56,7 @@ export class GridStack extends LitElement implements LovelaceCard {
     this.config = config;
   }
 
-  protected willUpdate(changedProps: PropertyValues) {
+  protected willUpdate(changedProps: PropertyValues): void {
     if (!this.hass) return;
 
     if (changedProps.has('config')) {

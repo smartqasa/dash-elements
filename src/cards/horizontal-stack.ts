@@ -60,7 +60,7 @@ export class HorizontalStack extends LitElement implements LovelaceCard {
     this.justifyRight = config.justify_right || false;
   }
 
-  protected willUpdate(changedProps: PropertyValues) {
+  protected willUpdate(changedProps: PropertyValues): void {
     if (!this.config || !this.hass) return;
 
     if (changedProps.has('config')) {

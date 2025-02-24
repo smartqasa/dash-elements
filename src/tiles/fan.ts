@@ -77,8 +77,7 @@ export class FanTile extends LitElement implements LovelaceCard {
     return false;
   }
 
-  protected willUpdate(changedProps: PropertyValues): void {
-    super.willUpdate(changedProps);
+  protected willUpdate(): void {
     this.updateState();
   }
 

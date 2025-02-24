@@ -99,8 +99,6 @@ export class MainCard extends LitElement implements LovelaceCard {
   }
 
   protected willUpdate(changedProps: PropertyValues): void {
-    super.willUpdate(changedProps);
-
     if (changedProps.has('config')) {
       this.loadContent();
     }

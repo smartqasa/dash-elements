@@ -13,6 +13,7 @@ import { HomeAssistant, LovelaceCard, LovelaceCardConfig } from '../types';
 import { callService } from '../utilities/call-service';
 
 import tileStyle from '../css/tile.css';
+import path from 'path';
 
 interface ActionConfig {
   action: string;
@@ -61,8 +62,7 @@ export class ActionTile extends LitElement implements LovelaceCard {
     return !!(changedProps.has('config') || changedProps.has('running'));
   }
 
-  protected willUpdate(changedProps: PropertyValues): void {
-    super.willUpdate(changedProps);
+  protected willUpdate(): void {
     this.updateState();
   }
 
