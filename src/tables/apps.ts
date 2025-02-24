@@ -7,6 +7,7 @@ import appleMusicIcon from '../assets/app_icons/apple_music.webp';
 import bmwIcon from '../assets/app_icons/bmw.webp';
 import bondIcon from '../assets/app_icons/bond.webp';
 import bringIcon from '../assets/app_icons/bring.webp';
+import butouchIcon from '../assets/app_icons/bu_touch.webp';
 import calculatorIcon from '../assets/app_icons/calculator.webp';
 import chatgptIcon from '../assets/app_icons/chatgpt.webp';
 import clockTimerIcon from '../assets/app_icons/clock.webp';
@@ -122,6 +123,13 @@ export const appTable: AppTable = {
     app_icon: bringIcon,
     launcher: 'package',
     package: 'ch.publisheria.bring',
+    uri_scheme: '',
+  },
+  bu_touch: {
+    name: 'BU-Touch',
+    app_icon: butouchIcon,
+    launcher: 'package',
+    package: 'com.bainultra.butouch',
     uri_scheme: '',
   },
   calculator: {
