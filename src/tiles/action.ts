@@ -18,6 +18,7 @@ import path from 'path';
 interface ActionConfig {
   action: string;
   data?: Record<string, any>;
+  target?: Record<string, any>;
 }
 
 interface Config extends LovelaceCardConfig {
@@ -115,9 +116,16 @@ export class ActionTile extends LitElement implements LovelaceCard {
 
     this.running = true;
 
-    for (const action of this.config.actions) {
+    for (const action of this.actions) {
       const [domain, service] = action.action.split('.');
-      await callService(this.hass, domain, service, action.data || {});
+      if (!domain || !service) {
+        console.error(`Invalid action format: ${action.action}`);
+        continue;
+      }
+      const data = action.data || {};
+      const target = action.target || {};
+
+      await callService(this.hass, domain, service, data, target);
     }
 
     setTimeout(() => {

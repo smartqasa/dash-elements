@@ -160,11 +160,11 @@ export class LightTile extends LitElement implements LovelaceCard {
 
     const domain = this.entity.split('.')[0];
     const state = this.stateObj.state || 'unknown';
-    const action = state === 'on' ? 'turn_off' : 'turn_on';
+    const service = state === 'on' ? 'turn_off' : 'turn_on';
     const data = state === 'on' ? { transition: 2 } : undefined;
     const target = { entity_id: this.entity };
 
-    await callService(this.hass, domain, action, data, target);
+    await callService(this.hass, domain, service, data, target);
   }
 
   private showMoreInfo(e: Event): void {

@@ -169,13 +169,13 @@ export class RobotTile extends LitElement implements LovelaceCard {
 
     const domain = this.entity.split('.')[0];
     const state = this.stateObj.state || 'unknown';
-    const action = ['docked', 'idle', 'paused'].includes(state)
+    const service = ['docked', 'idle', 'paused'].includes(state)
       ? 'start'
       : 'pause';
     const data = undefined;
     const target = { entity_id: this.entity };
 
-    await callService(this.hass, domain, action, data, target);
+    await callService(this.hass, domain, service, data, target);
   }
 
   private showMoreInfo(e: Event): void {
