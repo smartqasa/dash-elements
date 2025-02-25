@@ -174,7 +174,6 @@ export class ShadeTile extends LitElement implements LovelaceCard {
 
   private async toggleEntity(e: Event): Promise<void> {
     e.stopPropagation();
-    console.log('Toggling entity:', this.entity);
     if (!this.hass || !this.entity || !this.stateObj) return;
 
     const state = this.stateObj.state || 'unknown';
@@ -191,13 +190,8 @@ export class ShadeTile extends LitElement implements LovelaceCard {
     } else if (tilt && position && position !== tilt) {
       service = 'set_cover_tilt_position';
       data = { position: tilt };
-    } else if (state === 'open') {
-      service = 'close_cover';
-    } else if (state === 'closed') {
-      service = 'open_cover';
     }
 
-    console.log(`Calling service: ${domain}.${service}`);
     await callService(this.hass, domain, service, data, target);
   }
 
