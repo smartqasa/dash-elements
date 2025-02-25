@@ -161,6 +161,8 @@ export class GarageTile extends LitElement implements LovelaceCard {
 
   private toggleEntity(e: Event): void {
     e.stopPropagation();
+    if (!this.hass || !this.entity || !this.stateObj) return;
+
     callService(this.hass, 'cover', 'toggle', { entity_id: this.entity });
   }
 

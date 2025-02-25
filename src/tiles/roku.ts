@@ -148,6 +148,8 @@ export class RokuTile extends LitElement implements LovelaceCard {
 
   private toggleEntity(e: Event): void {
     e.stopPropagation();
+    if (!this.hass || !this.entity || !this.stateObj) return;
+
     callService(this.hass, 'media_player', 'toggle', {
       entity_id: this.entity,
     });

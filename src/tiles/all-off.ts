@@ -120,7 +120,7 @@ export class AllOffTile extends LitElement implements LovelaceCard {
 
   private async runRoutine(e: Event): Promise<void> {
     e.stopPropagation();
-    if (!this.hass || !this.areaObj) return;
+    if (!this.hass || !this.area || !this.areaObj) return;
 
     this.running = true;
 

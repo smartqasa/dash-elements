@@ -131,6 +131,8 @@ export class SwitchTile extends LitElement implements LovelaceCard {
 
   private toggleEntity(e: Event): void {
     e.stopPropagation();
+    if (!this.hass || !this.entity || !this.stateObj) return;
+
     callService(this.hass, 'homeassistant', 'toggle', {
       entity_id: this.entity,
     });
@@ -138,6 +140,7 @@ export class SwitchTile extends LitElement implements LovelaceCard {
 
   private showMoreInfo(e: Event): void {
     e.stopPropagation();
+
     moreInfoDialog(this.stateObj, this.config?.callingDialog);
   }
 }

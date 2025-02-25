@@ -130,7 +130,7 @@ export class RoutineTile extends LitElement implements LovelaceCard {
 
   private runRoutine(e: Event): void {
     e.stopPropagation();
-    if (!this.hass || !this.stateObj) return;
+    if (!this.hass || !this.entity || !this.stateObj) return;
 
     this.running = true;
 

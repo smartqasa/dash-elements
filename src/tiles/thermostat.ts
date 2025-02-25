@@ -128,6 +128,7 @@ export class ThermostatTile extends LitElement implements LovelaceCard {
 
   private showMoreInfo(e: Event): void {
     e.stopPropagation();
+
     moreInfoDialog(this.stateObj, this.config?.callingDialog);
   }
 }

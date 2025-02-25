@@ -150,7 +150,8 @@ export class FanTile extends LitElement implements LovelaceCard {
 
   private toggleEntity(e: Event): void {
     e.stopPropagation();
-    if (!this.stateObj) return;
+    if (!this.hass || !this.entity || !this.stateObj) return;
+
     callService(this.hass, 'fan', 'toggle', { entity_id: this.entity });
   }
 

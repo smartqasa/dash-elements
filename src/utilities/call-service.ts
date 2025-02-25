@@ -1,21 +1,19 @@
 import { HomeAssistant } from '../types';
 
-export const callService = async (
+export async function callService(
   hass: HomeAssistant | undefined,
   domain: string,
   service: string,
-  serviceData: Record<string, any>
-): Promise<void> => {
+  serviceData?: Record<string, any>,
+  target?: Record<string, any>
+): Promise<void> {
   if (!hass) {
-    console.error(
-      `Error calling ${domain}.${service}:`,
-      'Connection to Home Assistant is not available.'
-    );
-    return;
+    throw new Error('Home Assistant instance is not available');
   }
   try {
-    await hass.callService(domain, service, serviceData);
+    await hass.callService(domain, service, serviceData, target);
   } catch (error) {
-    console.error(`Error calling ${domain}.${service}:`, error);
+    console.error(`Service call failed: ${domain}.${service}`, error);
+    throw error;
   }
-};
+}

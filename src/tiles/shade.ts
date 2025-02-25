@@ -167,7 +167,8 @@ export class ShadeTile extends LitElement implements LovelaceCard {
 
   private toggleEntity(e: Event): void {
     e.stopPropagation();
-    if (!this.hass || !this.config || !this.stateObj) return;
+    if (!this.hass || !this.config || this.entity || !this.stateObj) return;
+
     const state = this.stateObj.state;
     const tilt = this.config.tilt || 100;
     if (['closing', 'opening'].includes(state)) {

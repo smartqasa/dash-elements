@@ -131,12 +131,14 @@ export class PoolLightTile extends LitElement implements LovelaceCard {
 
   private toggleEntity(e: Event): void {
     e.stopPropagation();
+    if (!this.hass || !this.entity || !this.stateObj) return;
+
     callService(this.hass, 'light', 'toggle', { entity_id: this.entity });
   }
 
   private showColorList(e: Event): void {
     e.stopPropagation();
-    if (!this.stateObj) return;
+    if (!this.hass || !this.entity || !this.stateObj) return;
 
     const cards = Object.keys(sequenceTable).map((key) => ({
       type: 'custom:smartqasa-pool-light-sequencer-tile',

@@ -165,7 +165,9 @@ export class RobotTile extends LitElement implements LovelaceCard {
 
   private toggleEntity(e: Event): void {
     e.stopPropagation();
-    const state = this.stateObj?.state || 'unknown';
+    if (!this.hass || !this.entity || !this.stateObj) return;
+
+    const state = this.stateObj.state || 'unknown';
     const service = ['docked', 'idle', 'paused'].includes(state)
       ? 'start'
       : 'pause';

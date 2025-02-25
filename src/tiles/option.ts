@@ -139,7 +139,7 @@ export class OptionTile extends LitElement implements LovelaceCard {
 
   private async selectOption(e: Event): Promise<void> {
     e.stopPropagation();
-    if (!this.hass || !this.config || !this.stateObj) return;
+    if (!this.config || !this.hass || !this.entity || !this.stateObj) return;
 
     this.running = true;
     this.requestUpdate();
