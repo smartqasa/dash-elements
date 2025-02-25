@@ -137,7 +137,6 @@ export class PoolLightTile extends LitElement implements LovelaceCard {
     const service = 'toggle';
     const data = undefined;
     const target = { entity_id: this.entity };
-
     await callService(this.hass, domain, service, data, target);
   }
 

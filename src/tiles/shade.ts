@@ -23,7 +23,7 @@ import { formatState } from '../utilities/format-state';
 import tileStyle from '../css/tile.css';
 
 interface Config extends LovelaceCardConfig {
-  entity: string;
+  entity?: string;
   name?: string;
   tilt?: number;
 }
@@ -44,6 +44,7 @@ export class ShadeTile extends LitElement implements LovelaceCard {
   @property({ attribute: false }) public hass?: HomeAssistant;
   @state() protected config?: Config;
   private entity?: string;
+  private tilt?: number;
   private stateObj?: HassEntity;
   private icon: string = 'hass:roller-shade';
   private iconStyles: Record<string, string> = {};
@@ -88,10 +89,16 @@ export class ShadeTile extends LitElement implements LovelaceCard {
   public setConfig(config: Config): void {
     if (!config.entity?.startsWith('cover.')) {
       console.error('Invalid cover entity provided in the config.');
-      this.entity = undefined;
-    } else {
-      this.entity = config.entity;
+      config.entity = undefined;
     }
+
+    if (config.tilt && (config.tilt < 0 || config.tilt > 100)) {
+      console.error('Invalid tilt value provided in the config.');
+      config.tilt = undefined;
+    }
+
+    this.entity = config.entity;
+    this.tilt = config.tilt;
     this.config = config;
   }
 
@@ -165,36 +172,31 @@ export class ShadeTile extends LitElement implements LovelaceCard {
     this.stateFmtd = stateFmtd;
   }
 
-  private toggleEntity(e: Event): void {
+  private async toggleEntity(e: Event): Promise<void> {
     e.stopPropagation();
     if (!this.hass || !this.config || this.entity || !this.stateObj) return;
 
-    const state = this.stateObj.state;
-    const tilt = this.config.tilt || 100;
+    const state = this.stateObj.state || 'unknown';
+    const position = this.stateObj.attributes.current_position;
+    const tilt = this.tilt;
+
+    const domain = 'cover';
+    let service = 'toggle';
+    let data = undefined;
+    const target = { entity_id: this.entity };
+
     if (['closing', 'opening'].includes(state)) {
-      callService(this.hass, 'cover', 'stop_cover', {
-        entity_id: this.entity,
-      });
-      return;
+      service = 'stop_cover';
+    } else if (tilt && position && position !== tilt) {
+      service = 'set_cover_tilt_position';
+      data = { position: tilt };
+    } else if (state === 'open') {
+      service = 'close_cover';
+    } else if (state === 'closed') {
+      service = 'open_cover';
     }
-    if (tilt >= 1 && tilt <= 100) {
-      if (this.stateObj.attributes.current_position !== tilt) {
-        callService(this.hass, 'cover', 'set_cover_position', {
-          entity_id: this.entity,
-          position: tilt,
-        });
-      } else {
-        callService(this.hass, 'cover', 'set_cover_position', {
-          entity_id: this.entity,
-          position: 0,
-        });
-      }
-    } else {
-      callService(this.hass, 'cover', 'toggle', {
-        entity_id: this.entity,
-        position: 0,
-      });
-    }
+
+    await callService(this.hass, domain, service, data, target);
   }
 
   private showMoreInfo(e: Event): void {

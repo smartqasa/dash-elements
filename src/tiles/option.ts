@@ -142,17 +142,20 @@ export class OptionTile extends LitElement implements LovelaceCard {
     if (!this.config || !this.hass || !this.entity || !this.stateObj) return;
 
     this.running = true;
-    this.requestUpdate();
-    await callService(this.hass, 'input_select', 'select_option', {
-      entity_id: this.entity,
-      option: this.config.option,
-    });
+
+    const domain = 'input_select';
+    const service = 'select_option';
+    const data = { option: this.config.option };
+    const target = { entity_id: this.entity };
+    await callService(this.hass, domain, service, data, target);
 
     const trigger = this.config.trigger;
     if (trigger && trigger.startsWith('input_button.')) {
-      await callService(this.hass, 'input_button', 'press', {
-        entity_id: trigger,
-      });
+      const domain = 'input_button';
+      const service = 'press';
+      const data = undefined;
+      const target = { entity_id: trigger };
+      await callService(this.hass, domain, service, data, target);
     }
 
     setTimeout(() => {

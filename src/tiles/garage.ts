@@ -163,11 +163,10 @@ export class GarageTile extends LitElement implements LovelaceCard {
     e.stopPropagation();
     if (!this.hass || !this.entity || !this.stateObj) return;
 
-    const domain = this.entity.split('.')[0];
+    const domain = 'cover';
     const service = 'toggle';
     const data = undefined;
     const target = { entity_id: this.entity };
-
     await callService(this.hass, domain, service, data, target);
   }
 
