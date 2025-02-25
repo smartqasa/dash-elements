@@ -174,6 +174,7 @@ export class ShadeTile extends LitElement implements LovelaceCard {
 
   private async toggleEntity(e: Event): Promise<void> {
     e.stopPropagation();
+    console.log('Toggling entity:', this.entity);
     if (!this.hass || !this.entity || !this.stateObj) return;
 
     const state = this.stateObj.state || 'unknown';
