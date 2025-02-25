@@ -158,23 +158,13 @@ export class LightTile extends LitElement implements LovelaceCard {
     e.stopPropagation();
     if (!this.hass || !this.entity || !this.stateObj) return;
 
-    try {
-      if (this.stateObj.state === 'on') {
-        await callService(
-          this.hass,
-          'light',
-          'turn_off',
-          { transition: 2 },
-          { entity_id: this.entity }
-        );
-      } else {
-        await callService(this.hass, 'light', 'turn_on', undefined, {
-          entity_id: this.entity,
-        });
-      }
-    } catch (error) {
-      console.error(`Failed to toggle ${this.entity}:`, error);
-    }
+    const domain = this.entity.split('.')[0];
+    const state = this.stateObj.state || 'unknown';
+    const action = state === 'on' ? 'turn_off' : 'turn_on';
+    const data = state === 'on' ? { transition: 2 } : undefined;
+    const target = { entity_id: this.entity };
+
+    await callService(this.hass, domain, action, data, target);
   }
 
   private showMoreInfo(e: Event): void {

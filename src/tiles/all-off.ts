@@ -124,13 +124,12 @@ export class AllOffTile extends LitElement implements LovelaceCard {
 
     this.running = true;
 
-    await callService(this.hass, 'light', 'turn_off', {
-      area_id: this.area,
-      transition: 2,
-    });
-    await callService(this.hass, 'fan', 'turn_off', {
-      area_id: this.area,
-    });
+    const action = 'turn_off';
+    const data = { transition: 2 };
+    const target = { area_id: this.area };
+
+    await callService(this.hass, 'light', action, data, target);
+    await callService(this.hass, 'fan', action, undefined, target);
 
     setTimeout(() => {
       this.running = false;

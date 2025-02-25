@@ -163,17 +163,19 @@ export class RobotTile extends LitElement implements LovelaceCard {
     this.stateFmtd = stateFmtd;
   }
 
-  private toggleEntity(e: Event): void {
+  private async toggleEntity(e: Event): Promise<void> {
     e.stopPropagation();
     if (!this.hass || !this.entity || !this.stateObj) return;
 
+    const domain = this.entity.split('.')[0];
     const state = this.stateObj.state || 'unknown';
-    const service = ['docked', 'idle', 'paused'].includes(state)
+    const action = ['docked', 'idle', 'paused'].includes(state)
       ? 'start'
       : 'pause';
-    callService(this.hass, 'vacuum', service, {
-      entity_id: this.entity,
-    });
+    const data = undefined;
+    const target = { entity_id: this.entity };
+
+    await callService(this.hass, domain, action, data, target);
   }
 
   private showMoreInfo(e: Event): void {
