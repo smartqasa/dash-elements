@@ -196,6 +196,7 @@ export class ShadeTile extends LitElement implements LovelaceCard {
       service = 'open_cover';
     }
 
+    console.log(`Calling service: ${domain}.${service}`);
     await callService(this.hass, domain, service, data, target);
   }
 
