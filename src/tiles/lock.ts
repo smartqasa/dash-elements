@@ -166,16 +166,20 @@ export class LockTile extends LitElement implements LovelaceCard {
     this.stateFmtd = stateFmtd;
   }
 
-  private toggleEntity(e: Event): void {
+  private async toggleEntity(e: Event): Promise<void> {
     e.stopPropagation();
     if (!this.hass || !this.entity || !this.stateObj) return;
 
-    const state = this.stateObj.state;
     this.running = true;
+
+    const domain = this.entity.split('.')[0];
+    const state = this.stateObj.state || 'unknown';
     this.stateObj.state = state == 'locked' ? 'unlocking' : 'locking';
-    callService(this.hass, 'lock', state == 'locked' ? 'unlock' : 'lock', {
-      entity_id: this.entity,
-    });
+    const service = state === 'locked' ? 'unlock' : 'lock';
+    const data = undefined;
+    const target = { entity_id: this.entity };
+
+    await callService(this.hass, domain, service, data, target);
 
     setTimeout(() => {
       this.running = false;
