@@ -1,4 +1,3 @@
-import babel from '@rollup/plugin-babel';
 import commonjs from '@rollup/plugin-commonjs';
 import litcss from 'rollup-plugin-lit-css';
 import image from '@rollup/plugin-image';
@@ -23,10 +22,6 @@ export default {
     name: 'SmartQasaElements',
   },
   plugins: [
-    babel({
-      exclude: 'node_modules/**',
-      babelHelpers: 'bundled',
-    }),
     commonjs({
       include: 'node_modules/**',
     }),
