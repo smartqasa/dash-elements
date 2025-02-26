@@ -152,36 +152,41 @@ export class LightGridCard extends LitElement implements LovelaceCard {
   }
 
   private showMoreInfo(e: Event, entity: string): void {
-    e.preventDefault();
-    const stateObj = this.hass?.states[entity];
-    if (stateObj) {
-      const callingDialogConfig = {
-        title: this.config!.title,
-        timeout: 120000,
-        content: {
-          type: 'custom:smartqasa-light-grid-card',
-          title: this.config!.title,
-          entities: this.entities,
-          columns: this.columns,
-          style: this.style,
-        },
-      };
-      moreInfoDialog(stateObj, callingDialogConfig);
-    }
-  }
+    e.stopPropagation();
+    if (!this.hass || !this.entities.length) return;
 
-  private toggleEntity(e: Event, entity: string): void {
-    e.preventDefault();
     const stateObj = this.hass?.states[entity];
     if (!stateObj) return;
 
-    if (stateObj?.state === 'on') {
-      callService(this.hass, 'light', 'turn_off', {
-        entity_id: entity,
-        transition: 2,
-      });
-    } else {
-      callService(this.hass, 'light', 'turn_on', { entity_id: entity });
-    }
+    const callingDialogConfig = {
+      title: this.config!.title,
+      timeout: 120000,
+      content: {
+        type: 'custom:smartqasa-light-grid-card',
+        title: this.config?.title || 'Light Group',
+        entities: this.entities,
+        columns: this.columns,
+        style: this.style,
+      },
+    };
+
+    moreInfoDialog(stateObj, callingDialogConfig);
+  }
+
+  private async toggleEntity(e: Event, entity: string): Promise<void> {
+    e.stopPropagation();
+    if (!this.hass) return;
+
+    const stateObj = this.hass.states[entity];
+    if (!stateObj) return;
+
+    const state = this.hass?.states[entity].state || 'unknown';
+
+    const domain = 'light';
+    const service = state === 'on' ? 'turn_off' : 'turn_on';
+    const data = state === 'on' ? { transition: 2 } : undefined;
+    const target = { entity_id: entity };
+
+    await callService(this.hass, domain, service, data, target);
   }
 }
