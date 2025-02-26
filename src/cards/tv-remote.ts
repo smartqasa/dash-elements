@@ -357,40 +357,39 @@ export class TVRemoteCard extends LitElement implements LovelaceCard {
     }
   }
 
-  private handlePower(): void {
-    callService(this.hass, 'remote', 'send_command', {
-      entity_id: this.entities.remote,
-      command: 'power',
-    });
+  private async handlePower(): Promise<void> {
+    const domain = 'remote';
+    const service = 'send_command';
+    const data = { command: 'power' };
+    const target = { entity_id: this.entities.remote };
+    await callService(this.hass, domain, service, data, target);
   }
 
-  private handleVolume(button: string): void {
-    const entity = this.entities.audio || undefined;
-    if (entity) {
-      const isMuted = this.hass!.states[entity].attributes.is_volume_muted;
-      if (button === 'volume_mute') {
-        callService(this.hass, 'media_player', 'volume_mute', {
-          entity_id: entity,
-          is_volume_muted: !isMuted,
-        });
-      } else {
-        if (!isMuted) {
-          callService(this.hass, 'media_player', button, {
-            entity_id: entity,
-          });
-        } else {
-          callService(this.hass, 'media_player', 'volume_mute', {
-            entity_id: entity,
-            is_volume_muted: false,
-          });
-        }
-      }
+  private async handleVolume(button: string): Promise<void> {
+    const audioEntity = this.entities.audio;
+    const remoteEntity = this.entities.remote;
+
+    if (!audioEntity && !remoteEntity) return;
+
+    let domain, service, data, target;
+
+    if (audioEntity) {
+      const isMuted = this.hass!.states[audioEntity].attributes.is_volume_muted;
+      domain = 'media_player';
+      service = isMuted ? button : 'volume_mute';
+      data =
+        isMuted || button === 'volume_mute'
+          ? { is_volume_muted: !isMuted }
+          : {};
+      target = { entity_id: audioEntity };
     } else {
-      callService(this.hass, 'remote', 'send_command', {
-        entity_id: this.entities.remote,
-        command: button,
-      });
+      domain = 'remote';
+      service = 'send_command';
+      data = { command: button };
+      target = { entity_id: remoteEntity };
     }
+
+    await callService(this.hass, domain, service, data, target);
   }
 
   private handleCommand(button: string): void {
