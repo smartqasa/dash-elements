@@ -209,7 +209,7 @@ export class TVRemoteCard extends LitElement implements LovelaceCard {
     const entityBase = this.entity.split('.')[1].replace(/_roku$/, '');
 
     const findAudioEntity = () => {
-      if (this.config?.audio_entity) return this.config.audio_entity;
+      if (this.config!.audio_entity) return this.config!.audio_entity;
       const candidates = [
         `media_player.${entityBase}_arc`,
         `media_player.${entityBase}_beam`,
@@ -221,7 +221,7 @@ export class TVRemoteCard extends LitElement implements LovelaceCard {
         `media_player.${entityBase}_tv`,
       ];
       return (
-        candidates.find((candidate) => this.hass?.states[candidate]) ||
+        candidates.find((candidate) => this.hass!.states[candidate]) ||
         undefined
       );
     };
@@ -269,8 +269,8 @@ export class TVRemoteCard extends LitElement implements LovelaceCard {
       </div>
       <div class="row">
         ${this.renderButton('volume', 'volume_down', 'mdi:volume-minus')}
-        ${this.renderButton('volume_mute', 'volume_mute', 'mdi:volume-mute')}
-        ${this.renderButton('volume_up', 'volume_up', 'mdi:volume-plus')}
+        ${this.renderButton('volume', 'volume_mute', 'mdi:volume-mute')}
+        ${this.renderButton('volume', 'volume_up', 'mdi:volume-plus')}
       </div>
     `;
   }
@@ -392,11 +392,12 @@ export class TVRemoteCard extends LitElement implements LovelaceCard {
     await callService(this.hass, domain, service, data, target);
   }
 
-  private handleCommand(button: string): void {
-    callService(this.hass, 'remote', 'send_command', {
-      entity_id: this.entities.remote,
-      command: button,
-    });
+  private async handleCommand(button: string): Promise<void> {
+    const domain = 'remote';
+    const service = 'send_command';
+    const data = { command: button };
+    const target = { entity_id: this.entities.remote };
+    await callService(this.hass, domain, service, data, target);
   }
 
   private selectApp(app: string): void {
