@@ -19,7 +19,7 @@ export default {
   input: 'src/index.ts',
   output: {
     file: 'dist/elements.js',
-    name: 'SmartQasaElements',
+    format: 'es',
     sourcemap: true,
   },
   plugins: [
