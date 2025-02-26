@@ -56,5 +56,8 @@ export default {
       ],
       limit: 10240,
     }),
-  ],
+    process.env.NODE_ENV === 'production'
+      ? terser({ output: { comments: false } })
+      : null,
+  ].filter(Boolean),
 };

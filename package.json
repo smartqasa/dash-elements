@@ -11,6 +11,7 @@
   "scripts": {
     "clean": "rm -rf dist",
     "build": "npm run clean && rollup -c",
+    "build:prod": "npm run clean && rollup -c --environment NODE_ENV:production",
     "watch": "npm run clean && rollup -c --watch",
     "lint": "eslint .",
     "format": "prettier --write ."
