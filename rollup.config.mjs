@@ -20,6 +20,7 @@ export default {
   output: {
     file: 'dist/elements.js',
     name: 'SmartQasaElements',
+    sourcemap: true,
   },
   plugins: [
     commonjs({
