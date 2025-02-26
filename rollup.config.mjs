@@ -54,7 +54,7 @@ export default {
         '**/*.gif',
         '**/*.svg',
       ],
-      limit: 0,
+      limit: 10240,
     }),
   ],
 };
