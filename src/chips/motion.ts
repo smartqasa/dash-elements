@@ -152,10 +152,15 @@ export class MotionChip extends LitElement implements LovelaceCard {
     return { icon, iconColor };
   }
 
-  private toggleEntity(e: Event): void {
+  private async toggleEntity(e: Event): Promise<void> {
     e.stopPropagation();
-    callService(this.hass, 'automation', 'toggle', {
-      entity_id: this.automation,
-    });
+    if (!this.hass || !this.automation) return;
+
+    const domain = 'automation';
+    const service = 'toggle';
+    const data = undefined;
+    const target = { entity_id: this.automation };
+
+    await callService(this.hass, domain, service, data, target);
   }
 }

@@ -128,33 +128,18 @@ export class RoutineTile extends LitElement implements LovelaceCard {
     this.name = name;
   }
 
-  private runRoutine(e: Event): void {
+  private async runRoutine(e: Event): Promise<void> {
     e.stopPropagation();
     if (!this.hass || !this.entity || !this.stateObj) return;
 
     this.running = true;
 
     const domain = this.stateObj.entity_id.split('.')[0];
-    switch (domain) {
-      case 'script':
-        callService(this.hass, 'script', 'turn_on', {
-          entity_id: this.entity,
-        });
-        break;
-      case 'scene':
-        callService(this.hass, 'scene', 'turn_on', {
-          entity_id: this.entity,
-        });
-        break;
-      case 'automation':
-        callService(this.hass, 'automation', 'trigger', {
-          entity_id: this.entity,
-        });
-        break;
-      default:
-        console.error('Unsupported entity domain:', domain);
-        break;
-    }
+    const service = domain === 'automation' ? 'trigger' : 'turn_on';
+    const data = undefined;
+    const target = { entity_id: this.entity };
+
+    await callService(this.hass, domain, service, data, target);
 
     setTimeout(() => {
       this.running = false;
