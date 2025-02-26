@@ -4,6 +4,7 @@ import image from '@rollup/plugin-image';
 import json from '@rollup/plugin-json';
 import replace from '@rollup/plugin-replace';
 import resolve from '@rollup/plugin-node-resolve';
+import terser from '@rollup/plugin-terser';
 import typescript from '@rollup/plugin-typescript';
 import url from '@rollup/plugin-url';
 
@@ -18,7 +19,6 @@ export default {
   input: 'src/index.ts',
   output: {
     file: 'dist/elements.js',
-    format: 'es',
     name: 'SmartQasaElements',
   },
   plugins: [
@@ -40,6 +40,7 @@ export default {
       __BUILD_VERSION__: JSON.stringify(version),
       __BUILD_TIMESTAMP__: JSON.stringify(timestamp),
     }),
+    terser({ output: { comments: false } }),
     typescript(),
     url({
       destDir: 'dist/assets',
