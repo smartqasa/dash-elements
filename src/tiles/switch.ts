@@ -40,14 +40,6 @@ export class SwitchTile extends LitElement implements LovelaceCard {
     return 1;
   }
 
-  static getConfigElement() {
-    return document.createElement('smartqasa-switch-tile-editor');
-  }
-
-  static getStubConfig() {
-    return { entity: '' };
-  }
-
   @property({ attribute: false }) public hass?: HomeAssistant;
   @state() protected config?: Config;
   private entity?: string;
@@ -154,6 +146,14 @@ export class SwitchTile extends LitElement implements LovelaceCard {
 
     moreInfoDialog(this.stateObj, this.config?.callingDialog);
   }
+
+  static getConfigElement() {
+    return document.createElement('smartqasa-switch-tile-editor');
+  }
+
+  static getStubConfig() {
+    return { entity: '' };
+  }
 }
 
 @customElement('smartqasa-switch-tile-editor')
@@ -183,14 +183,7 @@ class MyCustomCardEditor extends LitElement {
 
   protected render(): TemplateResult | typeof nothing {
     if (!this.hass || !this.config) return nothing;
-
-    // @focusout below will call entityChanged when the input field loses focus (e.g. the user tabs away or clicks outside of it)
     return html`
-    Entity:
-    <input
-    .value=${this.config.entity}
-    @focusout=${this.entityChanged}
-    ></input>
-    `;
+      Entity: <input .value=${this.config.entity} @focusout=${this.entityChanged}></input>`;
   }
 }
