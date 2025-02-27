@@ -14,6 +14,7 @@ import {
   HomeAssistant,
   LovelaceCard,
   LovelaceCardConfig,
+  LovelaceCardEditor,
 } from '../types';
 import { callService } from '../utilities/call-service';
 import { moreInfoDialog } from '../dialogs/more-info-dialog';
@@ -147,8 +148,10 @@ export class SwitchTile extends LitElement implements LovelaceCard {
     moreInfoDialog(this.stateObj, this.config?.callingDialog);
   }
 
-  static getConfigElement() {
-    return document.createElement('smartqasa-switch-tile-editor');
+  public static getConfigElement(): LovelaceCardEditor {
+    return document.createElement(
+      'smartqasa-switch-tile-editor'
+    ) as LovelaceCardEditor;
   }
 
   static getStubConfig() {
