@@ -156,27 +156,6 @@ export interface HomeAssistant {
   themes: Themes;
 }
 
-export interface MFAModule {
-  id: string;
-  name: string;
-  enabled: boolean;
-}
-
-export interface Resources {
-  [language: string]: Record<string, string>;
-}
-
-export interface ServiceCallRequest {
-  domain: string;
-  service: string;
-  serviceData?: Record<string, any>;
-  target?: HassServiceTarget;
-}
-
-export interface ServiceCallResponse {
-  context: Context;
-}
-
 export interface LovelaceDashboardBaseConfig {}
 
 export interface LovelaceCard extends HTMLElement {
@@ -229,6 +208,27 @@ export interface LovelaceLayoutOptions {
   grid_min_columns?: number;
   grid_min_rows?: number;
   grid_max_rows?: number;
+}
+
+export interface MFAModule {
+  id: string;
+  name: string;
+  enabled: boolean;
+}
+
+export interface Resources {
+  [language: string]: Record<string, string>;
+}
+
+export interface ServiceCallRequest {
+  domain: string;
+  service: string;
+  serviceData?: Record<string, any>;
+  target?: HassServiceTarget;
+}
+
+export interface ServiceCallResponse {
+  context: Context;
 }
 
 export interface ThemeVars {
