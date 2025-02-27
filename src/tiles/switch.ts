@@ -9,7 +9,6 @@ import {
 } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import { styleMap } from 'lit/directives/style-map.js';
-import { ifDefined } from 'lit/directives/if-defined.js';
 
 import {
   HassEntity,
@@ -73,13 +72,11 @@ export class SwitchTile extends LitElement implements LovelaceCard {
 
   protected shouldUpdate(changedProps: PropertyValues): boolean {
     if (changedProps.has('config')) return true;
-
     if (changedProps.has('hass'))
       return (
         (this.entity ? this.hass?.states[this.entity] : undefined) !==
         this.stateObj
       );
-
     return false;
   }
 
@@ -172,10 +169,10 @@ export class SmartqasaSwitchTileEditor
   implements LovelaceCardEditor
 {
   @property({ attribute: false }) public hass?: HomeAssistant;
-  @state() protected config?: Config;
+  @property({ attribute: false }) private config?: Config;
 
   public setConfig(config: Config): void {
-    this.config = config;
+    this.config = { ...config }; // Ensure a new object for reactivity
   }
 
   static get styles() {
@@ -191,15 +188,15 @@ export class SmartqasaSwitchTileEditor
     `;
   }
 
-  entityChanged(ev: CustomEvent) {
+  private entityChanged(ev: CustomEvent): void {
     this.updateConfig('entity', ev.detail.value || '');
   }
 
-  iconChanged(ev: Event | CustomEvent) {
-    this.updateConfig('icon', (ev as CustomEvent).detail.value || '');
+  private iconChanged(ev: CustomEvent): void {
+    this.updateConfig('icon', ev.detail.value || '');
   }
 
-  valueChanged(ev: Event) {
+  private valueChanged(ev: Event): void {
     const target = ev.target as HTMLInputElement;
     const property = target.name;
     const value = target.value;
@@ -208,7 +205,7 @@ export class SmartqasaSwitchTileEditor
     }
   }
 
-  private updateConfig(property: string, value: string) {
+  private updateConfig(property: string, value: string): void {
     if (!this.config) return;
     const config = { ...this.config };
     if (value === '') {
@@ -219,7 +216,7 @@ export class SmartqasaSwitchTileEditor
     this.config = config;
     this.dispatchEvent(
       new CustomEvent('config-changed', {
-        detail: { config: config },
+        detail: { config },
         bubbles: true,
         composed: true,
       })
@@ -232,16 +229,15 @@ export class SmartqasaSwitchTileEditor
       ${this.renderParameter({
         label: 'Entity',
         type: 'entity-picker',
-        value: this.config.entity || '', // Ensure default empty string
+        value: this.config.entity || '',
         domains: ['switch', 'light', 'fan', 'input_boolean'],
-        onChange: (ev: Event | CustomEvent) =>
-          this.entityChanged(ev as CustomEvent),
+        onChange: this.entityChanged,
       })}
       ${this.renderParameter({
         label: 'Icon',
         type: 'icon-picker',
         value: this.config.icon || '',
-        onChange: (ev: Event | CustomEvent) => this.iconChanged(ev),
+        onChange: this.iconChanged,
       })}
       ${this.renderParameter({
         label: 'Name',
@@ -269,7 +265,7 @@ export class SmartqasaSwitchTileEditor
     name?: string;
     domains?: string[];
     placeholder?: string;
-    onChange: (ev: Event | CustomEvent) => void; // Union type for flexibility
+    onChange: (ev: CustomEvent) => void | ((ev: Event) => void);
   }): TemplateResult {
     const { label, type, value, name, domains, placeholder, onChange } =
       options;
@@ -281,6 +277,8 @@ export class SmartqasaSwitchTileEditor
           .value=${value}
           .includeDomains=${domains}
           @value-changed=${onChange}
+          allow-custom-entity
+          required
         ></ha-entity-picker>
       `,
       'icon-picker': html`
