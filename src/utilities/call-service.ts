@@ -15,6 +15,7 @@ export async function callService(
     await hass.callService(domain, service, data, target);
   } catch (error) {
     console.error(`Service call failed: ${domain}.${service}`, error);
-    throw error;
+    //throw error;
+    return;
   }
 }

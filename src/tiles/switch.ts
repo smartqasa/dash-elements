@@ -5,9 +5,11 @@ import {
   nothing,
   PropertyValues,
   TemplateResult,
+  css,
 } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import { styleMap } from 'lit/directives/style-map.js';
+import { ifDefined } from 'lit/directives/if-defined.js';
 
 import {
   HassEntity,
@@ -42,7 +44,7 @@ export class SwitchTile extends LitElement implements LovelaceCard {
   }
 
   @property({ attribute: false }) public hass?: HomeAssistant;
-  @state() protected config?: Config;
+  @property({ attribute: false }) public config?: Config;
   private entity?: string;
   private stateObj?: HassEntity;
   private icon: string = 'hass:toggle-switch-variant';
@@ -60,7 +62,13 @@ export class SwitchTile extends LitElement implements LovelaceCard {
     )
       ? config.entity
       : undefined;
-    this.config = config;
+    this.config = {
+      type: config.type,
+      entity: config.entity || '',
+      icon: config.icon || '',
+      name: config.name || '',
+      category: config.category || '',
+    };
   }
 
   protected shouldUpdate(changedProps: PropertyValues): boolean {
@@ -117,7 +125,7 @@ export class SwitchTile extends LitElement implements LovelaceCard {
     } else {
       icon = this.config!.icon || 'hass:toggle-switch-variant';
       iconColor = 'var(--sq-unavailable-rgb)';
-      name = this.config?.name || 'Unknown Switch';
+      name = this.config!.name || 'Unknown Switch';
       stateFmtd = 'Unknown State';
     }
 
@@ -144,7 +152,6 @@ export class SwitchTile extends LitElement implements LovelaceCard {
 
   private showMoreInfo(e: Event): void {
     e.stopPropagation();
-
     moreInfoDialog(this.stateObj, this.config?.callingDialog);
   }
 
@@ -154,13 +161,16 @@ export class SwitchTile extends LitElement implements LovelaceCard {
     ) as LovelaceCardEditor;
   }
 
-  static getStubConfig() {
-    return { entity: '' };
+  static getStubConfig(): Record<string, any> {
+    return { entity: '', icon: '', name: '', category: '' };
   }
 }
 
 @customElement('smartqasa-switch-tile-editor')
-class MyCustomCardEditor extends LitElement {
+export class SmartqasaSwitchTileEditor
+  extends LitElement
+  implements LovelaceCardEditor
+{
   @property({ attribute: false }) public hass?: HomeAssistant;
   @state() protected config?: Config;
 
@@ -168,25 +178,132 @@ class MyCustomCardEditor extends LitElement {
     this.config = config;
   }
 
-  entityChanged(ev: Event) {
-    const config = Object.assign({}, this.config);
-    const target = ev.target as HTMLInputElement | null;
-    if (target) {
-      config.entity = target.value;
+  static get styles() {
+    return css`
+      .config {
+        margin-bottom: 10px;
+      }
+      label {
+        display: block;
+        margin-bottom: 5px;
+        color: var(--primary-text-color);
+      }
+    `;
+  }
+
+  entityChanged(ev: CustomEvent) {
+    this.updateConfig('entity', ev.detail.value || '');
+  }
+
+  iconChanged(ev: Event | CustomEvent) {
+    this.updateConfig('icon', (ev as CustomEvent).detail.value || '');
+  }
+
+  valueChanged(ev: Event) {
+    const target = ev.target as HTMLInputElement;
+    const property = target.name;
+    const value = target.value;
+    if (property) {
+      this.updateConfig(property, value);
+    }
+  }
+
+  private updateConfig(property: string, value: string) {
+    if (!this.config) return;
+    const config = { ...this.config };
+    if (value === '') {
+      delete config[property];
+    } else {
+      config[property] = value;
     }
     this.config = config;
-
-    const event = new CustomEvent('config-changed', {
-      detail: { config: config },
-      bubbles: true,
-      composed: true,
-    });
-    this.dispatchEvent(event);
+    this.dispatchEvent(
+      new CustomEvent('config-changed', {
+        detail: { config: config },
+        bubbles: true,
+        composed: true,
+      })
+    );
   }
 
   protected render(): TemplateResult | typeof nothing {
     if (!this.hass || !this.config) return nothing;
     return html`
-      Entity: <input .value=${this.config.entity} @focusout=${this.entityChanged}></input>`;
+      ${this.renderParameter({
+        label: 'Entity',
+        type: 'entity-picker',
+        value: this.config.entity || '', // Ensure default empty string
+        domains: ['switch', 'light', 'fan', 'input_boolean'],
+        onChange: (ev: Event | CustomEvent) =>
+          this.entityChanged(ev as CustomEvent),
+      })}
+      ${this.renderParameter({
+        label: 'Icon',
+        type: 'icon-picker',
+        value: this.config.icon || '',
+        onChange: (ev: Event | CustomEvent) => this.iconChanged(ev),
+      })}
+      ${this.renderParameter({
+        label: 'Name',
+        type: 'text',
+        name: 'name',
+        value: this.config.name || '',
+        placeholder: 'Enter a custom name',
+        onChange: this.valueChanged,
+      })}
+      ${this.renderParameter({
+        label: 'Category',
+        type: 'text',
+        name: 'category',
+        value: this.config.category || '',
+        placeholder: 'Enter a category',
+        onChange: this.valueChanged,
+      })}
+    `;
+  }
+
+  private renderParameter(options: {
+    label: string;
+    type: 'entity-picker' | 'icon-picker' | 'text';
+    value: string;
+    name?: string;
+    domains?: string[];
+    placeholder?: string;
+    onChange: (ev: Event | CustomEvent) => void; // Union type for flexibility
+  }): TemplateResult {
+    const { label, type, value, name, domains, placeholder, onChange } =
+      options;
+
+    const inputMap = {
+      'entity-picker': html`
+        <ha-entity-picker
+          .hass=${this.hass}
+          .value=${value}
+          .includeDomains=${domains}
+          @value-changed=${onChange}
+        ></ha-entity-picker>
+      `,
+      'icon-picker': html`
+        <ha-icon-picker
+          .hass=${this.hass}
+          .value=${value}
+          @value-changed=${onChange}
+        ></ha-icon-picker>
+      `,
+      text: html`
+        <input
+          .name=${name ?? ''}
+          .value=${value}
+          @change=${onChange}
+        ></input>
+      `,
+    };
+
+    return html`
+      <div class="config">
+        <label>${label}:</label>
+        ${inputMap[type]}
+      </div>
+    `;
   }
 }
