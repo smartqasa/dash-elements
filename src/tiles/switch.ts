@@ -160,30 +160,19 @@ export class SwitchTile extends LitElement implements LovelaceCard {
 class MyCustomCardEditor extends LitElement {
   @property({ attribute: false }) public hass?: HomeAssistant;
   @state() protected config?: Config;
-  private entity?: string;
 
   public setConfig(config: Config): void {
-    this.entity = ['fan', 'input_boolean', 'light', 'switch'].includes(
-      config.entity?.split('.')[0]
-    )
-      ? config.entity
-      : undefined;
     this.config = config;
   }
 
   entityChanged(ev: Event) {
-    // We make a copy of the current config so we don't accidentally overwrite anything too early
     const config = Object.assign({}, this.config);
-    // Then we update the entity value with what we just got from the input field
     const target = ev.target as HTMLInputElement | null;
     if (target) {
       config.entity = target.value;
     }
-    // And finally write back the updated configuration all at once
     this.config = config;
 
-    // A config-changed event will tell lovelace we have made changed to the configuration
-    // this make sure the changes are saved correctly later and will update the preview
     const event = new CustomEvent('config-changed', {
       detail: { config: config },
       bubbles: true,
