@@ -53,7 +53,7 @@ export class MoreInfoCard extends LitElement implements LovelaceCard {
       white-space: normal;
       font-weight: 400;
       font-size: var(--sq-primary-font-size);
-      color: rgb(var(--sq-primary-font-rgb));
+      color: rgb(var(--sq-primary-text-rgb));
     }
   `;
 

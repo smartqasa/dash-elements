@@ -138,7 +138,7 @@ export class MotionChip extends LitElement implements LovelaceCard {
           iconColor =
             this.sensorObj?.state === 'on'
               ? 'var(--sq-blue-rgb)'
-              : 'var(--sq-primary-font-rgb)';
+              : 'var(--sq-primary-text-rgb)';
           break;
         case 'off':
           icon = 'hass:motion-sensor-off';

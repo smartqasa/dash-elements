@@ -68,7 +68,7 @@ export class TVRemoteCard extends LitElement implements LovelaceCard {
         text-overflow: ellipsis;
         font-weight: var(--sq-primary-font-weight, 400);
         font-size: var(--sq-primary-font-size, 1.5rem);
-        color: rgb(var(--sq-primary-font-rgb, 128, 128, 128));
+        color: rgb(var(--sq-primary-text-rgb, 128, 128, 128));
         width: 100%;
       }
       .sections {
@@ -334,7 +334,7 @@ export class TVRemoteCard extends LitElement implements LovelaceCard {
                 background-color: rgba(var(--sq-inactive-rgb), var(--sq-icon-alpha, 0.2));
                 font-weight: var(--sq-secondary-font-weight, 300);
                 font-size: var(--sq-secondary-font-size, 1rem);
-                color: rgb(var(--sq-primary-font-rgb, 128, 128, 128));
+                color: rgb(var(--sq-primary-text-rgb, 128, 128, 128));
                 text-overflow: ellipsis;
                 overflow: hidden;
             `;
