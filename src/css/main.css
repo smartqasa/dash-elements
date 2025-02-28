@@ -40,13 +40,13 @@
   line-height: 3rem;
   font-size: var(--sq-title-font-size);
   font-weight: var(--sq-title-font-weight);
-  color: rgb(var(--sq-title-font-rgb));
+  color: rgb(var(--sq-title-text-rgb));
 }
 .date {
   margin-top: 0.4rem;
   font-size: var(--sq-primary-font-size);
   font-weight: var(--sq-primary-font-weight);
-  color: rgb(var(--sq-secondary-font-rgb));
+  color: rgb(var(--sq-secondary-text-rgb));
 }
 .header-chips {
   display: flex;
@@ -73,7 +73,7 @@
   text-align: left;
   font-size: var(--sq-title-font-size);
   font-weight: var(--sq-title-font-weight);
-  color: rgb(var(--sq-title-font-rgb));
+  color: rgb(var(--sq-title-text-rgb));
 }
 .area-chips {
   grid-area: chips;
@@ -135,7 +135,7 @@
   justify-content: center;
   font-size: var(--sq-primary-font-size);
   font-weight: var(--sq-primary-font-weight);
-  color: rgb(var(--sq-secondary-font-rgb));
+  color: rgb(var(--sq-secondary-text-rgb));
   cursor: pointer;
 }
 

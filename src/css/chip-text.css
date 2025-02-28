@@ -15,7 +15,7 @@
   line-height: var(--sq-icon-size);
   font-weight: var(--sq-primary-font-weight);
   font-size: var(--sq-primary-font-size);
-  color: rgb(var(--sq-primary-font-rgb));
+  color: rgb(var(--sq-primary-text-rgb));
   text-align: left;
   overflow: hidden;
   text-overflow: ellipsis;

@@ -35,7 +35,7 @@ export class PinVerifyCard extends LitElement implements LovelaceCard {
     :host {
       font-weight: var(--sq-primary-font-weight, 400);
       font-size: var(--sq-primary-font-size, 1.5rem);
-      color: rgb(var(--sq-primary-font-rgb), 128, 128, 128);
+      color: rgb(var(--sq-primary-text-rgb), 128, 128, 128);
     }
     .container {
       background: none;
@@ -125,7 +125,7 @@ export class PinVerifyCard extends LitElement implements LovelaceCard {
     if (!this.pinState) {
       maskedPin = this.maskedPin;
       pinStyles = {
-        color: 'var(--sq-primary-font-rgb)',
+        color: 'var(--sq-primary-text-rgb)',
       };
     } else if (this.pinState === 'valid') {
       maskedPin = 'PIN Accepted';
