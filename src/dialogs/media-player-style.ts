@@ -1,6 +1,6 @@
 const playerHeaderStyles = `
   .entity {
-    color: rgb(var(--sq-primary-font-rgb)) !important;
+    color: rgb(var(--sq-primary-text-rgb)) !important;
     font-weight: var(--sq-primary-font-weight) !important;
     font-size: var(--sq-primary-font-size) !important;
   }

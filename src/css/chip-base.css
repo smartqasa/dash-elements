@@ -25,7 +25,7 @@
   height: var(--sq-icon-size);
   width: var(--sq-icon-size);
   padding: var(--sq-chip-padding);
-  color: rgb(var(--sq-primary-font-rgb));
+  color: rgb(var(--sq-primary-text-rgb));
   transition: var(--sq-icon-transition);
   align-items: center;
   justify-content: center;

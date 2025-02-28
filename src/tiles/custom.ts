@@ -121,7 +121,7 @@ export class DialogTile extends LitElement implements LovelaceCard {
             ? (this.config?.dialog?.active_color ??
               this.config?.active_color ??
               'var(--sq-orange-rgb)')
-            : 'var(--sq-inactive-rgb)';
+            : 'var(--sq-primary-text-rgb)';
         stateFmtd = formatState(this.hass!, this.entity);
       } else {
         iconColor = 'var(--sq-unavailable-rgb)';

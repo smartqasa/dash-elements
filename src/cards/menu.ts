@@ -73,7 +73,7 @@ export class MenuCard extends LitElement implements LovelaceCard {
       }
       .tab[selected] {
         font-weight: var(--sq-primary-font-weight);
-        color: rgb(var(--sq-primary-font-rgb));
+        color: rgb(var(--sq-primary-text-rgb));
       }
       .tab ha-icon {
         margin-right: 0.5rem;

@@ -54,7 +54,7 @@
   overflow: hidden;
   font-weight: var(--sq-primary-font-weight);
   font-size: var(--sq-primary-font-size);
-  color: rgb(var(--sq-primary-font-rgb));
+  color: rgb(var(--sq-primary-text-rgb));
 }
 
 .state {
@@ -65,7 +65,7 @@
   overflow: hidden;
   font-weight: var(--sq-secondary-font-weight);
   font-size: var(--sq-secondary-font-size);
-  color: rgb(var(--sq-secondary-font-rgb));
+  color: rgb(var(--sq-secondary-text-rgb));
 }
 
 @keyframes blink {
