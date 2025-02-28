@@ -43,6 +43,7 @@ import sleepNumberIcon from '../assets/app_icons/sleep_number.webp';
 import solitaireIcon from '../assets/app_icons/solitaire.webp';
 import sonosIcon from '../assets/app_icons/sonos.webp';
 import spotifyIcon from '../assets/app_icons/spotify.webp';
+import subzeroIcon from '../assets/app_icons/sub_zero.webp';
 import tuyaSmartIcon from '../assets/app_icons/tuya_smart.webp';
 import uberIcon from '../assets/app_icons/uber.webp';
 import uberEatsIcon from '../assets/app_icons/uber_eats.webp';
@@ -376,6 +377,12 @@ export const appTable: AppTable = {
     launcher: 'uri_scheme',
     package: 'com.spotify.music',
     uri_scheme: 'spotify:',
+  },
+  subzero: {
+    name: 'Sub-Zero Wolf',
+    app_icon: subzeroIcon,
+    launcher: 'package',
+    package: 'com.subzero.group.owners.app',
   },
   tuya_smart: {
     name: 'Tuya Smart',
