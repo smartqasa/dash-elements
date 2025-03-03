@@ -1,7 +1,5 @@
 // Initialize global variables
 window.smartqasa = window.smartqasa || {};
-
-// Save the Initial Area
 window.smartqasa.startArea =
   window.smartqasa.startArea || location.pathname.split('/').pop();
 

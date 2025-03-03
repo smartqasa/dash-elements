@@ -10,6 +10,7 @@ interface Config extends LovelaceCardConfig {
   app: string;
   icon?: string;
   name?: string;
+  timeout?: number;
 }
 
 window.customCards.push({
@@ -28,6 +29,7 @@ export class AppTile extends LitElement implements LovelaceCard {
   @state() protected config?: Config;
   private app?: string;
   private appObj?: any;
+  private appTimout?: number;
 
   static get styles(): CSSResult {
     return tileStyle;
@@ -38,6 +40,7 @@ export class AppTile extends LitElement implements LovelaceCard {
 
     this.app = config.app;
     this.appObj = appTable[config.app] || undefined;
+    this.appTimout = config.timeout || undefined;
     this.config = config;
   }
 
@@ -82,6 +85,6 @@ export class AppTile extends LitElement implements LovelaceCard {
     e.stopPropagation();
     if (!this.app) return;
 
-    launchApp(this.app);
+    launchApp(this.app, this.appTimout);
   }
 }
