@@ -87,7 +87,7 @@ export class CustomChip extends LitElement implements LovelaceCard {
         iconColor =
           state === 'on'
             ? (this.dialogObj.active_color ?? 'rgb(var(--sq-orange-rgb))')
-            : 'rgb(var(--sq-inactive-rgb))';
+            : 'rgb(var(--sq-primary-text-rgb))';
       } else {
         iconColor = 'var(--sq-unavailable-rgb)';
       }
