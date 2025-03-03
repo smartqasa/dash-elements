@@ -85,11 +85,7 @@ export class WeatherChip extends LitElement implements LovelaceCard {
     }
 
     return html`
-      <div
-        class="container"
-        @click=${this.showDialog}
-        @contextmenu=${this.launchApp}
-      >
+      <div class="container" @click=${this.showDialog}>
         <div class="icon" style="color: rgb(${iconColor});">
           <ha-state-icon
             .hass=${this.hass}
@@ -103,13 +99,14 @@ export class WeatherChip extends LitElement implements LovelaceCard {
 
   private showDialog(e: Event): void {
     e.stopPropagation();
+    if (!this.config) return;
+
+    if (this.app) {
+      launchApp(this.app);
+      return;
+    }
+
     const dialogObj = dialogTable.weather;
     if (dialogObj?.data) window.browser_mod?.service('popup', dialogObj.data);
-  }
-
-  private launchApp(e: Event): void {
-    e.stopPropagation();
-    if (!this.app) return;
-    launchApp(this.app);
   }
 }
