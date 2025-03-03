@@ -48,11 +48,11 @@ export class AppTile extends LitElement implements LovelaceCard {
         iconStyle =
           'color: rgb(var(--sq-inactive-rgb)); background-color: rgba(var(--sq-inactive-rgb), var(--sq-icon-alpha));';
         iconTemplate = html`<ha-icon icon=${this.config.icon}></ha-icon>`;
-      } else if (this.appObj?.app_icon) {
+      } else if (this.appObj?.appIcon) {
         iconStyle =
           'height: calc(var(--sq-icon-size) + var(--sq-icon-padding) * 2); width: calc(var(--sq-icon-size) + var(--sq-icon-padding) * 2); padding: 0;';
         iconTemplate = html`<img
-          src="${this.appObj.app_icon}"
+          src="${this.appObj.appIcon}"
           alt="App Icon"
           style="border-radius: 50%;"
         />`;

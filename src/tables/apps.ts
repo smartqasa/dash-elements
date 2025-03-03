@@ -71,7 +71,6 @@ export const appTable: AppTable = {
     appIcon: accuweatherIcon,
     launcher: 'package',
     package: 'com.accuweather.android',
-    uriScheme: '',
   },
   alexa: {
     name: 'Alexa',
@@ -100,14 +99,12 @@ export const appTable: AppTable = {
     appIcon: amcrestSmartHomeIcon,
     launcher: 'package',
     package: 'com.mm.android.amcrestsmarthome',
-    uriScheme: '',
   },
   apple_music: {
     name: 'Apple Music',
     appIcon: appleMusicIcon,
     launcher: 'package',
     package: 'com.apple.android.music',
-    uriScheme: '',
     timeout: 30,
   },
   bmw: {
