@@ -67,28 +67,29 @@ export class CustomChip extends LitElement implements LovelaceCard {
   }
 
   protected shouldUpdate(changedProps: PropertyValues): boolean {
-    return !!(
-      (changedProps.has('hass') &&
-        this.entity &&
-        this.hass?.states[this.entity] !== this.stateObj) ||
-      changedProps.has('config')
-    );
+    if (changedProps.has('config')) return true;
+    if (changedProps.has('hass') && this.entity)
+      return this.hass?.states[this.entity] !== this.stateObj;
+    return false;
   }
 
   protected render(): TemplateResult | typeof nothing {
     if (!this.config || !this.dialogObj) return nothing;
 
-    this.stateObj = this.entity ? this.hass?.states[this.entity] : undefined;
-
     const icon = this.dialogObj.icon || 'mdi:help-circle';
     let iconColor = 'var(--sq-primary-text-rgb)';
 
-    if (this.hass && this.dialogObj.icon_rgb) {
-      try {
-        const func = new Function('states', this.dialogObj.icon_rgb);
-        iconColor = func(this.hass.states);
-      } catch (error) {
-        console.error('Error evaluating icon color expression:', error);
+    if (this.entity) {
+      this.stateObj = this.hass?.states[this.entity];
+
+      if (this.stateObj) {
+        const state = this.stateObj.state || 'unknown';
+        iconColor =
+          state === 'on'
+            ? (this.dialogObj.active_color ?? 'rgb(var(--sq-orange-rgb))')
+            : 'rgb(var(--sq-inactive-rgb))';
+      } else {
+        iconColor = 'var(--sq-unavailable-rgb)';
       }
     }
 
@@ -106,7 +107,7 @@ export class CustomChip extends LitElement implements LovelaceCard {
     }
 
     const iconStyles = {
-      color: `rgb(${iconColor})`,
+      color: iconColor,
       backgroundColor: 'transparent',
       paddingRight: text
         ? 'calc(var(--sq-chip-padding) / 2)'

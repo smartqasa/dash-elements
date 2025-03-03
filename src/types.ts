@@ -72,8 +72,8 @@ export interface DialogObj {
   icon_rgb?: string;
   entity?: string;
   entity_type?: string;
+  active_color?: string;
   show_state?: boolean;
-  state_color?: string;
   name?: string;
   data: any;
 }

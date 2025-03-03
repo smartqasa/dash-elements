@@ -95,13 +95,8 @@ export class GarageTile extends LitElement implements LovelaceCard {
 
   protected shouldUpdate(changedProps: PropertyValues): boolean {
     if (changedProps.has('config')) return true;
-
-    if (changedProps.has('hass'))
-      return (
-        (this.entity ? this.hass?.states[this.entity] : undefined) !==
-        this.stateObj
-      );
-
+    if (changedProps.has('hass') && this.entity)
+      return this.hass?.states[this.entity] !== this.stateObj;
     return false;
   }
 

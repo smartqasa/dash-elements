@@ -79,12 +79,8 @@ export class DialogTile extends LitElement implements LovelaceCard {
 
   protected shouldUpdate(changedProps: PropertyValues): boolean {
     if (changedProps.has('config')) return true;
-
-    if (changedProps.has('hass') && this.entity) {
-      const newState = this.hass?.states[this.entity];
-      return newState !== this.stateObj;
-    }
-
+    if (changedProps.has('hass') && this.entity)
+      return this.hass?.states[this.entity] !== this.stateObj;
     return false;
   }
 
@@ -118,9 +114,7 @@ export class DialogTile extends LitElement implements LovelaceCard {
         const state = this.stateObj.state || 'unknown';
         iconColor =
           state === 'on'
-            ? (this.config?.dialog?.active_color ??
-              this.config?.active_color ??
-              'var(--sq-orange-rgb)')
+            ? (this.dialogObj?.active_color ?? 'var(--sq-orange-rgb)')
             : 'var(--sq-inactive-rgb)';
         stateFmtd = formatState(this.hass!, this.entity);
       } else {
