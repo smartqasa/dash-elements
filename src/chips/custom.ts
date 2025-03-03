@@ -77,7 +77,7 @@ export class CustomChip extends LitElement implements LovelaceCard {
     if (!this.config || !this.dialogObj) return nothing;
 
     const icon = this.dialogObj.icon || 'mdi:help-circle';
-    let iconColor = 'var(--sq-primary-text-rgb)';
+    let iconColor;
 
     if (this.entity) {
       this.stateObj = this.hass?.states[this.entity];
