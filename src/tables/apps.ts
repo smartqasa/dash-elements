@@ -48,6 +48,7 @@ import subzeroIcon from '../assets/app_icons/sub_zero.webp';
 import tuyaSmartIcon from '../assets/app_icons/tuya_smart.webp';
 import uberIcon from '../assets/app_icons/uber.webp';
 import uberEatsIcon from '../assets/app_icons/uber_eats.webp';
+import weatherIcon from '../assets/app_icons/weather.webp';
 import weatherChannelIcon from '../assets/app_icons/weather_channel.webp';
 import weatherUndergroundIcon from '../assets/app_icons/weather_underground.webp';
 import yukaIcon from '../assets/app_icons/yuka.webp';
@@ -411,6 +412,13 @@ export const appTable: AppTable = {
     launcher: 'uri_scheme',
     package: 'com.ubercab.eats',
     uri_scheme: 'ubereats:',
+  },
+  weather: {
+    name: 'Weather',
+    app_icon: weatherIcon,
+    launcher: 'package',
+    package: 'com.google.android.apps.weather',
+    uri_scheme: '',
   },
   weather_channel: {
     name: 'Weather Channel',
