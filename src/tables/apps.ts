@@ -14,6 +14,7 @@ import clockTimerIcon from '../assets/app_icons/clock.webp';
 import doordashIcon from '../assets/app_icons/doordash.webp';
 import eufyHomeIcon from '../assets/app_icons/eufy_home.webp';
 import eufySecurityIcon from '../assets/app_icons/eufy_security.webp';
+import foxWeatherIcon from '../assets/app_icons/fox_weather.webp';
 import googleAssistantIcon from '../assets/app_icons/google_assistant.webp';
 import googleChromeIcon from '../assets/app_icons/google_chrome.webp';
 import googleMapsIcon from '../assets/app_icons/google_maps.webp';
@@ -174,6 +175,12 @@ export const appTable: AppTable = {
     launcher: 'package',
     package: 'com.oceanwing.battery.cam',
     uri_scheme: 'eufysecurity:',
+  },
+  fox_weather: {
+    name: 'Fox Weather',
+    app_icon: foxWeatherIcon,
+    launcher: 'package',
+    package: 'com.fox.weather',
   },
   google_assistant: {
     name: 'Google Assistant',
