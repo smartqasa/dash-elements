@@ -21,7 +21,7 @@ import chipBaseStyle from '../css/chip-base.css';
 import chipTextStyle from '../css/chip-text.css';
 
 interface Config extends LovelaceCardConfig {
-  entity: string;
+  entity?: string;
   app?: string;
 }
 
@@ -49,7 +49,7 @@ export class WeatherChip extends LitElement implements LovelaceCard {
   }
 
   public setConfig(config: Config): void {
-    if (!config.entity?.startsWith('weather.')) {
+    if (config.entity && !config.entity?.startsWith('weather.')) {
       console.error('Invalid weather entity provided in the config.');
       return;
     }
@@ -60,7 +60,7 @@ export class WeatherChip extends LitElement implements LovelaceCard {
     }
 
     this.entity = config.entity ?? 'weather.forecast_home';
-    this.app = config.app || 'weather';
+    this.app = config.app ?? 'weather';
     this.config = config;
   }
 
@@ -71,10 +71,16 @@ export class WeatherChip extends LitElement implements LovelaceCard {
     return false;
   }
 
+  protected willUpdate(): void {
+    if (this.entity && this.hass?.states[this.entity]) {
+      this.stateObj = this.hass.states[this.entity];
+    } else {
+      this.stateObj = undefined;
+    }
+  }
+
   protected render(): TemplateResult {
     let iconColor, temperature;
-
-    this.stateObj = this.entity ? this.hass?.states[this.entity] : undefined;
 
     if (this.stateObj) {
       iconColor = 'var(--sq-primary-text-rgb)';
