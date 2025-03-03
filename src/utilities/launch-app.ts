@@ -7,8 +7,10 @@ export function launchApp(app: string): void {
     return;
   }
 
-  if (appObj.launcher === 'uri_scheme' && appObj.uri_scheme) {
-    window.location.href = appObj.uri_scheme;
+  window.smartqasa.appTimeout = appObj.timeout ?? 5;
+
+  if (appObj.launcher === 'uri' && appObj.uriScheme) {
+    window.location.href = appObj.uriScheme;
     return;
   }
 

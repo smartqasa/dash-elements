@@ -52,9 +52,9 @@ declare interface Window {
     turnScreenOn: () => void;
   };
   smartqasa: {
+    appTimeout?: number;
     chipsConfig?: any;
     darkModeImage: string;
-    handleScreensaverStop: () => void;
     lightModeImage: string;
     menuConfig?: any;
     menuTab: number;

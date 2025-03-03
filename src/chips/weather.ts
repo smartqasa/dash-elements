@@ -60,7 +60,7 @@ export class WeatherChip extends LitElement implements LovelaceCard {
     }
 
     this.entity = config.entity;
-    this.app = config.app || undefined;
+    this.app = config.app || 'weather';
     this.config = config;
   }
 
