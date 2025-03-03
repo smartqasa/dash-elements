@@ -105,25 +105,21 @@ export class DialogTile extends LitElement implements LovelaceCard {
   }
 
   private updateState(): void {
-    let iconColor, stateFmtd;
+    this.stateObj = this.entity ? this.hass?.states[this.entity] : undefined;
 
-    if (this.entity) {
-      this.stateObj = this.hass?.states[this.entity];
+    let iconColor = 'var(--sq-inactive-rgb)';
+    let stateFmtd = '';
 
-      if (this.stateObj) {
-        const state = this.stateObj.state || 'unknown';
-        iconColor =
-          state === 'on'
-            ? (this.dialogObj?.active_color ?? 'var(--sq-orange-rgb)')
-            : 'var(--sq-inactive-rgb)';
-        stateFmtd = formatState(this.hass!, this.entity);
-      } else {
-        iconColor = 'var(--sq-unavailable-rgb)';
-        stateFmtd = 'Unknown State';
-      }
+    if (this.stateObj) {
+      const state = this.stateObj.state || 'unknown';
+      iconColor =
+        state === 'on'
+          ? (this.dialogObj?.active_color ?? 'var(--sq-orange-rgb)')
+          : 'var(--sq-inactive-rgb)';
+      stateFmtd = formatState(this.hass!, this.entity!) ?? '';
     } else {
-      iconColor = 'var(--sq-inactive-rgb)';
-      stateFmtd = '';
+      iconColor = 'var(--sq-unavailable-rgb)';
+      stateFmtd = 'Unknown State';
     }
 
     this.iconStyles = {
