@@ -53,6 +53,7 @@ declare interface Window {
   };
   smartqasa: {
     appTimeout?: number;
+    appLaunchTime?: number;
     chipsConfig?: any;
     darkModeImage: string;
     lightModeImage: string;

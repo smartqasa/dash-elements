@@ -7,7 +7,12 @@ export function launchApp(app: string): void {
     return;
   }
 
+  window.smartqasa = window.smartqasa || {};
   window.smartqasa.appTimeout = appObj.timeout ?? 5;
+
+  if (typeof window.fully !== 'undefined') {
+    window.smartqasa.appLaunchTime = Date.now();
+  }
 
   if (appObj.launcher === 'uri' && appObj.uriScheme) {
     window.open(appObj.uriScheme, '_self');

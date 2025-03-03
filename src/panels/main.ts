@@ -267,43 +267,6 @@ export class MainCard extends LitElement implements LovelaceCard {
     this.dashboardTimer = setTimeout(() => this.resetDashboard(), delay);
   }
 
-  /*
-    private handleRefreshDashboard(): void {
-        const state =
-            this.hass?.states['input_button.refresh_dashboards']?.state;
-
-        if (this.refreshDashboardState === undefined) {
-            this.refreshDashboardState = state;
-            return;
-        }
-
-        if (this.refreshDashboardState === state) return;
-
-        this.refreshDashboardState = state;
-
-        if (window.fully) {
-            executeFullyAction('restartApp');
-        } else {
-            window.browser_mod?.service('refresh');
-        }
-    }
-
-    private handleRebootDevice(): void {
-        if (!window.fully || !this.hass) return;
-
-        const state = this.hass.states['input_button.reboot_devices']?.state;
-        if (this.rebootDeviceState === undefined) {
-            this.rebootDeviceState = state;
-            return;
-        }
-
-        if (this.rebootDeviceState === state) return;
-
-        this.rebootDeviceState = state;
-        executeFullyAction('reboot');
-    } 
-    */
-
   private resetDashboard(): void {
     this.startDashboardTimer();
 
