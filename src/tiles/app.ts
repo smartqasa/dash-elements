@@ -35,9 +35,10 @@ export class AppTile extends LitElement implements LovelaceCard {
 
   public setConfig(config: Config): void {
     if (!config.app) throw new Error('A valid app must be specified.');
-    this.config = config;
+
     this.app = config.app;
     this.appObj = appTable[config.app] || undefined;
+    this.config = config;
   }
 
   protected render(): TemplateResult {
@@ -79,7 +80,8 @@ export class AppTile extends LitElement implements LovelaceCard {
 
   private launchApp(e: Event): void {
     e.stopPropagation();
-    if (!this.config?.app) return;
-    launchApp(this.config.app);
+    if (!this.app) return;
+
+    launchApp(this.app);
   }
 }
