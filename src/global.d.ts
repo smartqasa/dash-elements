@@ -46,6 +46,7 @@ declare interface Window {
     isInForeground: () => boolean;
     reboot: () => void;
     restartApp: () => void;
+    setStringSetting: (key: string, value: string) => void;
     startApplication: (packageName: string) => void;
     stopScreensaver: () => void;
     turnScreenOff: (keepAlive: boolean) => void;

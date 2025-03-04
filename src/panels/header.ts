@@ -5,10 +5,7 @@ import { launchApp } from '../utilities/launch-app';
 
 async function launchClock(e: Event): Promise<void> {
   e.stopPropagation();
-  const launched = launchApp('clock');
-  if (!launched) {
-    console.error('Failed to launch app "clock".');
-  }
+  const launched = await launchApp('clock');
 }
 
 export function renderHeader(headerChips?: LovelaceCard[]): TemplateResult {
