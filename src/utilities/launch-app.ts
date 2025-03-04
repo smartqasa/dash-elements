@@ -22,7 +22,8 @@ export function launchApp(app: string, timeout?: number): void {
       }
 
       setTimeout(() => {
-        if (!window.fully?.isInForeground()) {
+        const isInForeground = !!window.fully?.isInForeground();
+        if (!isInForeground) {
           window.fully?.bringToForeground();
           window.fully?.setStringSetting('timeToRegainFocus', '0');
         }
