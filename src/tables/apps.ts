@@ -69,13 +69,13 @@ export const appTable: AppTable = {
     name: 'AccuWeather',
     appIcon: accuweatherIcon,
     package: 'com.accuweather.android',
-    timeout: 120,
   },
   alexa: {
     name: 'Alexa',
     appIcon: alexaIcon,
     package: 'com.amazon.dee.app',
     uriScheme: 'alexa:',
+    timeout: 600,
   },
   amazon_music: {
     name: 'Amazon Music',
@@ -89,6 +89,7 @@ export const appTable: AppTable = {
     appIcon: amazonShoppingIcon,
     package: 'com.amazon.windowshop',
     uriScheme: 'amazon:',
+    timeout: 600,
   },
   amcrest_smart_home: {
     name: 'Amcrest Smart Home',
@@ -106,7 +107,6 @@ export const appTable: AppTable = {
     appIcon: bmwIcon,
     package: 'de.bmw.connected.mobile20.na',
     uriScheme: 'bmwconnected:',
-    timeout: 120,
   },
   bond: {
     name: 'Bond Home',
@@ -118,6 +118,7 @@ export const appTable: AppTable = {
     name: 'Bring!',
     appIcon: bringIcon,
     package: 'ch.publisheria.bring',
+    timeout: 600,
   },
   bu_touch: {
     name: 'BU-Touch',
@@ -128,23 +129,26 @@ export const appTable: AppTable = {
     name: 'Calculator',
     appIcon: calculatorIcon,
     package: 'com.google.android.calculator',
+    timeout: 600,
   },
   chatgpt: {
     name: 'ChatGPT',
     appIcon: chatgptIcon,
     package: 'com.openai.chatgpt',
+    timeout: 600,
   },
   clock: {
     name: 'Clock/Timer',
     appIcon: clockTimerIcon,
     package: 'com.google.android.deskclock',
-    timeout: 1800,
+    timeout: 3600,
   },
   doordash: {
     name: 'Doordash',
     appIcon: doordashIcon,
     package: 'com.dd.dashdash',
     uriScheme: 'doordash:',
+    timeout: 600,
   },
   eufy_home: {
     name: 'Eufy Clean',
@@ -174,28 +178,33 @@ export const appTable: AppTable = {
     appIcon: googleChromeIcon,
     package: 'com.android.chrome',
     uriScheme: 'googlechrome:',
+    timeout: 1800,
   },
   google_maps: {
     name: 'Google Maps',
     appIcon: googleMapsIcon,
     package: 'com.google.android.apps.maps',
     uriScheme: 'googlemaps:',
+    timeout: 600,
   },
   grubhub: {
     name: 'Grubhub',
     appIcon: grubhubIcon,
     package: 'com.grubhub.android',
     uriScheme: 'grubhub:',
+    timeout: 600,
   },
   home_connect: {
     name: 'Home Connect',
     appIcon: homeConnectIcon,
     package: 'com.bshg.homeconnect.android.release.na',
+    timeout: 600,
   },
   hue: {
     name: 'Hue',
     appIcon: hueIcon,
     package: 'com.philips.lighting.hue2',
+    timeout: 1800,
   },
   hulu: {
     name: 'Hulu',
@@ -208,6 +217,7 @@ export const appTable: AppTable = {
     name: 'iRobot',
     appIcon: irobotIcon,
     package: 'com.irobot.home',
+    timeout: 600,
   },
   keurig: {
     name: 'Keurig',
@@ -223,22 +233,26 @@ export const appTable: AppTable = {
     name: 'Lutron',
     appIcon: lutronIcon,
     package: 'com.lutron.mmw',
+    timeout: 1800,
   },
   lyft: {
     name: 'Lyft',
     appIcon: lyftIcon,
     package: 'me.lyft.android',
     uriScheme: 'lyft:',
+    timeout: 600,
   },
   myq: {
     name: 'MyQ',
     appIcon: myqIcon,
     package: 'com.chamberlain.android.liftmaster.myq',
+    timeout: 600,
   },
   nest: {
     name: 'Nest',
     appIcon: nestIcon,
     package: 'com.nest.android',
+    timeout: 600,
   },
   netflix: {
     name: 'Netflix',
@@ -275,12 +289,14 @@ export const appTable: AppTable = {
     appIcon: reolinkIcon,
     package: 'com.mcu.reolink',
     uriScheme: 'reolink:',
+    timeout: 600,
   },
   ring: {
     name: 'Ring',
     appIcon: ringIcon,
     package: 'com.ringapp',
     uriScheme: 'ring:',
+    timeout: 600,
   },
   roku: {
     name: 'Roku',
@@ -292,6 +308,7 @@ export const appTable: AppTable = {
     name: 'Sense Energy',
     appIcon: senseIcon,
     package: 'com.sense.androidclient',
+    timeout: 600,
   },
   shazam: {
     name: 'Shazam',
@@ -303,6 +320,7 @@ export const appTable: AppTable = {
     name: 'Shipt Shopper',
     appIcon: shiptShopperIcon,
     package: 'com.shipt.shopper',
+    timeout: 600,
   },
   sleep_number: {
     name: 'Sleep Number',
@@ -333,42 +351,43 @@ export const appTable: AppTable = {
     name: 'Sub-Zero Wolf',
     appIcon: subzeroIcon,
     package: 'com.subzero.group.owners.app',
+    timeout: 600,
   },
   tuya_smart: {
     name: 'Tuya Smart',
     appIcon: tuyaSmartIcon,
     package: 'com.tuya.smart',
     uriScheme: 'tuyasmart:',
+    timeout: 1800,
   },
   uber: {
     name: 'Uber',
     appIcon: uberIcon,
     package: 'com.ubercab',
     uriScheme: 'uber:',
+    timeout: 600,
   },
   uber_eats: {
     name: 'Uber Eats',
     appIcon: uberEatsIcon,
     package: 'com.ubercab.eats',
     uriScheme: 'ubereats:',
+    timeout: 600,
   },
   weather: {
     name: 'Weather',
     appIcon: weatherIcon,
     package: 'com.google.android.apps.weather',
-    timeout: 120,
   },
   weather_channel: {
     name: 'Weather Channel',
     appIcon: weatherChannelIcon,
     package: 'com.weather.Weather',
-    timeout: 120,
   },
   weather_underground: {
     name: 'Weather Underground',
     appIcon: weatherUndergroundIcon,
     package: 'com.wunderground.android.weather',
-    timeout: 120,
   },
   yuka: {
     name: 'Yuka',
