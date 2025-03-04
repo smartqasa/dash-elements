@@ -69,12 +69,14 @@ export const appTable: AppTable = {
     name: 'AccuWeather',
     appIcon: accuweatherIcon,
     package: 'com.accuweather.android',
+    timeout: 2,
   },
   alexa: {
     name: 'Alexa',
     appIcon: alexaIcon,
     package: 'com.amazon.dee.app',
     uriScheme: 'alexa:',
+    timeout: 2,
   },
   amazon_music: {
     name: 'Amazon Music',
@@ -105,11 +107,13 @@ export const appTable: AppTable = {
     appIcon: bmwIcon,
     package: 'de.bmw.connected.mobile20.na',
     uriScheme: 'bmwconnected:',
+    timeout: 2,
   },
   bond: {
     name: 'Bond Home',
     appIcon: bondIcon,
     package: 'io.olibra.bondapp',
+    timeout: 30,
   },
   bring: {
     name: 'Bring!',
@@ -352,16 +356,19 @@ export const appTable: AppTable = {
     name: 'Weather',
     appIcon: weatherIcon,
     package: 'com.google.android.apps.weather',
+    timeout: 2,
   },
   weather_channel: {
     name: 'Weather Channel',
     appIcon: weatherChannelIcon,
     package: 'com.weather.Weather',
+    timeout: 2,
   },
   weather_underground: {
     name: 'Weather Underground',
     appIcon: weatherUndergroundIcon,
     package: 'com.wunderground.android.weather',
+    timeout: 2,
   },
   yuka: {
     name: 'Yuka',
