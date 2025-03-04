@@ -138,8 +138,11 @@ export class AudioTile extends LitElement implements LovelaceCard {
     dialogPopup(dialogObj.data);
   }
 
-  private launchApp(e: Event): void {
+  private async launchApp(e: Event): Promise<void> {
     e.stopPropagation();
-    launchApp('com.sonos.acr2');
+    const launched = launchApp('sonos');
+    if (!launched) {
+      console.error('Failed to launch app "sonos".');
+    }
   }
 }

@@ -3,9 +3,12 @@ import { LovelaceCard } from '../types';
 import { formattedTime2, formattedDate } from '../utilities/format-date-time';
 import { launchApp } from '../utilities/launch-app';
 
-function launchClock(e: Event): void {
+async function launchClock(e: Event): Promise<void> {
   e.stopPropagation();
-  launchApp('clock');
+  const launched = launchApp('clock');
+  if (!launched) {
+    console.error('Failed to launch app "clock".');
+  }
 }
 
 export function renderHeader(headerChips?: LovelaceCard[]): TemplateResult {

@@ -119,8 +119,12 @@ export class AudioChip extends LitElement implements LovelaceCard {
     dialogPopup(dialogObj.data);
   }
 
-  private launchApp(e: Event): void {
+  private async launchApp(e: Event): Promise<void> {
     e.stopPropagation();
-    launchApp('sonos');
+
+    const launched = await launchApp('sonos');
+    if (!launched) {
+      console.error('Failed to launch app "sonos".');
+    }
   }
 }

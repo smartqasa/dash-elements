@@ -81,10 +81,14 @@ export class AppTile extends LitElement implements LovelaceCard {
     `;
   }
 
-  private launchApp(e: Event): void {
+  private async launchApp(e: Event): Promise<void> {
     e.stopPropagation();
     if (!this.app) return;
 
-    launchApp(this.app, this.appTimout);
+    const launched = await launchApp(this.app, this.appTimout);
+
+    if (!launched) {
+      console.error(`Failed to launch app "${this.app}".`);
+    }
   }
 }
