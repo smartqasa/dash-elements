@@ -23,6 +23,7 @@ import musicBarsStyle from '../css/music-bars.css';
 
 interface Config extends LovelaceCardConfig {
   entity?: string;
+  timeout?: number;
 }
 
 window.customCards.push({
@@ -44,6 +45,7 @@ export class AudioChip extends LitElement implements LovelaceCard {
   private entity?: string;
   private stateObj?: HassEntity;
   private iconTemplate?: TemplateResult;
+  private appTimeout?: number;
 
   static get styles(): CSSResultGroup[] {
     return [chipBaseStyle, musicBarsStyle];
@@ -55,6 +57,7 @@ export class AudioChip extends LitElement implements LovelaceCard {
       this.entity = undefined;
     } else {
       this.entity = config.entity;
+      this.appTimeout = config.timeout || undefined;
     }
     this.config = config;
   }
@@ -121,6 +124,6 @@ export class AudioChip extends LitElement implements LovelaceCard {
 
   private async launchApp(e: Event): Promise<void> {
     e.stopPropagation();
-    await launchApp('sonos');
+    await launchApp('sonos', this.appTimeout);
   }
 }

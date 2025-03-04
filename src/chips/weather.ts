@@ -23,6 +23,7 @@ import chipTextStyle from '../css/chip-text.css';
 interface Config extends LovelaceCardConfig {
   entity?: string;
   app?: string;
+  timeout?: number;
 }
 
 window.customCards.push({
@@ -43,6 +44,7 @@ export class WeatherChip extends LitElement implements LovelaceCard {
   private entity?: string;
   private stateObj?: HassEntity;
   private app?: string;
+  private appTimeout?: number;
 
   static get styles(): CSSResultGroup {
     return [chipBaseStyle, chipTextStyle];
@@ -61,6 +63,7 @@ export class WeatherChip extends LitElement implements LovelaceCard {
 
     this.entity = config.entity ?? 'weather.forecast_home';
     this.app = config.app ?? 'weather';
+    this.appTimeout = config.timeout || undefined;
     this.config = config;
   }
 
@@ -108,7 +111,7 @@ export class WeatherChip extends LitElement implements LovelaceCard {
     if (!this.config) return;
 
     if (typeof window.fully !== 'undefined' && this.app) {
-      await launchApp(this.app, 2);
+      await launchApp(this.app, this.appTimeout);
     }
 
     const dialogObj = dialogTable.weather;

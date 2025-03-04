@@ -84,7 +84,6 @@ export class AppTile extends LitElement implements LovelaceCard {
   private async launchApp(e: Event): Promise<void> {
     e.stopPropagation();
     if (!this.app) return;
-
     await launchApp(this.app, this.appTimout);
   }
 }

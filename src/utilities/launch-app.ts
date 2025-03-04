@@ -7,7 +7,7 @@ export function launchApp(app: string, timeout?: number): void {
     return;
   }
 
-  const timeoutMins = timeout ?? appObj.timeout ?? 5;
+  timeout = timeout || 300;
 
   if (typeof window.fully !== 'undefined') {
     window.fully.startApplication(appObj.package);
@@ -20,16 +20,14 @@ export function launchApp(app: string, timeout?: number): void {
         return;
       }
 
-      const timeoutSecs = (timeoutMins * 60).toString();
-      window.fully?.setStringSetting('timeToRegainFocus', timeoutSecs);
+      window.fully?.setStringSetting('timeToRegainFocus', timeout.toString());
 
-      const timeoutMillis = timeoutMins * 60 * 1000;
       setTimeout(() => {
         if (!window.fully?.isInForeground()) {
           window.fully?.bringToForeground();
         }
-      }, timeoutMillis);
-    }, 500);
+      }, timeout * 1000);
+    }, 1000);
 
     return;
   }
