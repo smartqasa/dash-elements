@@ -24,12 +24,13 @@ export async function launchApp(
       return false;
     }
 
-    await new Promise((resolve) => setTimeout(resolve, timeoutSecs * 1000));
+    /*await new Promise((resolve) => setTimeout(resolve, timeoutSecs * 1000));
 
     if (!window.fully.isInForeground()) {
       window.fully.bringToForeground();
       window.fully.setStringSetting('timeToRegainFocus', '0');
     }
+    */
 
     return true;
   }
