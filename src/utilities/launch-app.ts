@@ -31,6 +31,6 @@ export function launchApp(app: string, timeout?: number): Promise<boolean> {
     setTimeout(() => {
       const isNowBackground = !window.fully?.isInForeground();
       return resolve(isNowBackground);
-    }, 1000);
+    }, 500);
   });
 }
