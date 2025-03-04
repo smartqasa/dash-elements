@@ -10,7 +10,7 @@ export async function launchApp(
     return false;
   }
 
-  const timeoutSecs = timeout ?? 300;
+  const timeoutSecs = timeout ?? appObj.timeout ?? 300;
 
   if (typeof window.fully !== 'undefined') {
     window.fully.startApplication(appObj.package);
