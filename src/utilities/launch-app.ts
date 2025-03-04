@@ -7,14 +7,14 @@ export function launchApp(app: string, timeout?: number): void {
     return;
   }
 
-  timeout = timeout ?? 300;
+  const timeoutSecs = timeout ?? 300;
 
   if (typeof window.fully !== 'undefined') {
-    window.fully.setStringSetting('timeToRegainFocus', timeout.toString());
     window.fully.startApplication(appObj.package);
+    window.fully.setStringSetting('timeToRegainFocus', timeoutSecs.toString());
 
     setTimeout(() => {
-      const isInForeground = window.fully?.isInForeground() || false;
+      const isInForeground = !!window.fully?.isInForeground();
       if (isInForeground) {
         console.error(`App "${app}" failed to launch.`);
         window.fully?.setStringSetting('timeToRegainFocus', '0');
@@ -24,8 +24,9 @@ export function launchApp(app: string, timeout?: number): void {
       setTimeout(() => {
         if (!window.fully?.isInForeground()) {
           window.fully?.bringToForeground();
+          window.fully?.setStringSetting('timeToRegainFocus', '0');
         }
-      }, timeout * 1000);
+      }, timeoutSecs * 1000);
     }, 1000);
 
     return;
