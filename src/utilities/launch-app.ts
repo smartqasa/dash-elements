@@ -1,10 +1,13 @@
 import { appTable } from '../tables/apps';
 
-export function launchApp(app: string, timeout?: number): void {
+export async function launchApp(
+  app: string,
+  timeout?: number
+): Promise<boolean> {
   const appObj = appTable[app];
   if (!appObj) {
     console.error(`App "${app}" not found in App Table.`);
-    return;
+    return false;
   }
 
   const timeoutSecs = timeout ?? 300;
@@ -13,30 +16,29 @@ export function launchApp(app: string, timeout?: number): void {
     window.fully.startApplication(appObj.package);
     window.fully.setStringSetting('timeToRegainFocus', timeoutSecs.toString());
 
-    setTimeout(() => {
-      const isInForeground = !!window.fully?.isInForeground();
-      if (isInForeground) {
-        console.error(`App "${app}" failed to launch.`);
-        window.fully?.setStringSetting('timeToRegainFocus', '0');
-        return;
-      }
+    await new Promise((resolve) => setTimeout(resolve, 1000));
 
-      setTimeout(() => {
-        const isInForeground = !!window.fully?.isInForeground();
-        if (!isInForeground) {
-          window.fully?.bringToForeground();
-          window.fully?.setStringSetting('timeToRegainFocus', '0');
-        }
-      }, timeoutSecs * 1000);
-    }, 1000);
+    if (window.fully.isInForeground()) {
+      console.error(`App "${app}" failed to launch.`);
+      window.fully.setStringSetting('timeToRegainFocus', '0');
+      return false;
+    }
 
-    return;
+    await new Promise((resolve) => setTimeout(resolve, timeoutSecs * 1000));
+
+    if (!window.fully.isInForeground()) {
+      window.fully.bringToForeground();
+      window.fully.setStringSetting('timeToRegainFocus', '0');
+    }
+
+    return true;
   }
 
   if (appObj.uriScheme) {
     window.open(appObj.uriScheme, '_self');
-    return;
+    return true;
   }
 
   console.error(`App "${app}" has no package or URI Scheme.`);
+  return false;
 }

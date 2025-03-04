@@ -111,7 +111,8 @@ export class WeatherChip extends LitElement implements LovelaceCard {
     if (!this.config) return;
 
     if (typeof window.fully !== 'undefined' && this.app) {
-      await launchApp(this.app, this.appTimeout);
+      const success = await launchApp(this.app, this.appTimeout);
+      if (success) return;
     }
 
     const dialogObj = dialogTable.weather;
